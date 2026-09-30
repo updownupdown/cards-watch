@@ -106,8 +106,9 @@ object TripleStack : Game<TripleStackState> {
     fun serve(state: TripleStackState): TripleStackState? {
         val cards = selectedCards(state)
         if (!isSandwich(cards)) return null
-        val count = minOf(refills(cards), state.deck.size)
         val hand = state.hand.mapIndexed { i, c -> if (i in state.selected) null else c }.toMutableList()
+        // The hand never holds more than its eight places.
+        val count = minOf(refills(cards), state.deck.size, hand.count { it == null })
         var deck = state.deck
         repeat(count) {
             val empty = hand.indexOfFirst { it == null }

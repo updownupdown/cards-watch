@@ -98,7 +98,7 @@ object FortunesCall : Game<FortuneState> {
         else -> null
     }
 
-    override fun status(state: FortuneState) = "Score ${state.score}/$TARGET · Misses ${state.misses}/$MAX_MISSES"
+    override fun status(state: FortuneState) = "Pts ${state.score}/$TARGET · Miss ${state.misses}/$MAX_MISSES"
 
     @Composable
     override fun Board(state: FortuneState, play: (FortuneState) -> Unit, feedback: Feedback, modifier: Modifier) {

@@ -24,6 +24,10 @@ import com.updownupdown.cards.watch.games.acesup.AcesUp
 import com.updownupdown.cards.watch.games.baroness.Baroness
 import com.updownupdown.cards.watch.games.beehive.Beehive
 import com.updownupdown.cards.watch.games.clock.Clock
+import com.updownupdown.cards.watch.games.dominion.Dominion
+import com.updownupdown.cards.watch.games.lycan.Lycan
+import com.updownupdown.cards.watch.games.rogue.RogueRun
+import com.updownupdown.cards.watch.games.seer.Seer
 import com.updownupdown.cards.watch.games.triplestack.TripleStack
 import com.updownupdown.cards.watch.games.fortune.Call
 import com.updownupdown.cards.watch.games.fortune.FortunesCall
@@ -100,6 +104,14 @@ class ScreenshotTest {
     @Test fun beehive() = game(Beehive, Beehive.after({ Beehive.draw(it) }))
 
     @Test fun tripleStack() = game(TripleStack, TripleStack.after({ TripleStack.toggle(it, 0) }, { TripleStack.toggle(it, 3) }))
+
+    @Test fun dominion() = game(Dominion)
+
+    @Test fun rogueRun() = game(RogueRun, RogueRun.after({ RogueRun.select(it, 1) }))
+
+    @Test fun seer() = game(Seer, Seer.after({ Seer.predict(it, 0) }, { Seer.predict(it, 2) }, { Seer.predict(it, 1) }))
+
+    @Test fun lycan() = game(Lycan, Lycan.after({ Lycan.togglePlayer(it, it.player[0].id) }))
 
     @Test fun fortune() = game(FortunesCall, FortunesCall.after({ FortunesCall.call(it, Call.Red) }))
 

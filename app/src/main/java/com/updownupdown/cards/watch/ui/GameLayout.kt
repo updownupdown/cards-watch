@@ -144,7 +144,7 @@ fun StatusText(text: String) {
         style = style.copy(color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center),
         maxLines = 1,
         autoSize = TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = style.fontSize),
-        modifier = Modifier.padding(top = 6.dp).fillMaxWidth(0.84f),
+        modifier = Modifier.padding(top = 6.dp).fillMaxWidth(0.72f),
     )
 }
 
@@ -202,16 +202,17 @@ fun <S> BottomActions(
                 modifier = Modifier.padding(top = 4.dp),
             )
         }
+        // Two buttons sit higher and smaller, clear of the screen's curve.
         else -> Row(
-            Modifier.padding(top = 4.dp),
+            Modifier.padding(top = 2.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             actions.take(2).forEach { action ->
                 ActionButton(
                     label = action.label,
                     onClick = { feedback.move(); play(action.perform(state)) },
-                    width = size.width * 0.46f,
-                    height = bottomButtonHeight(size),
+                    width = size.width * 0.37f,
+                    height = min(size.height * 0.6f, 26.dp),
                     enabled = action.enabled,
                 )
             }
