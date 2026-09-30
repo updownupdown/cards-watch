@@ -14,6 +14,7 @@ class Haptics(private val view: View) : Feedback {
     fun press() = buzz(HapticFeedbackConstants.CONTEXT_CLICK)
     fun longPress() = buzz(HapticFeedbackConstants.LONG_PRESS)
     fun win() = buzz(HapticFeedbackConstants.CONFIRM)
+    fun lose() = buzz(HapticFeedbackConstants.REJECT)
 
     private fun buzz(type: Int) {
         view.performHapticFeedback(type)

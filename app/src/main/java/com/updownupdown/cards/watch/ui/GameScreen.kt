@@ -1,6 +1,7 @@
 package com.updownupdown.cards.watch.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -8,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.updownupdown.cards.watch.game.GameSession
 
 @Composable
@@ -19,13 +21,15 @@ fun <S : Any> GameScreen(
     val haptics = rememberHaptics()
     val game = session.game
     val state = session.state
-    val won = session.isWon
+    val outcome = session.outcome
 
-    // Buzz when a move wins, but not when opening a game that's already won.
-    var wasWon by remember { mutableStateOf(won) }
-    LaunchedEffect(won) {
-        if (won && !wasWon) haptics.win()
-        wasWon = won
+    // Buzz when a move ends the game, but not when opening an ended game.
+    var wasOver by remember { mutableStateOf(outcome != null) }
+    LaunchedEffect(outcome) {
+        if (outcome != null && !wasOver) {
+            if (outcome.won) haptics.win() else haptics.lose()
+        }
+        wasOver = outcome != null
     }
 
     GameLayout(
@@ -43,25 +47,21 @@ fun <S : Any> GameScreen(
             haptics.press()
             onRules()
         },
-        bottom = { width, height ->
-            val action = game.actions(state).firstOrNull()
-            when {
-                won -> ActionButton("New game", { session.newGame() }, width, height)
-                action != null -> ActionButton(
-                    label = action.label,
-                    onClick = {
-                        haptics.move()
-                        session.play(action.perform(state))
-                    },
-                    width = width,
-                    height = height,
-                    enabled = action.enabled,
+        bottom = { size ->
+            if (outcome != null) {
+                ActionButton(
+                    label = "New game",
+                    onClick = { haptics.move(); session.newGame() },
+                    width = size.width * 0.7f,
+                    height = bottomButtonHeight(size),
+                    modifier = Modifier.padding(top = 4.dp),
                 )
-                else -> game.status(state)?.let { StatusText(it) }
+            } else {
+                game.Bottom(state, session::play, haptics, size)
             }
         },
     ) {
         game.Board(state, session::play, haptics, Modifier.fillMaxSize())
-        if (won) BoardBanner(game.winMessage(state))
+        if (outcome != null) BoardBanner(outcome.message)
     }
 }

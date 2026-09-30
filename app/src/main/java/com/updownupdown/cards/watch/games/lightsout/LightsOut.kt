@@ -1,0 +1,139 @@
+package com.updownupdown.cards.watch.games.lightsout
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import com.updownupdown.cards.watch.cards.Card
+import com.updownupdown.cards.watch.cards.CardGrid
+import com.updownupdown.cards.watch.cards.PlayingCard
+import com.updownupdown.cards.watch.cards.Rank
+import com.updownupdown.cards.watch.cards.Suit
+import com.updownupdown.cards.watch.game.Feedback
+import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Outcome
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlin.random.Random
+
+/** Which cards are face up, row by row. */
+@Serializable
+data class LightsOutState(val faceUp: List<Boolean>, val moves: Int = 0)
+
+/**
+ * 5×5: on 4×4 most deals fall in about four taps, and 6×6 cards are too small
+ * to tap on the watch (see docs/GAMES.md).
+ */
+object LightsOut : Game<LightsOutState> {
+    const val SIZE = 5
+    private const val CELLS = SIZE * SIZE
+    /** Deals needing fewer taps than this are too easy, so aren't dealt. */
+    const val MIN_SOLUTION = 7
+
+    override val id = "lights-out"
+    override val title = "Lights Out"
+    override val stateSerializer: KSerializer<LightsOutState> = LightsOutState.serializer()
+
+    override val rules = listOf(
+        "## Objective",
+        "Turn all 25 cards face down.",
+        "## Gameplay",
+        "- Tapping a card turns over that card and the cards directly above, below, left and right of it.",
+        "- Diagonal cards are not affected.",
+        "- Every deal is made by tapping a finished board, so it can always be solved.",
+    )
+
+    /** The cards shown when face up: a fixed pattern, as in the phone game. */
+    val CARDS: List<Card> = List(CELLS) { Card(Rank.entries[it % Rank.entries.size], Suit.entries[it % Suit.entries.size]) }
+
+    fun affected(index: Int): List<Int> {
+        val row = index / SIZE
+        val col = index % SIZE
+        return buildList {
+            add(index)
+            if (row > 0) add(index - SIZE)
+            if (row < SIZE - 1) add(index + SIZE)
+            if (col > 0) add(index - 1)
+            if (col < SIZE - 1) add(index + 1)
+        }
+    }
+
+    fun tap(state: LightsOutState, index: Int): LightsOutState {
+        val flipped = affected(index).toSet()
+        return LightsOutState(
+            faceUp = state.faceUp.mapIndexed { i, up -> if (i in flipped) !up else up },
+            moves = state.moves + 1,
+        )
+    }
+
+    override fun newGame(random: Random): LightsOutState {
+        while (true) {
+            var state = LightsOutState(List(CELLS) { false })
+            val presses = (0 until CELLS).shuffled(random).take(random.nextInt(8, 16))
+            presses.forEach { state = tap(state, it) }
+            val fewest = fewestTaps(state.faceUp)
+            if (fewest != null && fewest >= MIN_SOLUTION) return LightsOutState(state.faceUp)
+        }
+    }
+
+    /**
+     * The fewest taps that solve [faceUp], or null if it can't be solved:
+     * Gaussian elimination over GF(2), trying every combination of the free
+     * taps (two on a 5×5 board).
+     */
+    fun fewestTaps(faceUp: List<Boolean>): Int? {
+        val n = faceUp.size
+        // Row r: which taps flip card r, then whether card r is face up.
+        val rows = Array(n) { r -> BooleanArray(n + 1) { c -> if (c == n) faceUp[r] else r in affected(c) } }
+        val pivots = mutableListOf<Int>()
+        var rank = 0
+        for (col in 0 until n) {
+            val pivot = (rank until n).firstOrNull { rows[it][col] } ?: continue
+            rows[pivot] = rows[rank].also { rows[rank] = rows[pivot] }
+            for (r in 0 until n) {
+                if (r != rank && rows[r][col]) {
+                    for (c in 0..n) rows[r][c] = rows[r][c] xor rows[rank][c]
+                }
+            }
+            pivots += col
+            rank++
+        }
+        if ((rank until n).any { rows[it][n] }) return null
+        val free = (0 until n).filter { it !in pivots }
+        var best = Int.MAX_VALUE
+        for (mask in 0 until (1 shl free.size)) {
+            val taps = BooleanArray(n)
+            free.forEachIndexed { i, col -> taps[col] = (mask shr i) and 1 == 1 }
+            pivots.forEachIndexed { i, col ->
+                var value = rows[i][n]
+                for (f in free) if (rows[i][f] && taps[f]) value = !value
+                taps[col] = value
+            }
+            best = minOf(best, taps.count { it })
+        }
+        return best
+    }
+
+    override fun outcome(state: LightsOutState) =
+        if (state.faceUp.none { it }) Outcome(true, "Lights out in ${state.moves} moves") else null
+
+    override fun status(state: LightsOutState) = if (state.moves == 1) "1 move" else "${state.moves} moves"
+
+    @Composable
+    override fun Board(state: LightsOutState, play: (LightsOutState) -> Unit, feedback: Feedback, modifier: Modifier) {
+        CardGrid(
+            columns = SIZE,
+            rows = SIZE,
+            modifier = modifier,
+            gap = 0.1f,
+            onTap = { index ->
+                if (outcome(state) != null) {
+                    feedback.reject()
+                } else {
+                    feedback.move()
+                    play(tap(state, index))
+                }
+            },
+        ) { index ->
+            PlayingCard(CARDS[index], faceDown = !state.faceUp[index])
+        }
+    }
+}

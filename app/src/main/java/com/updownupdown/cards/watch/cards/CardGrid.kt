@@ -56,3 +56,18 @@ fun CardGrid(
         }
     }
 }
+
+/** A cell's position and size on a [CardGrid]-style board, for laying out by hand. */
+data class CellBounds(val x: Dp, val y: Dp, val width: Dp, val height: Dp)
+
+fun cellBounds(columns: Int, rows: Int, width: Dp, height: Dp, gap: Float, index: Int): CellBounds {
+    val cellWidth = width / (columns + (columns - 1) * gap)
+    val gapSize = cellWidth * gap
+    val cellHeight = (height - gapSize * (rows - 1)) / rows
+    return CellBounds(
+        x = (cellWidth + gapSize) * (index % columns),
+        y = (cellHeight + gapSize) * (index / columns),
+        width = cellWidth,
+        height = cellHeight,
+    )
+}

@@ -2,6 +2,8 @@ package com.updownupdown.cards.watch.game
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpSize
+import com.updownupdown.cards.watch.ui.BottomActions
 import kotlinx.serialization.KSerializer
 import kotlin.random.Random
 
@@ -28,15 +30,20 @@ interface Game<S : Any> {
 
     fun newGame(random: Random = Random.Default): S
 
-    fun isWon(state: S): Boolean
+    /**
+     * Whether going from [previous] to [next] can be undone. Changes that
+     * aren't (such as picking cards kept in the state) replace the current
+     * state instead of adding to the history.
+     */
+    fun isUndoStep(previous: S, next: S): Boolean = true
+
+    /** How the game ended, or null while it's still being played. */
+    fun outcome(state: S): Outcome?
 
     /** Short text for the bottom of the screen, such as the move count. */
     fun status(state: S): String? = null
 
-    /** Message shown over the board once the game is won. */
-    fun winMessage(state: S): String = "You won!"
-
-    /** Buttons for the bottom of the screen, such as "Deal". */
+    /** Buttons for the bottom of the screen (one or two), such as "Deal". */
     fun actions(state: S): List<GameAction<S>> = emptyList()
 
     /**
@@ -45,7 +52,15 @@ interface Game<S : Any> {
      */
     @Composable
     fun Board(state: S, play: (S) -> Unit, feedback: Feedback, modifier: Modifier)
+
+    /** The crescent under the board: [actions], or else [status]. */
+    @Composable
+    fun Bottom(state: S, play: (S) -> Unit, feedback: Feedback, size: DpSize) {
+        BottomActions(actions(state), status(state), state, play, feedback, size)
+    }
 }
+
+data class Outcome(val won: Boolean, val message: String)
 
 class GameAction<S>(
     val label: String,

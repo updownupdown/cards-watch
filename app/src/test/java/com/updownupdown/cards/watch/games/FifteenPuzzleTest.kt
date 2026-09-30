@@ -16,7 +16,7 @@ class FifteenPuzzleTest {
     fun `new games are shuffled and hold every card once`() {
         repeat(50) { seed ->
             val state = FifteenPuzzle.newGame(Random(seed))
-            assertFalse(FifteenPuzzle.isWon(state))
+            assertFalse(FifteenPuzzle.isSolved(state))
             assertEquals(FifteenPuzzle.SOLVED.toSet(), state.cells.toSet())
         }
     }
@@ -29,7 +29,7 @@ class FifteenPuzzleTest {
         assertNull(moved.cells[14])
         assertEquals(FifteenPuzzle.SOLVED[14], moved.cells[15])
         assertEquals(1, moved.moves)
-        assertTrue(FifteenPuzzle.isWon(FifteenPuzzle.slide(moved, 15)!!))
+        assertTrue(FifteenPuzzle.isSolved(FifteenPuzzle.slide(moved, 15)!!))
     }
 
     @Test

@@ -10,6 +10,7 @@ import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Outcome
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
@@ -81,12 +82,13 @@ object FifteenPuzzle : Game<FifteenState> {
         }
     }
 
-    override fun isWon(state: FifteenState) = state.cells == SOLVED
+    fun isSolved(state: FifteenState) = state.cells == SOLVED
+
+    override fun outcome(state: FifteenState) =
+        if (isSolved(state)) Outcome(won = true, message = "Solved in ${state.moves} moves") else null
 
     override fun status(state: FifteenState) =
         if (state.moves == 1) "1 move" else "${state.moves} moves"
-
-    override fun winMessage(state: FifteenState) = "Solved in ${state.moves} moves"
 
     @Composable
     override fun Board(
@@ -100,7 +102,7 @@ object FifteenPuzzle : Game<FifteenState> {
             rows = SIZE,
             modifier = modifier,
             onTap = { index ->
-                val next = if (isWon(state)) null else slide(state, index)
+                val next = if (isSolved(state)) null else slide(state, index)
                 if (next != null) {
                     feedback.move()
                     play(next)

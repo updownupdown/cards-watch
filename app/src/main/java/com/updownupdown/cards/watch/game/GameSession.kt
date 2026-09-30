@@ -25,12 +25,14 @@ class GameSession<S : Any>(
     private val history = mutableStateListOf<S>().apply { saved?.history?.let(::addAll) }
 
     val canUndo: Boolean get() = history.isNotEmpty()
-    val isWon: Boolean get() = game.isWon(state)
+    val outcome: Outcome? get() = game.outcome(state)
 
     fun play(next: S) {
         if (next == state) return
-        history.add(state)
-        if (history.size > MAX_UNDO) history.removeAt(0)
+        if (game.isUndoStep(state, next)) {
+            history.add(state)
+            if (history.size > MAX_UNDO) history.removeAt(0)
+        }
         state = next
         save()
     }

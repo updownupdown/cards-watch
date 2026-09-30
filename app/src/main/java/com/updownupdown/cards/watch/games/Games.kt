@@ -1,11 +1,29 @@
 package com.updownupdown.cards.watch.games
 
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.games.acesup.AcesUp
+import com.updownupdown.cards.watch.games.baroness.Baroness
+import com.updownupdown.cards.watch.games.beehive.Beehive
+import com.updownupdown.cards.watch.games.clock.Clock
 import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
+import com.updownupdown.cards.watch.games.fortune.FortunesCall
+import com.updownupdown.cards.watch.games.hanoi.TowerOfHanoi
+import com.updownupdown.cards.watch.games.lightsout.LightsOut
+import com.updownupdown.cards.watch.games.memory.Memory
+import com.updownupdown.cards.watch.games.triplestack.TripleStack
 
 /** Every game, in the order the home screen lists them. */
 val ALL_GAMES: List<Game<*>> = listOf(
     FifteenPuzzle,
+    Memory,
+    LightsOut,
+    TowerOfHanoi,
+    Clock,
+    FortunesCall,
+    AcesUp,
+    Baroness,
+    Beehive,
+    TripleStack,
 )
 
 fun gameById(id: String?): Game<*>? = ALL_GAMES.firstOrNull { it.id == id }

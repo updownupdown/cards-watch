@@ -19,6 +19,17 @@ import com.updownupdown.cards.watch.game.GameSession
 import com.updownupdown.cards.watch.game.SavedGame
 import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
 import com.updownupdown.cards.watch.games.fifteen.FifteenState
+import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.games.acesup.AcesUp
+import com.updownupdown.cards.watch.games.baroness.Baroness
+import com.updownupdown.cards.watch.games.beehive.Beehive
+import com.updownupdown.cards.watch.games.clock.Clock
+import com.updownupdown.cards.watch.games.triplestack.TripleStack
+import com.updownupdown.cards.watch.games.fortune.Call
+import com.updownupdown.cards.watch.games.fortune.FortunesCall
+import com.updownupdown.cards.watch.games.hanoi.TowerOfHanoi
+import com.updownupdown.cards.watch.games.lightsout.LightsOut
+import com.updownupdown.cards.watch.games.memory.Memory
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,7 +45,7 @@ import kotlin.random.Random
  */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
-@Config(sdk = [35])
+@Config(sdk = [35], qualifiers = RobolectricDeviceQualifiers.WearOSSmallRound)
 class ScreenshotTest {
     @get:Rule
     val compose = createComposeRule()
@@ -51,28 +62,46 @@ class ScreenshotTest {
         compose.onRoot().captureRoboImage("build/outputs/roborazzi/$name.png")
     }
 
-    private fun fifteen(state: FifteenState = FifteenPuzzle.newGame(Random(3))) =
-        GameSession(FifteenPuzzle, SavedGame(1, state)) {}
-
-    @Test
-    @Config(qualifiers = RobolectricDeviceQualifiers.WearOSSmallRound)
-    fun fifteenSmall() = capture("fifteen_small") {
-        ScreenScaffold(timeText = {}) { GameScreen(fifteen(), {}, {}) }
+    private fun <S : Any> game(game: Game<S>, state: S = game.newGame(Random(3))) {
+        val session = GameSession(game, SavedGame(game.saveVersion, state)) {}
+        capture(game.id) { ScreenScaffold(timeText = {}) { GameScreen(session, {}, {}) } }
     }
+
+    private fun <S : Any> Game<S>.after(vararg moves: (S) -> S?): S =
+        moves.fold(newGame(Random(3))) { state, move -> move(state) ?: state }
+
+    @Test fun fifteen() = game(FifteenPuzzle)
 
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
     fun fifteenLarge() = capture("fifteen_large") {
-        ScreenScaffold(timeText = {}) { GameScreen(fifteen(), {}, {}) }
+        val session = GameSession(FifteenPuzzle, SavedGame(1, FifteenPuzzle.newGame(Random(3)))) {}
+        ScreenScaffold(timeText = {}) { GameScreen(session, {}, {}) }
     }
 
     @Test
-    @Config(qualifiers = RobolectricDeviceQualifiers.WearOSSmallRound)
-    fun fifteenWonSmall() = capture("fifteen_won_small") {
-        ScreenScaffold(timeText = {}) {
-            GameScreen(fifteen(FifteenState(FifteenPuzzle.SOLVED, moves = 87)), {}, {})
-        }
+    fun fifteenWon() = capture("fifteen_won") {
+        val session = GameSession(FifteenPuzzle, SavedGame(1, FifteenState(FifteenPuzzle.SOLVED, moves = 87))) {}
+        ScreenScaffold(timeText = {}) { GameScreen(session, {}, {}) }
     }
+
+    @Test fun memory() = game(Memory, Memory.after({ Memory.tap(it, 0) }, { Memory.tap(it, 7) }))
+
+    @Test fun lightsOut() = game(LightsOut)
+
+    @Test fun hanoi() = game(TowerOfHanoi)
+
+    @Test fun clock() = game(Clock, Clock.after({ Clock.reveal(it) }, { Clock.reveal(it) }, { Clock.reveal(it) }))
+
+    @Test fun acesUp() = game(AcesUp, AcesUp.after({ AcesUp.deal(it) }, { AcesUp.deal(it) }))
+
+    @Test fun baroness() = game(Baroness, Baroness.after({ Baroness.deal(it) }))
+
+    @Test fun beehive() = game(Beehive, Beehive.after({ Beehive.draw(it) }))
+
+    @Test fun tripleStack() = game(TripleStack, TripleStack.after({ TripleStack.toggle(it, 0) }, { TripleStack.toggle(it, 3) }))
+
+    @Test fun fortune() = game(FortunesCall, FortunesCall.after({ FortunesCall.call(it, Call.Red) }))
 
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)

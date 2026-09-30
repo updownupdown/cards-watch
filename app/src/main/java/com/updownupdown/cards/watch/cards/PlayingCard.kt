@@ -23,7 +23,8 @@ object CardColors {
     val Face = Color(0xFFF4F1EA)
     val Back = Color(0xFF7A2E3A)
     val BackTrim = Color(0xFFB0596A)
-    val EmptySlot = Color(0x40FFFFFF)
+    /** An empty pile or space: off-black, so it shows against the black screen. */
+    val EmptySlot = Color(0xFF22262C)
     /** The border colour of a selected card. Reserved for selection. */
     val Selected = Color(0xFFFFC400)
 
@@ -44,12 +45,14 @@ object CardOverlay {
 }
 
 /**
- * A playing card that fills its bounds: the rank above the suit, scaled to
- * the card's size.
+ * A playing card that fills its bounds, scaled to its size: the rank above
+ * the suit, or with [indexHeight], the rank and suit side by side along the
+ * top edge (so they show when cards overlap) and a large suit below.
  *
  * @param card the card to show, or null for an empty slot.
  * @param overlay a status colour (see [CardOverlay]) tinting the card.
  * @param selected draws the selection border. Nothing else uses a border.
+ * @param indexHeight the height of the top strip, as a fraction of the card's.
  */
 @Composable
 fun PlayingCard(
@@ -58,17 +61,14 @@ fun PlayingCard(
     faceDown: Boolean = false,
     overlay: Color? = null,
     selected: Boolean = false,
+    indexHeight: Float? = null,
 ) {
     val textMeasurer = rememberTextMeasurer()
     Canvas(modifier) {
         val short = min(size.width, size.height)
         val corner = CornerRadius(short * 0.14f)
         when {
-            card == null -> drawRoundRect(
-                color = CardColors.EmptySlot,
-                cornerRadius = corner,
-                style = Stroke(width = 1.5f * density),
-            )
+            card == null -> drawRoundRect(CardColors.EmptySlot, cornerRadius = corner)
             faceDown -> {
                 drawBack(corner, short)
                 if (overlay != null) drawRoundRect(overlay, cornerRadius = corner)
@@ -76,7 +76,11 @@ fun PlayingCard(
             else -> {
                 drawRoundRect(CardColors.Face, cornerRadius = corner)
                 if (overlay != null) drawRoundRect(overlay, cornerRadius = corner)
-                drawFace(card, textMeasurer)
+                if (indexHeight != null) {
+                    drawIndexFace(card, textMeasurer, indexHeight)
+                } else {
+                    drawFace(card, textMeasurer)
+                }
             }
         }
         if (selected) {
@@ -126,6 +130,35 @@ private fun DrawScope.drawFace(card: Card, textMeasurer: TextMeasurer) {
 
     val suitSize = min(w * 0.42f, h * 0.32f)
     drawSuit(card.suit, Offset((w - suitSize) / 2, h * 0.74f - suitSize / 2), suitSize, color)
+}
+
+private fun DrawScope.drawIndexFace(card: Card, textMeasurer: TextMeasurer, indexHeight: Float) {
+    val color = CardColors.suit(card.suit)
+    val w = size.width
+    val h = size.height
+    val strip = h * indexHeight
+
+    // Rank then a small suit, in a row filling the strip.
+    val pad = w * 0.08f
+    var fontPx = strip * 1.05f
+    var layout = textMeasurer.measure(card.rank.label, rankStyle(fontPx, color))
+    val maxRankWidth = w * 0.58f
+    if (layout.size.width > maxRankWidth) {
+        fontPx *= maxRankWidth / layout.size.width
+        layout = textMeasurer.measure(card.rank.label, rankStyle(fontPx, color))
+    }
+    val suitSize = min(strip * 0.7f, w - pad * 3 - layout.size.width)
+    val rowWidth = layout.size.width + pad * 0.5f + suitSize
+    val left = (w - rowWidth) / 2
+    drawText(layout, topLeft = Offset(left, strip / 2 - layout.size.height / 2 + h * 0.01f))
+    drawSuit(card.suit, Offset(left + layout.size.width + pad * 0.5f, (strip - suitSize) / 2 + h * 0.01f), suitSize, color)
+
+    // A large suit in the rest of the card, when there's room for it.
+    val body = h - strip
+    val bigSuit = min(w * 0.55f, body * 0.6f)
+    if (bigSuit > strip * 0.8f) {
+        drawSuit(card.suit, Offset((w - bigSuit) / 2, strip + (body - bigSuit) / 2), bigSuit, color)
+    }
 }
 
 private fun DrawScope.rankStyle(fontPx: Float, color: Color) = TextStyle(

@@ -1,0 +1,128 @@
+package com.updownupdown.cards.watch.games.acesup
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.updownupdown.cards.watch.cards.BoardText
+import com.updownupdown.cards.watch.cards.Card
+import com.updownupdown.cards.watch.cards.CardPile
+import com.updownupdown.cards.watch.cards.Rank
+import com.updownupdown.cards.watch.cards.shuffledDeck
+import com.updownupdown.cards.watch.game.Feedback
+import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.GameAction
+import com.updownupdown.cards.watch.game.Outcome
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlin.random.Random
+
+/** Four piles, each bottom to top, and the undealt deck. */
+@Serializable
+data class AcesUpState(val piles: List<List<Card>>, val deck: List<Card>)
+
+object AcesUp : Game<AcesUpState> {
+    const val PILES = 4
+
+    override val id = "aces-up"
+    override val title = "Aces Up"
+    override val stateSerializer: KSerializer<AcesUpState> = AcesUpState.serializer()
+
+    override val rules = listOf(
+        "## Objective",
+        "Discard the whole deck except the four Aces, leaving one Ace on each pile.",
+        "## Discarding",
+        "- Compare the top cards of the piles. Tap a card to discard it when another pile shows a **higher card of the same suit**.",
+        "- **Aces are high** and can never be discarded.",
+        "- When a pile is empty, tap any other top card to move it there.",
+        "- When you're stuck, tap **Deal** for one more card on each pile.",
+    )
+
+    private fun value(card: Card) = if (card.rank == Rank.Ace) 14 else card.rank.value
+
+    override fun newGame(random: Random) = deal(AcesUpState(List(PILES) { emptyList() }, shuffledDeck(random)))
+
+    fun deal(state: AcesUpState): AcesUpState {
+        val dealt = state.deck.take(PILES)
+        return AcesUpState(
+            piles = state.piles.mapIndexed { i, pile -> dealt.getOrNull(i)?.let { pile + it } ?: pile },
+            deck = state.deck.drop(dealt.size),
+        )
+    }
+
+    fun canDiscard(state: AcesUpState, pile: Int): Boolean {
+        val card = state.piles[pile].lastOrNull() ?: return false
+        return state.piles.any { other ->
+            val top = other.lastOrNull()
+            top != null && top.suit == card.suit && value(top) > value(card)
+        }
+    }
+
+    /** Discards the top card of [pile], or moves it to an empty pile. */
+    fun tap(state: AcesUpState, pile: Int): AcesUpState? {
+        val piles = state.piles.map { it.toMutableList() }
+        when {
+            canDiscard(state, pile) -> piles[pile].removeAt(piles[pile].lastIndex)
+            state.piles[pile].size > 1 && state.piles.any { it.isEmpty() } -> {
+                val empty = state.piles.indexOfFirst { it.isEmpty() }
+                piles[empty].add(piles[pile].removeAt(piles[pile].lastIndex))
+            }
+            else -> return null
+        }
+        return state.copy(piles = piles)
+    }
+
+    /** Moving a card to an empty pile only helps if it uncovers another. */
+    private fun canMove(state: AcesUpState) =
+        state.piles.any { it.isEmpty() } && state.piles.any { it.size > 1 }
+
+    override fun outcome(state: AcesUpState): Outcome? {
+        if (state.deck.isNotEmpty()) return null
+        if ((0 until PILES).any { canDiscard(state, it) } || canMove(state)) return null
+        val left = state.piles.flatten()
+        return if (left.size == 4 && left.all { it.rank == Rank.Ace }) {
+            Outcome(true, "Four Aces up!")
+        } else {
+            Outcome(false, "No moves left")
+        }
+    }
+
+    override fun actions(state: AcesUpState) = listOf(
+        GameAction<AcesUpState>("Deal", enabled = state.deck.isNotEmpty()) { deal(it) },
+    )
+
+    @Composable
+    override fun Board(state: AcesUpState, play: (AcesUpState) -> Unit, feedback: Feedback, modifier: Modifier) {
+        BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
+            val gap = 4.dp
+            val pileWidth = (maxWidth - gap * (PILES - 1)) / PILES
+            val pileHeight = pileWidth * 1.5f
+            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(gap)) {
+                    state.piles.forEachIndexed { index, pile ->
+                        CardPile(
+                            cards = pile,
+                            modifier = Modifier
+                                .size(pileWidth, pileHeight)
+                                .clickable(interactionSource = null, indication = null) {
+                                    val next = if (outcome(state) == null) tap(state, index) else null
+                                    if (next == null) feedback.reject() else {
+                                        feedback.move()
+                                        play(next)
+                                    }
+                                },
+                        )
+                    }
+                }
+                BoardText("${state.deck.size} in the deck")
+            }
+        }
+    }
+}

@@ -4,12 +4,17 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,12 +28,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
+import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import com.updownupdown.cards.watch.R
+import com.updownupdown.cards.watch.game.Feedback
+import com.updownupdown.cards.watch.game.GameAction
 
 /** The board's side as a fraction of the screen's diameter. */
 const val BOARD_FRACTION = 0.64f
@@ -45,7 +54,7 @@ fun GameLayout(
     onUndoHold: () -> Unit,
     canUndo: Boolean,
     onRules: () -> Unit,
-    bottom: @Composable (width: Dp, height: Dp) -> Unit,
+    bottom: @Composable (size: DpSize) -> Unit,
     board: @Composable BoxScope.() -> Unit,
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -81,11 +90,13 @@ fun GameLayout(
             size = button,
             modifier = Modifier.align(Alignment.CenterEnd).offset(x = -inset),
         )
+        // The crescent is as wide as the screen where it meets the board.
+        val bottomWidth = diameter * 0.74f
         Box(
-            Modifier.align(Alignment.BottomCenter).size(boardSize, band),
+            Modifier.align(Alignment.BottomCenter).size(bottomWidth, band),
             contentAlignment = Alignment.TopCenter,
         ) {
-            bottom(boardSize, band)
+            bottom(DpSize(bottomWidth, band))
         }
     }
 }
@@ -126,13 +137,14 @@ private fun RoundButton(
 /** A short line of text for the bottom crescent, such as a move count. */
 @Composable
 fun StatusText(text: String) {
-    Text(
+    val style = MaterialTheme.typography.labelMedium
+    // Shrinks to fit the crescent rather than being cut off.
+    BasicText(
         text = text,
-        style = MaterialTheme.typography.labelMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        textAlign = TextAlign.Center,
+        style = style.copy(color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center),
         maxLines = 1,
-        modifier = Modifier.padding(top = 6.dp),
+        autoSize = TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = style.fontSize),
+        modifier = Modifier.padding(top = 6.dp).fillMaxWidth(0.84f),
     )
 }
 
@@ -144,11 +156,11 @@ fun ActionButton(
     width: Dp,
     height: Dp,
     enabled: Boolean = true,
+    modifier: Modifier = Modifier,
 ) {
     Box(
-        Modifier
-            .padding(top = 4.dp)
-            .size(width * 0.8f, min(height * 0.7f, 32.dp))
+        modifier
+            .size(width, height)
             .clip(RoundedCornerShape(50))
             .background(MaterialTheme.colorScheme.primary)
             .alpha(if (enabled) 1f else 0.4f)
@@ -161,6 +173,49 @@ fun ActionButton(
             color = MaterialTheme.colorScheme.onPrimary,
             maxLines = 1,
         )
+    }
+}
+
+/** The height of a button in the bottom crescent of the given [size]. */
+fun bottomButtonHeight(size: DpSize): Dp = min(size.height * 0.7f, 32.dp)
+
+/** One or two action buttons side by side, or else a status line. */
+@Composable
+fun <S> BottomActions(
+    actions: List<GameAction<S>>,
+    status: String?,
+    state: S,
+    play: (S) -> Unit,
+    feedback: Feedback,
+    size: DpSize,
+) {
+    when (actions.size) {
+        0 -> status?.let { StatusText(it) }
+        1 -> {
+            val action = actions[0]
+            ActionButton(
+                label = action.label,
+                onClick = { feedback.move(); play(action.perform(state)) },
+                width = size.width * 0.7f,
+                height = bottomButtonHeight(size),
+                enabled = action.enabled,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+        }
+        else -> Row(
+            Modifier.padding(top = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            actions.take(2).forEach { action ->
+                ActionButton(
+                    label = action.label,
+                    onClick = { feedback.move(); play(action.perform(state)) },
+                    width = size.width * 0.46f,
+                    height = bottomButtonHeight(size),
+                    enabled = action.enabled,
+                )
+            }
+        }
     }
 }
 
