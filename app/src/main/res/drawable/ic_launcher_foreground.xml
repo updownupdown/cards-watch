@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The spade from PlayingCard's suit drawing, in the icon's safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#F4F1EA"
+        android:pathData="M33.76,57.52a10.12,10.12 0,1 0,20.24 0a10.12,10.12 0,1 0,-20.24 0zM54,57.52a10.12,10.12 0,1 0,20.24 0a10.12,10.12 0,1 0,-20.24 0zM34.11,54.88L54,32.88L73.89,54.88L54,58.4zM54,58.4L46.96,76L61.04,76z" />
+</vector>
