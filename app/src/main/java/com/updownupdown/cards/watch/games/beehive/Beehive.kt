@@ -2,18 +2,23 @@ package com.updownupdown.cards.watch.games.beehive
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.min
+import com.updownupdown.cards.watch.R
+import com.updownupdown.cards.watch.cards.CARD_ASPECT
 import com.updownupdown.cards.watch.cards.Card
-import com.updownupdown.cards.watch.cards.CardLayout
+import com.updownupdown.cards.watch.cards.CardStyle
 import com.updownupdown.cards.watch.cards.CardTable
+import com.updownupdown.cards.watch.cards.pileEdge
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
+import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /**
  * Piles list bottom to top. Only the beehive's top card is face up. The
@@ -38,6 +43,9 @@ object Beehive : Game<BeehiveState> {
     private const val WASTE_CELL = 8
 
     override val id = "beehive"
+    override val thumbnail = R.drawable.thumb_beehive
+    override val banner = R.drawable.banner_beehive
+    override val accent = Color(0xFF5A2A1A)
     override val title = "Beehive"
     override val stateSerializer: KSerializer<BeehiveState> = BeehiveState.serializer()
 
@@ -45,8 +53,8 @@ object Beehive : Game<BeehiveState> {
         "## Objective",
         "Clear all 52 cards by gathering sets of four cards of the same rank.",
         "## Board",
-        "- The six piles at the top hold one rank each. A set of four is cleared at once.",
-        "- Bottom left is the **beehive**; bottom right is the **waste**.",
+        "- The six piles on the left hold one rank each. A set of four is cleared at once.",
+        "- Top right is the **beehive**; under it is the **waste**, its last three cards spread out with the top one lowest.",
         "## Playing",
         "- Tap the beehive or the waste to move its top card onto a pile of the same rank, or else into an empty pile.",
         "- Tap a pile to join it to another pile of the same rank.",
@@ -160,21 +168,63 @@ object Beehive : Game<BeehiveState> {
         ) { draw(it) },
     )
 
+    private const val GAP = 0.12f
+    /** The gap between the piles and the column to their right, × a card's width. */
+    private const val COLUMN_GAP = 0.6f
+    /** How many of the waste's cards show. */
+    private const val WASTE_SHOWN = 3
+    /** The cards' height, × the board's: short of its foot, to stand clear of the Draw button. */
+    private const val BOARD_HEIGHT = 0.9f
+
     @Composable
     override fun Board(state: BeehiveState, play: (BeehiveState) -> Unit, feedback: Feedback, modifier: Modifier) {
         val over = outcome(state) != null
         CardTable(modifier) {
-            // Six piles above the beehive, the stock count and the waste.
-            val layout = CardLayout(3, 3, width, height, gap = 0.12f, extra = 0.1f)
-            fun x(cell: Int) = layout.x(cell % 3)
-            fun y(cell: Int) = layout.y(cell / 3)
+            val height = height * BOARD_HEIGHT
+            // Six piles, two across and three down, on the left. To their right, well apart,
+            // the beehive at the top and the waste spread downwards from the middle row.
+            val edge = CardStyle.PILE_OFFSET
+            val cardWidth = min(
+                width / (3 * (1 + edge) + GAP + COLUMN_GAP),
+                height / (3 * (CARD_ASPECT + edge) + 2 * GAP),
+            )
+            val gap = cardWidth * GAP
+            val cellWidth = cardWidth * (1 + edge)
+            val cellHeight = cardWidth * (CARD_ASPECT + edge)
+            val cardHeight = cardWidth * CARD_ASPECT
+            val left = (width - cellWidth * 3 - gap - cardWidth * COLUMN_GAP) / 2
+            val top = (height - cellHeight * 3 - gap * 2) / 2
+            fun rowY(row: Int) = top + (cellHeight + gap) * row
             state.tableau.forEachIndexed { i, pile ->
-                pile(pile, x(i), y(i), layout.cardWidth) { feedback.tryMove(if (over) null else joinPile(state, i), play) }
+                pile(pile, left + (cellWidth + gap) * (i % 2), rowY(i / 2), cardWidth) {
+                    feedback.tryMove(if (over) null else joinPile(state, i), play)
+                }
             }
-            pile(state.beehive, x(BEEHIVE_CELL), y(BEEHIVE_CELL), layout.cardWidth, faceDown = { it != state.beehive.lastIndex }) {
+            val rightX = left + cellWidth * 2 + gap + cardWidth * COLUMN_GAP
+            pile(state.beehive, rightX, rowY(0), cardWidth, faceDown = { it != state.beehive.lastIndex }) {
                 feedback.tryMove(if (over) null else playBeehive(state), play)
             }
-            pile(state.waste, x(WASTE_CELL), y(WASTE_CELL), layout.cardWidth) {
+            // The waste's older cards stay under its first place, so cards glide in and out.
+            // Its first card is level with the middle row, and its third with the bottom one.
+            val wasteY = rowY(1) + pileEdge(cardWidth)
+            val step = (cellHeight + gap) / (WASTE_SHOWN - 1)
+            val hidden = (state.waste.size - WASTE_SHOWN).coerceAtLeast(0)
+            state.waste.forEachIndexed { i, card ->
+                val covered = i != state.waste.lastIndex
+                card(
+                    key = card,
+                    card = card,
+                    x = rightX,
+                    y = wasteY + step * (i - hidden).coerceAtLeast(0),
+                    width = cardWidth,
+                    z = i * 0.01f,
+                    under = covered,
+                    // The stock is off to the right.
+                    fromRight = true,
+                )
+            }
+            if (state.waste.isEmpty()) slot(rightX, wasteY, cardWidth)
+            tap(rightX, wasteY, cardWidth, cardHeight + step * (WASTE_SHOWN - 1)) {
                 feedback.tryMove(if (over) null else playWaste(state), play)
             }
         }

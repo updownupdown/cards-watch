@@ -2,19 +2,21 @@ package com.updownupdown.cards.watch.games.fifteen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardLayout
-import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.CardOverlay
+import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
+import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /** The cells row by row from the top left; null is the gap. */
 @Serializable
@@ -31,6 +33,9 @@ object FifteenPuzzle : Game<FifteenState> {
         SUIT_ROWS.flatMap { suit -> RANKS.map { Card(it, suit) } }.dropLast(1) + null
 
     override val id = "fifteen-puzzle"
+    override val thumbnail = R.drawable.thumb_fifteen_puzzle
+    override val banner = R.drawable.banner_fifteen_puzzle
+    override val accent = Color(0xFF5A3414)
     override val title = "Fifteen Puzzle"
     override val stateSerializer: KSerializer<FifteenState> = FifteenState.serializer()
 
@@ -88,8 +93,14 @@ object FifteenPuzzle : Game<FifteenState> {
     override fun outcome(state: FifteenState) =
         if (isSolved(state)) Outcome(won = true, message = "Solved in ${state.moves} moves") else null
 
-    override fun status(state: FifteenState) =
-        if (state.moves == 1) "1 move" else "${state.moves} moves"
+    override val scoreName = "Moves"
+    override val lowScoreWins = true
+    override fun score(state: FifteenState) = state.moves
+
+    // No count under the board: the board takes that room, for larger cards.
+    // Its corners just reach the round screen's edge.
+    override val boardFraction = 0.76f
+    override val boardLift = -0.03f
 
     @Composable
     override fun Board(state: FifteenState, play: (FifteenState) -> Unit, feedback: Feedback, modifier: Modifier) {

@@ -6,8 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
+import com.updownupdown.cards.watch.cards.CardStyle
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Suit
@@ -15,9 +18,9 @@ import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
+import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /** Three piles, each listed from the bottom card up. */
 @Serializable
@@ -25,12 +28,29 @@ data class HanoiState(val piles: List<List<Card>>, val moves: Int = 0)
 
 object TowerOfHanoi : Game<HanoiState> {
     const val PILES = 3
+    /** A card's width, × the board's. */
+    private const val CARD_WIDTH = 0.219f
+    /** The gap between piles, × the board's width. */
+    private const val PILE_GAP = 0.073f
+    /** How far down each card sits from the one above, × a card's height: more than other fans. */
+    private const val SPREAD = CardStyle.FAN_SPREAD * 1.52f
+
+    /** One suit for each few ranks, always the same, to tell the cards apart. */
+    fun suitOf(rank: Rank) = when (rank.value) {
+        in 1..3 -> Suit.Spades
+        4, 5 -> Suit.Clubs
+        6, 7 -> Suit.Diamonds
+        else -> Suit.Hearts
+    }
     private val RANKS = Rank.entries.take(9)
 
     override val id = "tower-of-hanoi"
+    override val thumbnail = R.drawable.thumb_tower_of_hanoi
+    override val banner = R.drawable.banner_tower_of_hanoi
+    override val accent = Color(0xFF25483F)
     override val title = "Tower of Hanoi"
     override val stateSerializer: KSerializer<HanoiState> = HanoiState.serializer()
-    override val saveVersion = 2
+    override val saveVersion = 3
 
     override val rules = listOf(
         "## Objective",
@@ -42,7 +62,7 @@ object TowerOfHanoi : Game<HanoiState> {
     )
 
     override fun newGame(random: Random): HanoiState {
-        val cards = RANKS.map { Card(it, Suit.Spades) }.shuffled(random)
+        val cards = RANKS.map { Card(it, suitOf(it)) }.shuffled(random)
         return HanoiState(cards.chunked(3))
     }
 
@@ -67,17 +87,23 @@ object TowerOfHanoi : Game<HanoiState> {
     override fun outcome(state: HanoiState) =
         if (isBuilt(state)) Outcome(true, "Built in ${state.moves} moves") else null
 
+    override val scoreName = "Moves"
+    override val lowScoreWins = true
+    override fun score(state: HanoiState) = state.moves
+
     override fun status(state: HanoiState) = if (state.moves == 1) "1 move" else "${state.moves} moves"
 
     @Composable
     override fun Board(state: HanoiState, play: (HanoiState) -> Unit, feedback: Feedback, modifier: Modifier) {
         var selected by remember(state) { mutableStateOf<Int?>(null) }
         CardTable(modifier) {
-            val gap = 6.dp
-            val cardWidth = (width - gap * (PILES - 1)) / PILES
+            // Narrow cards, so a tall pile still shows each card's rank.
+            val cardWidth = width * CARD_WIDTH
+            val gap = width * PILE_GAP
+            val left = (width - cardWidth * PILES - gap * (PILES - 1)) / 2
             state.piles.forEachIndexed { index, pile ->
-                val x = (cardWidth + gap) * index
-                fan(pile, x, 0.dp, cardWidth, height, selectedFrom = if (selected == index) pile.lastIndex else null)
+                val x = left + (cardWidth + gap) * index
+                fan(pile, x, 0.dp, cardWidth, height, selectedFrom = if (selected == index) pile.lastIndex else null, spread = SPREAD)
                 tap(x, 0.dp, cardWidth, height) {
                     val from = selected
                     when {

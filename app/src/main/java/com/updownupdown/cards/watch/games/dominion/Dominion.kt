@@ -6,23 +6,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardLayout
+import com.updownupdown.cards.watch.cards.CardOverlay
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Removal
 import com.updownupdown.cards.watch.cards.Selection
-import com.updownupdown.cards.watch.cards.CardOverlay
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
-import com.updownupdown.cards.watch.ui.GameButton
+import com.updownupdown.cards.watch.ui.BottomButton
+import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /**
  * @param board 4×3 spaces, row by row; a conquest stacks the conqueror on
@@ -44,7 +46,15 @@ object Dominion : Game<DominionState> {
     private const val CELLS = COLUMNS * ROWS
     private const val RESERVE = 3
 
+    /** The grid's height, × the board's. */
+    private const val GRID_HEIGHT = 0.9f
+    /** How far up the drawn card sits from the Draw button, × its height. */
+    private const val DRAWN_LIFT = 0.15f
+
     override val id = "dominion"
+    override val thumbnail = R.drawable.thumb_dominion
+    override val banner = R.drawable.banner_dominion
+    override val accent = Color(0xFF3F3A2A)
     override val title = "Dominion"
     override val stateSerializer: KSerializer<DominionState> = DominionState.serializer()
 
@@ -144,20 +154,15 @@ object Dominion : Game<DominionState> {
     @Composable
     override fun Bottom(state: DominionState, play: (DominionState) -> Unit, feedback: Feedback, size: DpSize) {
         // A drawn card is shown on the board's layer, over this button.
-        GameButton(
-            label = "Draw (${state.reserve.size})",
-            enabled = drawReserve(state) != null,
-            width = size.width,
-            height = size.height,
-            onClick = { feedback.tryMove(drawReserve(state), play) },
-        )
+        BottomButton("Draw (${state.reserve.size})", { feedback.tryMove(drawReserve(state), play) }, drawReserve(state) != null)
     }
 
     @Composable
     override fun Board(state: DominionState, play: (DominionState) -> Unit, feedback: Feedback, modifier: Modifier) {
         var selected by remember(state) { mutableStateOf<Int?>(null) }
         CardTable(modifier) {
-            val layout = CardLayout(COLUMNS, ROWS, width, height, gap = 0.12f)
+            // Short of the board's foot, to stand clear of the Draw button.
+            val layout = CardLayout(COLUMNS, ROWS, width, height * GRID_HEIGHT, gap = 0.12f)
             val from = selected
             state.board.forEachIndexed { cell, pile ->
                 val x = layout.xOf(cell)
@@ -175,7 +180,7 @@ object Dominion : Game<DominionState> {
                         width = layout.cardWidth,
                         z = i.toFloat(),
                         selection = if (top && from == cell) Selection.Neutral else null,
-                        overlay = if (top && from != null && canConquer(state, from, cell)) CardOverlay.Hint else null,
+                        overlay = if (top && from != null && canConquer(state, from, cell)) CardOverlay.Target else null,
                         removal = Removal.Vanish,
                     )
                 }
@@ -201,7 +206,7 @@ object Dominion : Game<DominionState> {
                 }
             }
             // The drawn reserve card waits below the board, over the Draw button.
-            state.drawn?.let { card(it, it, (width - layout.cardWidth) / 2, height + 2.dp, layout.cardWidth, z = 50f, selection = Selection.Neutral) }
+            state.drawn?.let { card(it, it, (width - layout.cardWidth) / 2, height + 2.dp - layout.cardHeight * DRAWN_LIFT, layout.cardWidth, z = 50f, selection = Selection.Neutral) }
         }
     }
 }

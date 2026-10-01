@@ -5,22 +5,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.updownupdown.cards.watch.cards.BoardText
+import androidx.compose.ui.graphics.Color
+import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardLayout
+import com.updownupdown.cards.watch.cards.CardStyle
 import com.updownupdown.cards.watch.cards.CardTable
-import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.Rank
+import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
+import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /** Five piles, each bottom to top, and the stock. */
 @Serializable
@@ -30,6 +31,9 @@ object Baroness : Game<BaronessState> {
     const val PILES = 5
 
     override val id = "baroness"
+    override val thumbnail = R.drawable.thumb_baroness
+    override val banner = R.drawable.banner_baroness
+    override val accent = Color(0xFF1F2647)
     override val title = "Baroness"
     override val stateSerializer: KSerializer<BaronessState> = BaronessState.serializer()
 
@@ -102,23 +106,21 @@ object Baroness : Game<BaronessState> {
     }
 
     override fun actions(state: BaronessState) = listOf(
-        GameAction<BaronessState>("Deal", enabled = state.stock.isNotEmpty()) { deal(it) },
+        GameAction<BaronessState>("Deal (${state.stock.size})", enabled = state.stock.isNotEmpty()) { deal(it) },
     )
 
     @Composable
     override fun Board(state: BaronessState, play: (BaronessState) -> Unit, feedback: Feedback, modifier: Modifier) {
         var selected by remember(state) { mutableStateOf<Int?>(null) }
-        CardTable(
-            modifier,
-            overlay = { BoardText("${state.stock.size} in stock", Modifier.align(Alignment.BottomCenter)) },
-        ) {
-            // All five piles in one row.
-            val layout = CardLayout(PILES, 1, width, height * 0.8f, gap = 0.1f, extra = 0.1f)
+        CardTable(modifier) {
+            // Three piles in a row, over two centred under them.
+            val layout = CardLayout(3, 2, width, height, gap = 0.12f, extra = CardStyle.PILE_OFFSET)
+            val step = layout.cellWidth + layout.gap
             state.piles.forEachIndexed { index, pile ->
                 pile(
                     cards = pile,
-                    x = layout.x(index),
-                    y = layout.y(0),
+                    x = if (index < 3) layout.x(index) else layout.x(index - 3) + step / 2,
+                    y = layout.y(index / 3),
                     cardWidth = layout.cardWidth,
                     selection = if (selected == index) Selection.Neutral else null,
                 ) {

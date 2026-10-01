@@ -3,35 +3,76 @@ package com.updownupdown.cards.watch.data
 import android.content.Context
 import android.util.AtomicFile
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.GameResult
 import com.updownupdown.cards.watch.game.GameSession
+import com.updownupdown.cards.watch.game.GameStats
 import com.updownupdown.cards.watch.game.SavedGame
+import com.updownupdown.cards.watch.games.ALL_GAMES
+import com.updownupdown.cards.watch.widget.refreshSurfaces
+import java.io.File
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import java.io.File
 
 /**
  * Keeps one game in progress per game, in memory and in a file per game,
  * written after every move. Also remembers the last game played.
  */
-class SaveStore(context: Context, private val scope: CoroutineScope) {
+class SaveStore(private val context: Context, private val scope: CoroutineScope) {
     private val dir = File(context.filesDir, "saves").apply { mkdirs() }
     private val prefs = context.getSharedPreferences("app", Context.MODE_PRIVATE)
     private val sessions = mutableMapOf<String, GameSession<*>>()
     // One write at a time, in order, so an older state never lands last.
     private val writer = Dispatchers.IO.limitedParallelism(1)
 
+    private val stats = mutableStateMapOf<String, GameStats>().apply {
+        ALL_GAMES.forEach { game ->
+            val saved = prefs.getString(KEY_STATS + game.id, null)
+            put(
+                game.id,
+                // Before streaks, scores and times were kept, only the two counts were.
+                runCatching { saved?.let { json.decodeFromString(GameStats.serializer(), it) } }.getOrNull()
+                    ?: GameStats(prefs.getInt(KEY_WON + game.id, 0), prefs.getInt(KEY_LOST + game.id, 0)),
+            )
+        }
+    }
+
+    /** The games played, the last one first, for the tile. */
+    var recentGameIds: List<String> by mutableStateOf(
+        prefs.getString(KEY_RECENT, null)?.split(',')?.filter { it.isNotEmpty() }
+            ?: listOfNotNull(prefs.getString(KEY_LAST_GAME, null)),
+    )
+        private set
+
     var lastGameId: String?
-        get() = prefs.getString(KEY_LAST_GAME, null)
-        set(value) = prefs.edit().putString(KEY_LAST_GAME, value).apply()
+        get() = recentGameIds.firstOrNull()
+        set(value) {
+            if (value == null || value == recentGameIds.firstOrNull()) return
+            recentGameIds = (listOf(value) + (recentGameIds - value)).take(MAX_RECENT)
+            prefs.edit().putString(KEY_RECENT, recentGameIds.joinToString(",")).apply()
+            refreshSurfaces(context)
+        }
+
+    /** How [game]'s deals have ended. Reads as state, so the screen follows it. */
+    fun stats(game: Game<*>): GameStats = stats[game.id] ?: GameStats()
+
+    private fun record(game: Game<*>, result: GameResult) {
+        val now = stats(game).with(result, game.lowScoreWins)
+        stats[game.id] = now
+        prefs.edit().putString(KEY_STATS + game.id, json.encodeToString(GameStats.serializer(), now)).apply()
+    }
 
     @Suppress("UNCHECKED_CAST")
     fun <S : Any> session(game: Game<S>): GameSession<S> =
         sessions.getOrPut(game.id) {
             val saved = load(game)
-            GameSession(game, saved) { write(game, it) }.also {
+            GameSession(game, saved, onResult = { record(game, it) }) { write(game, it) }.also {
                 if (saved == null) write(game, SavedGame(game.saveVersion, it.state))
             }
         } as GameSession<S>
@@ -71,6 +112,11 @@ class SaveStore(context: Context, private val scope: CoroutineScope) {
     private companion object {
         const val TAG = "SaveStore"
         const val KEY_LAST_GAME = "lastGame"
+        const val KEY_RECENT = "recentGames"
+        const val KEY_STATS = "stats:"
+        const val KEY_WON = "won:"
+        const val KEY_LOST = "lost:"
+        const val MAX_RECENT = 4
         val json = Json { ignoreUnknownKeys = true }
     }
 }

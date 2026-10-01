@@ -1,0 +1,17 @@
+package com.updownupdown.cards.watch.cards
+
+// Every animation's timing, in milliseconds.
+
+/** How long a card takes to slide in, out or across. */
+const val CARD_MOVE_MS = 600
+/** How long a card takes to turn over. */
+const val CARD_FLIP_MS = 240
+/**
+ * Cards arriving together (a deal) set off this far apart, the right-most
+ * first, so they don't cross. With many cards the gap shrinks so the last
+ * sets off within [CARD_DEAL_MAX_MS].
+ */
+const val CARD_DEAL_STAGGER_MS = 100
+const val CARD_DEAL_MAX_MS = 800
+/** How long Memory shows a turned-up pair before turning it back or taking it away. */
+const val PAIR_SHOW_MS = 3000L

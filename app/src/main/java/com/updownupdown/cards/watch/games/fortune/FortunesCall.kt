@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.updownupdown.cards.watch.R
+import com.updownupdown.cards.watch.cards.CARD_ASPECT
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardOverlay
-import com.updownupdown.cards.watch.cards.CARD_ASPECT
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.isRed
 import com.updownupdown.cards.watch.cards.shuffledDeck
@@ -20,9 +22,9 @@ import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.ui.GameButton
+import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 @Serializable
 enum class Call(val label: String, val points: Int) {
@@ -51,6 +53,9 @@ object FortunesCall : Game<FortuneState> {
     const val MAX_MISSES = 3
 
     override val id = "fortunes-call"
+    override val thumbnail = R.drawable.thumb_fortunes_call
+    override val banner = R.drawable.banner_fortunes_call
+    override val accent = Color(0xFF5A1C1C)
     override val title = "Fortune's Call"
     override val stateSerializer: KSerializer<FortuneState> = FortuneState.serializer()
 

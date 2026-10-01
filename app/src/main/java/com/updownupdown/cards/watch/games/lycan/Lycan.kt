@@ -1,19 +1,27 @@
 package com.updownupdown.cards.watch.games.lycan
 
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
+import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.BoardText
-import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CARD_ASPECT
+import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardTable
-import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.Rank
+import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
@@ -21,9 +29,10 @@ import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.BottomActions
+import com.updownupdown.cards.watch.ui.LocalBoardSize
+import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /** Lycan's deck has five copies of each rank, so cards carry an id. */
 @Serializable
@@ -61,6 +70,9 @@ object Lycan : Game<LycanState> {
     const val TARGET = 100
 
     override val id = "lycan"
+    override val thumbnail = R.drawable.thumb_lycan
+    override val banner = R.drawable.banner_lycan
+    override val accent = Color(0xFF1C3F47)
     override val title = "Lycan"
     override val stateSerializer: KSerializer<LycanState> = LycanState.serializer()
 
@@ -185,6 +197,10 @@ object Lycan : Game<LycanState> {
         previous.copy(pickedPlayer = emptyList(), pickedWolf = emptyList()) !=
             next.copy(pickedPlayer = emptyList(), pickedWolf = emptyList())
 
+    override val scoreName = "Score"
+
+    override fun score(state: LycanState) = state.playerScore
+
     override fun outcome(state: LycanState) = when {
         state.playerScore >= TARGET -> Outcome(true, "You beat the Wolf ${state.playerScore} to ${state.wolfScore}")
         state.wolfScore >= TARGET -> Outcome(false, "The Wolf wins ${state.wolfScore} to ${state.playerScore}")
@@ -213,27 +229,59 @@ object Lycan : Game<LycanState> {
         BottomActions(actions(state), null, state, play, feedback, size)
     }
 
+    /** The gap between the three rows, and the cards' height × the most that would fit. */
+    private val ROW_GAP = 4.4.dp
+    private const val CARD_SCALE = 0.93f
+    /** How see-through the next card is. */
+    private const val NEXT_ALPHA = 1f
+    /** The scores' size, × the names over them. */
+    private const val SCORE_SCALE = 1.53f
+    /** How far the names and scores sit from the next card, × a card's width, on top of [SCORE_GAP]. */
+    private const val SCORE_OUT = 0.2f
+    private val SCORE_GAP = 8.dp
+
+    private fun cardHeight(board: Dp) = (board - ROW_GAP * 2) / 3 * CARD_SCALE
+
+    @Composable
+    private fun Score(name: String, score: Int) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            BoardText(name)
+            val style = MaterialTheme.typography.labelSmall
+            Text(
+                text = "$score",
+                style = style.copy(fontSize = style.fontSize * SCORE_SCALE, lineHeight = style.lineHeight * SCORE_SCALE),
+                color = Color.White,
+            )
+        }
+    }
+
     @Composable
     override fun Board(state: LycanState, play: (LycanState) -> Unit, feedback: Feedback, modifier: Modifier) {
         val playing = state.roundResult == null && outcome(state) == null
         val result = state.roundResult
+        val board = LocalBoardSize.current
         CardTable(
             modifier,
             overlay = {
-                BoardText(
-                    when {
-                        result == null -> "You ${state.playerScore}\nWolf ${state.wolfScore}"
-                        result.won -> "Round +${result.points}\nYou ${state.playerScore} · Wolf ${state.wolfScore}"
-                        else -> "Wolf +${result.points}\nYou ${state.playerScore} · Wolf ${state.wolfScore}"
-                    },
-                    Modifier.align(Alignment.CenterEnd).fillMaxWidth(0.62f),
-                )
+                // The scores either side of the next card; once a round ends, what it scored in the card's place.
+                Row(
+                    Modifier.align(Alignment.Center),
+                    horizontalArrangement = Arrangement.spacedBy(SCORE_GAP + cardHeight(board) / CARD_ASPECT * SCORE_OUT),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Score("Wolf", state.wolfScore)
+                    Box(Modifier.widthIn(min = cardHeight(board) / CARD_ASPECT), contentAlignment = Alignment.Center) {
+                        if (result != null) BoardText(if (result.won) "You +${result.points}" else "Wolf +${result.points}")
+                    }
+                    Score("You", state.playerScore)
+                }
             },
         ) {
             // Three rows of one card size: the Wolf's hand, the next card, yours.
-            val gap = 4.dp
-            val cardHeight = (height - gap * 2) / 3
+            val cardHeight = cardHeight(height)
             val cardWidth = cardHeight / CARD_ASPECT
+            val top = (height - cardHeight * 3 - ROW_GAP * 2) / 2
+            val gap = 4.dp
             fun hand(cards: List<LycanCard>, picked: List<Int>, y: Dp, toggle: (LycanState, Int) -> LycanState) {
                 // One row, overlapping once it outgrows the width.
                 val step = if (cards.size > 1) min(cardWidth + gap, (width - cardWidth) / (cards.size - 1)) else 0.dp
@@ -246,9 +294,12 @@ object Lycan : Game<LycanState> {
                     }
                 }
             }
-            hand(state.wolf, state.pickedWolf, 0.dp, ::toggleWolf)
-            state.deck.lastOrNull()?.let { card(it.id, it.card, width * 0.12f, cardHeight + gap, cardWidth) }
-            hand(state.player, state.pickedPlayer, (cardHeight + gap) * 2, ::togglePlayer)
+            hand(state.wolf, state.pickedWolf, top, ::toggleWolf)
+            state.deck.lastOrNull()?.let {
+                // It fades away when the round ends.
+                card(it.id, it.card, (width - cardWidth) / 2, top + cardHeight + ROW_GAP, cardWidth, alpha = if (result == null) NEXT_ALPHA else 0f)
+            }
+            hand(state.player, state.pickedPlayer, top + (cardHeight + ROW_GAP) * 2, ::togglePlayer)
         }
     }
 }

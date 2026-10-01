@@ -33,6 +33,9 @@ android {
         }
     }
 
+    // The cards' rank, suit and back icons, read as SVGs when the app starts.
+    sourceSets["main"].assets.srcDir("src/main/card-icons")
+
     buildFeatures {
         compose = true
     }
@@ -54,6 +57,10 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.wear)
     implementation(libs.profileinstaller)
+    implementation(libs.wear.tiles)
+    implementation(libs.wear.protolayout)
+    implementation(libs.wear.complications)
+    implementation(libs.concurrent.futures)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
 

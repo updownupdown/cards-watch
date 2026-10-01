@@ -2,6 +2,8 @@ package com.updownupdown.cards.watch.games.lightsout
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardLayout
 import com.updownupdown.cards.watch.cards.CardTable
@@ -11,31 +13,38 @@ import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
+import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /** Which cards are face up, row by row. */
 @Serializable
 data class LightsOutState(val faceUp: List<Boolean>, val moves: Int = 0)
 
 /**
- * 5×5: on 4×4 most deals fall in about four taps, and 6×6 cards are too small
- * to tap on the watch (see docs/GAMES.md).
+ * Five across and four down: the largest cards that fit the board. Every
+ * board this size has exactly one solution, of 10 taps on average (the same
+ * as 5×5), so play is as good; 4×4 and 5×3 fall in about four or five taps
+ * (see docs/GAMES.md).
  */
 object LightsOut : Game<LightsOutState> {
-    const val SIZE = 5
-    private const val CELLS = SIZE * SIZE
+    const val COLUMNS = 5
+    const val ROWS = 4
+    const val CELLS = COLUMNS * ROWS
     /** Deals needing fewer taps than this are too easy, so aren't dealt. */
     const val MIN_SOLUTION = 7
 
     override val id = "lights-out"
+    override val thumbnail = R.drawable.thumb_lights_out
+    override val banner = R.drawable.banner_lights_out
+    override val accent = Color(0xFF46303A)
     override val title = "Lights Out"
     override val stateSerializer: KSerializer<LightsOutState> = LightsOutState.serializer()
+    override val saveVersion = 2
 
     override val rules = listOf(
         "## Objective",
-        "Turn all 25 cards face down.",
+        "Turn all 20 cards face down.",
         "## Gameplay",
         "- Tapping a card turns over that card and the cards directly above, below, left and right of it.",
         "- Diagonal cards are not affected.",
@@ -46,14 +55,14 @@ object LightsOut : Game<LightsOutState> {
     val CARDS: List<Card> = List(CELLS) { Card(Rank.entries[it % Rank.entries.size], Suit.entries[it % Suit.entries.size]) }
 
     fun affected(index: Int): List<Int> {
-        val row = index / SIZE
-        val col = index % SIZE
+        val row = index / COLUMNS
+        val col = index % COLUMNS
         return buildList {
             add(index)
-            if (row > 0) add(index - SIZE)
-            if (row < SIZE - 1) add(index + SIZE)
+            if (row > 0) add(index - COLUMNS)
+            if (row < ROWS - 1) add(index + COLUMNS)
             if (col > 0) add(index - 1)
-            if (col < SIZE - 1) add(index + 1)
+            if (col < COLUMNS - 1) add(index + 1)
         }
     }
 
@@ -78,7 +87,7 @@ object LightsOut : Game<LightsOutState> {
     /**
      * The fewest taps that solve [faceUp], or null if it can't be solved:
      * Gaussian elimination over GF(2), trying every combination of the free
-     * taps (two on a 5×5 board).
+     * taps (none on a 5×4 board).
      */
     fun fewestTaps(faceUp: List<Boolean>): Int? {
         val n = faceUp.size
@@ -116,12 +125,18 @@ object LightsOut : Game<LightsOutState> {
     override fun outcome(state: LightsOutState) =
         if (state.faceUp.none { it }) Outcome(true, "Lights out in ${state.moves} moves") else null
 
-    override fun status(state: LightsOutState) = if (state.moves == 1) "1 move" else "${state.moves} moves"
+    override val scoreName = "Moves"
+    override val lowScoreWins = true
+    override fun score(state: LightsOutState) = state.moves
+
+    // Nothing under the board: the board takes that room, for larger cards.
+    override val boardFraction = 0.7f
+    override val boardLift = -0.02f
 
     @Composable
     override fun Board(state: LightsOutState, play: (LightsOutState) -> Unit, feedback: Feedback, modifier: Modifier) {
         CardTable(modifier) {
-            val layout = CardLayout(SIZE, SIZE, width, height, gap = 0.12f)
+            val layout = CardLayout(COLUMNS, ROWS, width, height, gap = 0.12f)
             CARDS.forEachIndexed { i, card ->
                 val x = layout.xOf(i)
                 val y = layout.yOf(i)

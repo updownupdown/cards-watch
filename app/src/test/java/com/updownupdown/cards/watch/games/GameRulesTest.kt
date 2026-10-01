@@ -38,7 +38,7 @@ class GameRulesTest {
             assertTrue(LightsOut.fewestTaps(state.faceUp)!! >= LightsOut.MIN_SOLUTION)
         }
         // One tap from solved is solved in one tap.
-        val one = LightsOut.tap(com.updownupdown.cards.watch.games.lightsout.LightsOutState(List(25) { false }), 12)
+        val one = LightsOut.tap(com.updownupdown.cards.watch.games.lightsout.LightsOutState(List(LightsOut.CELLS) { false }), 12)
         assertEquals(1, LightsOut.fewestTaps(one.faceUp))
     }
 

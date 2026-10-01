@@ -1,46 +1,51 @@
 package com.updownupdown.cards.watch
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.MotionEvent
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.wear.ambient.AmbientLifecycleObserver
 import androidx.wear.compose.material3.AppScaffold
-import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
-import com.updownupdown.cards.watch.cards.LocalCardText
 import com.updownupdown.cards.watch.data.SaveStore
+import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.games.gameById
 import com.updownupdown.cards.watch.ui.AmbientScreen
 import com.updownupdown.cards.watch.ui.AppTheme
 import com.updownupdown.cards.watch.ui.GameScreen
 import com.updownupdown.cards.watch.ui.HomeScreen
-import com.updownupdown.cards.watch.ui.RulesScreen
 
 class MainActivity : ComponentActivity() {
     private var ambient by mutableStateOf(false)
     /** Bumped once a minute in ambient mode, to redraw the time. */
     private var ambientTick by mutableIntStateOf(0)
-    /** The game on screen, named on the sleep screen. */
-    private var playing by mutableStateOf<String?>(null)
+    /** The game asked for from outside (the tile or a complication), until it's opened. */
+    private var requested by mutableStateOf<String?>(null)
+    /** The game on screen, shown on the sleep screen. */
+    private var playing by mutableStateOf<Game<*>?>(null)
+    private val saves get() = (application as CardsWatchApp).saves
 
     private val ambientObserver = AmbientLifecycleObserver(
         this,
         object : AmbientLifecycleObserver.AmbientLifecycleCallback {
             override fun onEnterAmbient(ambientDetails: AmbientLifecycleObserver.AmbientDetails) {
                 ambient = true
+                playing?.let { saves.session(it).pause() }
             }
 
             override fun onUpdateAmbient() {
@@ -49,39 +54,88 @@ class MainActivity : ComponentActivity() {
 
             override fun onExitAmbient() {
                 ambient = false
+                playing?.let { saves.session(it).resume() }
             }
         },
     )
 
+    private val handler = Handler(Looper.getMainLooper())
+    private val letSleep = Runnable { window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON) }
+
+    /**
+     * In a game, keeps the screen on for [GAME_SCREEN_ON_MS] after each touch
+     * or turn of the crown (the watch's own timeout still applies if longer).
+     */
+    private fun stayAwake() {
+        handler.removeCallbacks(letSleep)
+        if (playing != null) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            handler.postDelayed(letSleep, GAME_SCREEN_ON_MS)
+        } else {
+            letSleep.run()
+        }
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        stayAwake()
+        return super.dispatchTouchEvent(event)
+    }
+
+    override fun dispatchGenericMotionEvent(event: MotionEvent): Boolean {
+        stayAwake()
+        return super.dispatchGenericMotionEvent(event)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        requested = intent.getStringExtra(EXTRA_GAME)
+    }
+
+    override fun onDestroy() {
+        handler.removeCallbacks(letSleep)
+        super.onDestroy()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(ambientObserver)
-        val saves = (application as CardsWatchApp).saves
         // A fresh launch goes straight back into the last game played.
-        val resume = if (savedInstanceState == null) gameById(saves.lastGameId) else null
+        val resume = if (savedInstanceState == null) gameById(intent.getStringExtra(EXTRA_GAME) ?: saves.lastGameId) else null
         setContent {
             AppTheme {
-                CompositionLocalProvider(LocalCardText provides rememberTextMeasurer(cacheSize = 64)) {
-                    Box(Modifier.fillMaxSize()) {
-                        AppScaffold {
-                            App(saves, startRoute = resume?.let { gameRoute(it.id) } ?: HOME) { playing = it }
-                        }
-                        // Over the app, so the game underneath keeps its place.
-                        if (ambient) AmbientScreen(playing, ambientTick)
+                Box(Modifier.fillMaxSize()) {
+                    AppScaffold {
+                        App(saves, startRoute = resume?.let { gameRoute(it.id) } ?: HOME, requested = requested, onOpened = { requested = null }) {
+                                playing = it
+                                stayAwake()
+                            }
                     }
+                    // Over the app, so the game underneath keeps its place.
+                    if (ambient) AmbientScreen(playing?.let { saves.session(it) }, ambientTick)
                 }
             }
         }
     }
 }
 
+/** How long the screen stays on in a game after the last touch. */
+private const val GAME_SCREEN_ON_MS = 10_000L
+
+/** The id of the game to open, on an intent from the tile or a complication. */
+const val EXTRA_GAME = "game"
+
 private const val HOME = "home"
 private fun gameRoute(id: String) = "game/$id"
-private fun rulesRoute(id: String) = "rules/$id"
 
 @Composable
-private fun App(saves: SaveStore, startRoute: String, onPlaying: (String?) -> Unit) {
+private fun App(saves: SaveStore, startRoute: String, requested: String?, onOpened: () -> Unit, onPlaying: (Game<*>?) -> Unit) {
     val nav = rememberSwipeDismissableNavController()
+    LaunchedEffect(requested) {
+        val game = gameById(requested) ?: return@LaunchedEffect
+        nav.popBackStack(HOME, inclusive = false)
+        nav.navigate(gameRoute(game.id))
+        onOpened()
+    }
     SwipeDismissableNavHost(navController = nav, startDestination = HOME) {
         composable(HOME) {
             LaunchedEffect(Unit) { onPlaying(null) }
@@ -94,19 +148,9 @@ private fun App(saves: SaveStore, startRoute: String, onPlaying: (String?) -> Un
             val game = gameById(entry.arguments?.getString("id")) ?: return@composable
             LaunchedEffect(game.id) {
                 saves.lastGameId = game.id
-                onPlaying(game.title)
+                onPlaying(game)
             }
-            // No clock over the game: the home icon sits there.
-            ScreenScaffold(timeText = {}) {
-                GameScreen(
-                    session = saves.session(game),
-                    onHome = { nav.popBackStack(HOME, inclusive = false) },
-                    onRules = { nav.navigate(rulesRoute(game.id)) },
-                )
-            }
-        }
-        composable("rules/{id}") { entry ->
-            gameById(entry.arguments?.getString("id"))?.let { RulesScreen(it) }
+            GameScreen(saves.session(game), onHome = { nav.popBackStack(HOME, inclusive = false) }, stats = saves.stats(game))
         }
     }
     if (startRoute != HOME) {

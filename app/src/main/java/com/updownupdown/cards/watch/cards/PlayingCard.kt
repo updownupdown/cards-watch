@@ -2,83 +2,73 @@ package com.updownupdown.cards.watch.cards
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.CacheDrawScope
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathOperation
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.text.TextLayoutResult
-import androidx.compose.ui.text.TextMeasurer
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.em
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.platform.LocalContext
+import com.updownupdown.cards.watch.ui.AppColors
+import com.updownupdown.cards.watch.ui.LocalAmbient
 import kotlin.math.min
 
-/** Every card is 25:35, height over width. Cards only ever scale. */
-const val CARD_ASPECT = 35f / 25f
-
+/** The cards' colours, all set in `ui/Theme.kt`. */
 object CardColors {
-    /** Pale beige faces. */
-    val Face = Color(0xFFF6EED8)
-    val Back = Color(0xFF6E2C37)
-    val BackTrim = Color(0xFFA0586A)
-    /** An empty pile or space: off-black, so it shows against the black screen. */
-    val EmptySlot = Color(0xFF22252C)
-    /** The thin dark edge around every card, so overlapping cards stand apart. */
-    val Edge = Color(0xB3000000)
-    /** Darkens the card under the top card of a pile. */
-    val Under = Color(0x47000000)
+    val Face get() = AppColors.CardFace
+    val Back get() = AppColors.CardBack
+    val BackLogo get() = AppColors.CardBackLogo
+    val BackBorder get() = AppColors.CardBackBorder
+    val EmptySlot get() = AppColors.CardEmptySlot
+    val Edge get() = AppColors.CardEdge
+    val Under get() = AppColors.CardUnderShade
+    /** Everything on a card while the watch is asleep. */
+    val Ambient get() = AppColors.Ambient
 
-    // A four-colour deck, in deep, muted inks.
     fun suit(suit: Suit) = when (suit) {
-        Suit.Hearts -> Color(0xFFA8333E)
-        Suit.Diamonds -> Color(0xFF2C5A8C)
-        Suit.Clubs -> Color(0xFF2F6A45)
-        Suit.Spades -> Color(0xFF23262D)
+        Suit.Hearts -> AppColors.Hearts
+        Suit.Diamonds -> AppColors.Diamonds
+        Suit.Clubs -> AppColors.Clubs
+        Suit.Spades -> AppColors.Spades
     }
 }
 
 /** Status colours that tint a card's face (the rank and suit stay on top). */
 object CardOverlay {
-    val Good = Color(0x4D78EBB1)
-    val Bad = Color(0x4DE0485C)
-    val Hint = Color(0x4DFFCF87)
+    val Good = AppColors.Good.copy(alpha = 0.3f)
+    val Bad = AppColors.Bad.copy(alpha = 0.3f)
+    val Hint = AppColors.PaleYellow.copy(alpha = 0.3f)
+    /** A place the picked card can go. */
+    val Target = AppColors.Neutral.copy(alpha = 0.3f)
 }
 
 /**
- * A selected card: an outside border and a 30% tint, blue while neutral,
+ * A selected card: a border centred on its edge and a 30% tint, blue while neutral,
  * green or red once the selection is known to be valid or not.
  */
 enum class Selection(val color: Color) {
-    Neutral(Color(0xFF7BD5FF)),
-    Valid(Color(0xFF78EBB1)),
-    Invalid(Color(0xFFE0485C)),
+    Neutral(AppColors.Neutral),
+    Valid(AppColors.Good),
+    Invalid(AppColors.Bad),
 }
-
-/** One text measurer for every card, so cards don't each keep a cache. */
-val LocalCardText = staticCompositionLocalOf<TextMeasurer> { error("No card text measurer") }
 
 /**
  * A playing card filling its bounds (which should be [CARD_ASPECT]): the rank
  * above the suit, or with [indexHeight], the rank and suit along the top edge
- * (so they show when cards overlap) and a large suit below.
+ * (so they show when cards overlap) and a large suit below, or with
+ * [indexWidth], both down the left edge (for cards overlapping sideways). [CardStyle] sets
+ * the sizes.
  *
- * Shapes and text are measured once per size and kept, so redrawing is cheap.
+ * The layout is worked out once per size and kept, so redrawing is cheap.
  *
  * @param card the card to show, or null for an empty slot.
  * @param overlay a status colour (see [CardOverlay]) tinting the card.
- * @param under darkens the card, for the one under a pile's top card.
+ * @param under how far (0 to 1) the card is shaded as the one under a pile's
+ *   top card. Read while drawing, so it can animate.
  */
 @Composable
 fun PlayingCard(
@@ -88,157 +78,137 @@ fun PlayingCard(
     overlay: Color? = null,
     selection: Selection? = null,
     indexHeight: Float? = null,
-    under: Boolean = false,
+    indexWidth: Float? = null,
+    under: () -> Float = { 0f },
 ) {
-    val textMeasurer = LocalCardText.current
+    val icons = CardIcons.get(LocalContext.current.assets)
+    val ambient = LocalAmbient.current
     Spacer(
         modifier.drawWithCache {
-            val short = min(size.width, size.height)
-            val corner = CornerRadius(short * 0.13f)
-            val face = if (card != null && !faceDown) {
-                if (indexHeight != null) indexFace(card, textMeasurer, indexHeight) else centreFace(card, textMeasurer)
-            } else {
-                null
+            val corner = CornerRadius(size.width * CardStyle.CORNER)
+            val ink = if (ambient || card == null) CardColors.Ambient else CardColors.suit(card.suit)
+            val face = when {
+                card == null -> null
+                faceDown -> backFace(icons, ambient)
+                indexHeight != null -> indexFace(card, icons, indexHeight, ink)
+                indexWidth != null -> sideFace(card, icons, indexWidth, ink)
+                else -> centreFace(card, icons, ink)
             }
-            val width = if (selection != null) 1.6f * density else 1f * density
-            val border = selection?.color ?: if (card != null) CardColors.Edge else null
+            if (ambient) {
+                // Asleep: a grey outline and the card's marks, on black so cards underneath don't show through.
+                val line = Stroke(density)
+                return@drawWithCache onDrawBehind {
+                    if (card != null) drawRoundRect(Color.Black, cornerRadius = corner)
+                    drawRoundRect(CardColors.Ambient.copy(alpha = if (card == null) 0.3f else 0.7f), cornerRadius = corner, style = line)
+                    face?.invoke(this)
+                }
+            }
+            val edge = CardStyle.EDGE_DP * density
+            val selected = Stroke(CardStyle.SELECTION_DP * density)
+            val fill = when {
+                card == null -> CardColors.EmptySlot
+                faceDown -> CardColors.Back
+                else -> CardColors.Face
+            }
             onDrawBehind {
-                // A thin edge, or the selection border, just outside the card.
-                if (border != null) {
+                // A dark edge just outside the card.
+                if (card != null && selection == null) {
                     drawRoundRect(
-                        color = border,
-                        topLeft = Offset(-width / 2, -width / 2),
-                        size = Size(size.width + width, size.height + width),
-                        cornerRadius = CornerRadius(corner.x + width / 2),
-                        style = Stroke(width),
+                        color = CardColors.Edge,
+                        topLeft = Offset(-edge / 2, -edge / 2),
+                        size = Size(size.width + edge, size.height + edge),
+                        cornerRadius = CornerRadius(corner.x + edge / 2),
+                        style = Stroke(edge),
                     )
                 }
-                when {
-                    card == null -> drawRoundRect(CardColors.EmptySlot, cornerRadius = corner)
-                    faceDown -> drawBack(corner, short)
-                    else -> {
-                        drawRoundRect(CardColors.Face, cornerRadius = corner)
-                        overlay?.let { drawRoundRect(it, cornerRadius = corner) }
-                        selection?.let { drawRoundRect(it.color.copy(alpha = 0.3f), cornerRadius = corner) }
-                        face?.invoke(this)
-                    }
+                drawRoundRect(fill, cornerRadius = corner)
+                overlay?.let { drawRoundRect(it, cornerRadius = corner) }
+                if (card != null) selection?.let { drawRoundRect(it.color.copy(alpha = 0.3f), cornerRadius = corner) }
+                face?.invoke(this)
+                val shade = if (card != null) under() else 0f
+                if (shade > 0f) {
+                    drawRoundRect(CardColors.Under.copy(alpha = CardColors.Under.alpha * shade), cornerRadius = corner)
                 }
-                if (card != null && faceDown) {
-                    overlay?.let { drawRoundRect(it, cornerRadius = corner) }
-                    selection?.let { drawRoundRect(it.color.copy(alpha = 0.3f), cornerRadius = corner) }
-                }
-                if (card != null && under) drawRoundRect(CardColors.Under, cornerRadius = corner)
+                // The selection border, centred on the card's edge.
+                if (card != null && selection != null) drawRoundRect(selection.color, cornerRadius = corner, style = selected)
             }
         },
     )
 }
 
-private fun DrawScope.drawBack(corner: CornerRadius, short: Float) {
-    drawRoundRect(CardColors.Back, cornerRadius = corner)
-    val inset = short * 0.14f
-    drawRoundRect(
-        color = CardColors.BackTrim,
-        topLeft = Offset(inset, inset),
-        size = Size(size.width - inset * 2, size.height - inset * 2),
-        cornerRadius = CornerRadius(corner.x * 0.6f),
-        style = Stroke(width = short * 0.05f),
-    )
-}
-
-private fun Density.rankLayout(card: Card, measurer: TextMeasurer, fontPx: Float, maxWidth: Float): TextLayoutResult {
-    val color = CardColors.suit(card.suit)
-    var px = fontPx
-    var layout = measurer.measure(card.rank.label, rankStyle(px, color))
-    if (layout.size.width > maxWidth) {
-        px *= maxWidth / layout.size.width
-        layout = measurer.measure(card.rank.label, rankStyle(px, color))
+/** Draws [icon] in the square of side [side] centred on ([x], [y]). */
+private fun DrawScope.drawIcon(icon: CardIcon, x: Float, y: Float, side: Float, color: Color) {
+    val scale = side / icon.viewBox
+    withTransform({
+        translate(x - side / 2, y - side / 2)
+        scale(scale, scale, Offset.Zero)
+    }) {
+        drawPath(icon.path, color)
     }
-    return layout
 }
 
-private fun Density.rankStyle(fontPx: Float, color: Color) = TextStyle(
-    color = color,
-    // Sized in pixels, so the system font size doesn't overflow the card.
-    fontSize = (fontPx / density / fontScale).sp,
-    fontWeight = FontWeight.Bold,
-    letterSpacing = (-0.04).em,
-)
-
-/** The rank above the suit, centred, measured for this size. */
-private fun CacheDrawScope.centreFace(card: Card, measurer: TextMeasurer): DrawScope.() -> Unit {
+/** The logo, centred, inside a line set in from the card's edge. */
+private fun CacheDrawScope.backFace(icons: CardIcons, ambient: Boolean): DrawScope.() -> Unit {
     val w = size.width
     val h = size.height
-    val color = CardColors.suit(card.suit)
-    val layout = rankLayout(card, measurer, min(h * 0.44f, w * 0.62f), w * 0.9f)
-    val rankAt = Offset((w - layout.size.width) / 2, h * 0.34f - layout.size.height / 2)
-    val suitSize = min(w * 0.46f, h * 0.31f)
-    val suit = suitPath(card.suit, Offset((w - suitSize) / 2, h * 0.72f - suitSize / 2), suitSize)
+    val inset = w * CardStyle.BACK_BORDER_INSET
+    val line = Stroke(w * CardStyle.BACK_BORDER_WIDTH)
+    val lineCorner = CornerRadius(w * CardStyle.BACK_BORDER_CORNER)
+    // Asleep, just the logo, faintly.
+    if (ambient) return { drawIcon(icons.back, w / 2, h / 2, w * CardStyle.BACK_LOGO_SIZE, CardColors.Ambient.copy(alpha = 0.5f)) }
     return {
-        drawText(layout, topLeft = rankAt)
-        drawPath(suit, color)
+        drawRoundRect(
+            color = CardColors.BackBorder,
+            topLeft = Offset(inset, inset),
+            size = Size(w - inset * 2, h - inset * 2),
+            cornerRadius = lineCorner,
+            style = line,
+        )
+        drawIcon(icons.back, w / 2, h / 2, w * CardStyle.BACK_LOGO_SIZE, CardColors.BackLogo)
+    }
+}
+
+/** The rank above the suit, centred. */
+private fun CacheDrawScope.centreFace(card: Card, icons: CardIcons, color: Color): DrawScope.() -> Unit {
+    val w = size.width
+    val h = size.height
+    val rank = icons.rank(card.rank)
+    val suit = icons.suit(card.suit)
+    return {
+        drawIcon(rank, w / 2, h * CardStyle.RANK_Y, w * CardStyle.RANK_SIZE, color)
+        drawIcon(suit, w / 2, h * CardStyle.SUIT_Y, w * CardStyle.SUIT_SIZE, color)
+    }
+}
+
+/** The rank above the suit, in the strip down the card's left. */
+private fun CacheDrawScope.sideFace(card: Card, icons: CardIcons, indexWidth: Float, color: Color): DrawScope.() -> Unit {
+    val w = size.width
+    val h = size.height
+    val rank = icons.rank(card.rank)
+    val suit = icons.suit(card.suit)
+    val strip = w * indexWidth
+    val scale = min(1f, strip * 0.9f / (w * CardStyle.SUIT_SIZE))
+    return {
+        drawIcon(rank, strip / 2, h * CardStyle.RANK_Y, w * CardStyle.RANK_SIZE * scale, color)
+        drawIcon(suit, strip / 2, h * CardStyle.SUIT_Y, w * CardStyle.SUIT_SIZE * scale, color)
     }
 }
 
 /** The rank and a small suit in the top strip, a large suit below. */
-private fun CacheDrawScope.indexFace(card: Card, measurer: TextMeasurer, indexHeight: Float): DrawScope.() -> Unit {
+private fun CacheDrawScope.indexFace(card: Card, icons: CardIcons, indexHeight: Float, color: Color): DrawScope.() -> Unit {
     val w = size.width
     val h = size.height
-    val color = CardColors.suit(card.suit)
+    val rank = icons.rank(card.rank)
+    val suit = icons.suit(card.suit)
     val strip = h * indexHeight
-    val pad = w * 0.08f
-    val layout = rankLayout(card, measurer, strip * 1.05f, w * 0.58f)
-    val smallSuit = min(strip * 0.7f, w - pad * 3 - layout.size.width)
-    val rowWidth = layout.size.width + pad * 0.5f + smallSuit
-    val left = (w - rowWidth) / 2
-    val rankAt = Offset(left, strip / 2 - layout.size.height / 2 + h * 0.01f)
-    val small = suitPath(card.suit, Offset(left + layout.size.width + pad * 0.5f, (strip - smallSuit) / 2 + h * 0.01f), smallSuit)
+    val small = min(strip * CardStyle.INDEX_SIZE, w * CardStyle.INDEX_MAX_SIZE)
+    val spread = small * CardStyle.INDEX_SPREAD
+    val stripY = strip / 2 + h * 0.01f
     val body = h - strip
-    val bigSize = min(w * 0.55f, body * 0.6f)
-    val big = if (bigSize > strip * 0.8f) suitPath(card.suit, Offset((w - bigSize) / 2, strip + (body - bigSize) / 2), bigSize) else null
+    val big = min(w * CardStyle.SUIT_SIZE, body * 0.6f)
     return {
-        drawText(layout, topLeft = rankAt)
-        drawPath(small, color)
-        big?.let { drawPath(it, color) }
+        drawIcon(rank, w / 2 - spread, stripY, small, color)
+        drawIcon(suit, w / 2 + spread, stripY, small, color)
+        if (big > strip * 0.8f) drawIcon(suit, w / 2, strip + body / 2, big, color)
     }
-}
-
-/** A suit symbol in the square at [topLeft] with side [s], as one path. */
-fun suitPath(suit: Suit, topLeft: Offset, s: Float): Path {
-    val pieces = mutableListOf<Path>()
-    fun p(x: Float, y: Float) = Offset(topLeft.x + x * s, topLeft.y + y * s)
-    fun polygon(vararg points: Pair<Float, Float>) {
-        val path = Path()
-        points.forEachIndexed { i, (x, y) ->
-            val o = p(x, y)
-            if (i == 0) path.moveTo(o.x, o.y) else path.lineTo(o.x, o.y)
-        }
-        path.close()
-        pieces += path
-    }
-    fun circle(x: Float, y: Float, r: Float) {
-        pieces += Path().apply { addOval(Rect(p(x, y), r * s)) }
-    }
-    when (suit) {
-        Suit.Diamonds -> polygon(0.5f to 0f, 0.88f to 0.5f, 0.5f to 1f, 0.12f to 0.5f)
-        Suit.Hearts -> {
-            circle(0.27f, 0.32f, 0.23f)
-            circle(0.73f, 0.32f, 0.23f)
-            polygon(0.045f to 0.38f, 0.5f to 0.32f, 0.955f to 0.38f, 0.5f to 0.96f)
-        }
-        Suit.Spades -> {
-            circle(0.27f, 0.58f, 0.23f)
-            circle(0.73f, 0.58f, 0.23f)
-            polygon(0.048f to 0.52f, 0.5f to 0.02f, 0.952f to 0.52f, 0.5f to 0.6f)
-            polygon(0.5f to 0.6f, 0.34f to 1f, 0.66f to 1f)
-        }
-        Suit.Clubs -> {
-            circle(0.5f, 0.27f, 0.21f)
-            circle(0.27f, 0.6f, 0.21f)
-            circle(0.73f, 0.6f, 0.21f)
-            circle(0.5f, 0.55f, 0.12f)
-            polygon(0.5f to 0.5f, 0.34f to 1f, 0.66f to 1f)
-        }
-    }
-    // One outline, so overlapping pieces never cancel out.
-    return pieces.reduce { a, b -> Path.combine(PathOperation.Union, a, b) }
 }

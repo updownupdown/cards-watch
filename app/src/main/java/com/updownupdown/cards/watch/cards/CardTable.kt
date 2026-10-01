@@ -14,29 +14,36 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.zIndex
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-/** How long a card takes to slide in, out or across. */
-const val CARD_MOVE_MS = 1000
-/** How long a card takes to turn over. */
-const val CARD_FLIP_MS = 400
+/**
+ * Whether the board is showing an undo. Cards then go back the way they
+ * came: those that had slid in from the left leave to the left, and those
+ * that had left to the right come back from the right.
+ */
+val LocalUndoing = compositionLocalOf { false }
 
 /** What a card does when it leaves the table. */
 enum class Removal {
@@ -60,6 +67,17 @@ data class TableCard(
     val indexHeight: Float? = null,
     val under: Boolean = false,
     val removal: Removal = Removal.Discard,
+    /** How see-through the card is; changes fade. */
+    val alpha: Float = 1f,
+    /** Shows the rank and suit in this much of the card's left (× its width), for cards overlapping sideways. */
+    val indexWidth: Float? = null,
+    /**
+     * Where the card is dealt from, instead of from off screen: it arrives
+     * from here turning face up, and goes back here when it leaves.
+     */
+    val from: DpOffset? = null,
+    /** Arrives from off screen on the right instead of the left (and goes back there when undone). */
+    val fromRight: Boolean = false,
 ) {
     val height: Dp get() = width * CARD_ASPECT
 }
@@ -89,8 +107,13 @@ class TableBuilder(val width: Dp, val height: Dp) {
         selection: Selection? = null,
         indexHeight: Float? = null,
         removal: Removal = Removal.Discard,
+        alpha: Float = 1f,
+        indexWidth: Float? = null,
+        under: Boolean = false,
+        from: DpOffset? = null,
+        fromRight: Boolean = false,
     ) {
-        cards += TableCard(key, card, x, y, width, faceDown, z, overlay, selection, indexHeight, removal = removal)
+        cards += TableCard(key, card, x, y, width, faceDown, z, overlay, selection, indexHeight, under, removal, alpha, indexWidth, from, fromRight)
     }
 
     /** An empty place for a card. */
@@ -104,11 +127,11 @@ class TableBuilder(val width: Dp, val height: Dp) {
     }
 
     /**
-     * A pile at ([x], [y]): its top card, and the card under it darkened and
-     * showing to the top left, so one card and several look different. The
-     * rest stay hidden under them, so cards moving in and out of the pile
-     * glide rather than appear. Empty, it's an empty slot. It takes
-     * [cardWidth] + [pileEdge] each way.
+     * A pile at ([x], [y]): its top card, and the card under it shaded and
+     * showing to the bottom left, so one card and several look different. A
+     * card on its own isn't offset. The rest stay hidden under them, so cards
+     * moving in and out of the pile glide rather than appear. Empty, it's an
+     * empty slot. It takes [cardWidth] + [pileEdge] each way.
      */
     fun pile(
         cards: List<Card>,
@@ -127,18 +150,21 @@ class TableBuilder(val width: Dp, val height: Dp) {
         val top = cards.lastIndex
         cards.forEachIndexed { i, card ->
             this.cards += if (i == top) {
-                TableCard(keyOf(i), card, x + edge, y + edge, cardWidth, faceDown(i), z + 1f, overlay, selection, removal = removal)
+                // Up and to the right, but only off a card underneath.
+                val lift = if (top > 0) edge else 0.dp
+                TableCard(keyOf(i), card, x + lift, y + edge - lift, cardWidth, faceDown(i), z + 1f, overlay, selection, removal = removal)
             } else {
-                TableCard(keyOf(i), card, x, y, cardWidth, faceDown(i), z + i * 0.01f, under = true, removal = removal)
+                TableCard(keyOf(i), card, x, y + edge, cardWidth, faceDown(i), z + i * 0.01f, under = true, removal = removal)
             }
         }
-        if (top < 0) slot(x + edge, y + edge, cardWidth, overlay)
+        if (top < 0) slot(x, y + edge, cardWidth, overlay)
         if (tap != null) tap(x, y, cardWidth + edge, cardWidth * CARD_ASPECT + edge, tap)
     }
 
     /**
      * A column of overlapping cards from ([x], [y]) down, first at the top,
      * each showing its rank and suit along its top edge, fitting in [maxHeight].
+     * Each sits [spread] of a card's height below the last, or less to fit.
      */
     fun fan(
         cards: List<Card>,
@@ -150,10 +176,11 @@ class TableBuilder(val width: Dp, val height: Dp) {
         selectedFrom: Int? = null,
         selection: Selection = Selection.Neutral,
         z: Float = 0f,
+        spread: Float = CardStyle.FAN_SPREAD,
     ) {
         val cardHeight = cardWidth * CARD_ASPECT
-        val offset = if (cards.size > 1) min(cardHeight * 0.3f, (maxHeight - cardHeight) / (cards.size - 1)) else cardHeight * 0.3f
-        val strip = (offset / cardHeight).coerceIn(0.14f, 0.3f)
+        val offset = if (cards.size > 1) min(cardHeight * spread, (maxHeight - cardHeight) / (cards.size - 1)) else cardHeight * spread
+        val strip = (offset / cardHeight).coerceIn(0.14f, spread)
         if (cards.isEmpty()) slot(x, y, cardWidth)
         cards.forEachIndexed { i, card ->
             this.cards += TableCard(
@@ -170,8 +197,39 @@ class TableBuilder(val width: Dp, val height: Dp) {
     }
 }
 
+/** How far a tap area reaches beyond its card, into the space around it. */
+private val TAP_REACH = 8.dp
+
+/**
+ * Widens each tap area by up to [reach] on every side, into the gaps between
+ * cards, stopping halfway to a neighbour: small cards are easier to hit, and
+ * no area takes another's taps.
+ */
+internal fun spreadTaps(taps: List<Tap>, reach: Dp): List<Tap> = taps.map { tap ->
+    // The gap to the nearest area lying wholly beyond one side, among those level with this one.
+    fun room(level: (Tap) -> Boolean, gap: (Tap) -> Dp): Dp {
+        val nearest = taps.filter { it !== tap && level(it) && gap(it) >= 0.dp }.minOfOrNull(gap)
+        // Areas that overlap this one leave it as it is on that side.
+        val crowded = taps.any { it !== tap && level(it) && overlaps(it, tap) }
+        return if (crowded) 0.dp else min(reach, (nearest ?: (reach * 2)) / 2)
+    }
+    val inRow = { other: Tap -> other.y < tap.y + tap.height && other.y + other.height > tap.y }
+    val inColumn = { other: Tap -> other.x < tap.x + tap.width && other.x + other.width > tap.x }
+    val left = room(inRow) { tap.x - (it.x + it.width) }
+    val right = room(inRow) { it.x - (tap.x + tap.width) }
+    val top = room(inColumn) { tap.y - (it.y + it.height) }
+    val bottom = room(inColumn) { it.y - (tap.y + tap.height) }
+    tap.copy(x = tap.x - left, y = tap.y - top, width = tap.width + left + right, height = tap.height + top + bottom)
+}
+
+private fun overlaps(a: Tap, b: Tap) =
+    a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y
+
+/** The test tag of the card with [key]. */
+internal fun cardTag(key: Any) = "card:$key"
+
 /** How far a pile's top card sits from the card under it. */
-fun pileEdge(cardWidth: Dp): Dp = cardWidth * 0.1f
+fun pileEdge(cardWidth: Dp): Dp = cardWidth * CardStyle.PILE_OFFSET
 
 /**
  * Cards of one size laid out in [columns] × [rows], as large as fit in
@@ -215,8 +273,9 @@ class CardLayout(
 
 /**
  * A board of cards that animate between frames: a card that moves glides to
- * its new place, a new card slides in from off screen on the left, a removed
- * card leaves as its [TableCard.removal] says, and a card turned over flips.
+ * its new place, a new card slides in from off screen on the left (or from
+ * its [TableCard.from]), a removed card leaves as its [TableCard.removal]
+ * says, and a card turned over flips. An undo ([LocalUndoing]) runs backwards.
  * Nothing animates the first time the table is shown.
  */
 @Composable
@@ -237,7 +296,19 @@ fun CardTable(
         gone // Read, so a card finishing its exit redraws the table.
 
         val current = spec.cards.associateBy { it.key }
-        previous.forEach { (k, card) -> if (k !in current) leaving[k] = card }
+        val undoing = LocalUndoing.current
+        val leavingBack = remember { HashMap<Any, Boolean>() }
+        // New cards set off one after another: the right-most first, or as dealt (bottom first) from a place.
+        val arriving = spec.cards.filter { it.key !in previous }
+            .sortedWith(compareBy({ it.from == null }, { if (it.from != null) it.z else -it.x.value }))
+        val stagger = if (arriving.size > 1) minOf(CARD_DEAL_STAGGER_MS, CARD_DEAL_MAX_MS / (arriving.size - 1)) else 0
+        val waits = arriving.withIndex().associate { (i, card) -> card.key to i * stagger }
+        previous.forEach { (k, card) ->
+            if (k !in current) {
+                leaving[k] = card
+                leavingBack[k] = undoing
+            }
+        }
         leaving.keys.removeAll(current.keys)
         previous.clear()
         previous.putAll(current)
@@ -248,18 +319,19 @@ fun CardTable(
             PlayingCard(null, Modifier.offset(slot.x, slot.y).size(slot.width, slot.width * CARD_ASPECT), overlay = slot.overlay)
         }
         for (card in spec.cards) {
-            key(card.key) { MovingCard(card, leaving = false, enter = animateIn, screen = screen) {} }
+            key(card.key) { MovingCard(card, leaving = false, enter = animateIn, back = undoing, wait = waits[card.key] ?: 0, screen = screen) {} }
         }
         for (card in leaving.values.toList()) {
             key(card.key) {
-                MovingCard(card, leaving = true, enter = false, screen = screen) {
+                MovingCard(card, leaving = true, enter = false, back = leavingBack[card.key] == true, wait = 0, screen = screen) {
                     leaving.remove(card.key)
+                    leavingBack.remove(card.key)
                     gone++
                 }
             }
         }
         overlay()
-        spec.taps.forEach { tap ->
+        spreadTaps(spec.taps, TAP_REACH).forEach { tap ->
             Box(
                 Modifier
                     .offset(tap.x, tap.y)
@@ -271,49 +343,93 @@ fun CardTable(
     }
 }
 
+/**
+ * @param enter whether the card arrives with a move (not when the table is first shown).
+ * @param back whether this change is an undo, so the card moves the other way.
+ * @param wait how long the card holds before arriving, its turn in a deal.
+ */
 @Composable
-private fun MovingCard(card: TableCard, leaving: Boolean, enter: Boolean, screen: Float, onGone: () -> Unit) {
+private fun MovingCard(card: TableCard, leaving: Boolean, enter: Boolean, back: Boolean, wait: Int, screen: Float, onGone: () -> Unit) {
     val density = LocalDensity.current
     val targetX = with(density) { card.x.toPx() }
     val targetY = with(density) { card.y.toPx() }
-    val x = remember { Animatable(if (enter) targetX - screen else targetX) }
-    val y = remember { Animatable(targetY) }
+    val origin = card.from?.let { with(density) { Offset(it.x.toPx(), it.y.toPx()) } }
+    val start = remember {
+        when {
+            !enter -> Offset(targetX, targetY)
+            origin != null -> origin
+            // Undone: back from the right, or back in place if it had vanished there.
+            back -> if (card.removal == Removal.Vanish) Offset(targetX, targetY) else Offset(targetX + screen, targetY)
+            card.fromRight -> Offset(targetX + screen, targetY)
+            else -> Offset(targetX - screen, targetY)
+        }
+    }
+    val x = remember { Animatable(start.x) }
+    val y = remember { Animatable(start.y) }
+    // A dealt card arrives turning over, and turns back as it's taken away.
+    val dealt = origin != null
+    val flip = remember { Animatable(if (card.faceDown || enter && dealt) 180f else 0f) }
+    // Its turn in a deal, kept from when it arrived.
+    val turn = remember { IntArray(1) { if (enter) wait else 0 } }
     val spec = tween<Float>(CARD_MOVE_MS, easing = FastOutSlowInEasing)
 
     LaunchedEffect(targetX, targetY, leaving) {
         if (leaving) {
-            if (card.removal == Removal.Discard) x.animateTo(x.value + screen, spec) else kotlinx.coroutines.delay(CARD_MOVE_MS.toLong())
+            when {
+                origin != null -> coroutineScope {
+                    launch { x.animateTo(origin.x, spec) }
+                    launch { y.animateTo(origin.y, spec) }
+                    launch { flip.animateTo(180f, spec) }
+                }
+                back -> x.animateTo(x.value + if (card.fromRight) screen else -screen, spec)
+                card.removal == Removal.Discard -> x.animateTo(x.value + screen, spec)
+                else -> delay(CARD_MOVE_MS.toLong())
+            }
             onGone()
         } else {
+            if (turn[0] > 0) delay(turn[0].toLong())
+            val arriving = turn[0] >= 0 && dealt && flip.value != 0f && !card.faceDown
+            turn[0] = -1
             coroutineScope {
                 launch { x.animateTo(targetX, spec) }
                 launch { y.animateTo(targetY, spec) }
+                if (arriving) launch { flip.animateTo(0f, spec) }
             }
         }
     }
+    LaunchedEffect(card.faceDown) {
+        val target = if (card.faceDown) 180f else 0f
+        // Not while it waits to be dealt, which turns it over itself.
+        if (turn[0] < 0 && flip.targetValue != target) flip.animateTo(target, tween(CARD_FLIP_MS))
+    }
 
-    val turn by animateFloatAsState(if (card.faceDown) 180f else 0f, tween(CARD_FLIP_MS), label = "flip")
+    // Shades as another card lands on it.
+    val shade = animateFloatAsState(if (card.under) 1f else 0f, tween(CARD_MOVE_MS), label = "under")
+    val fade = animateFloatAsState(card.alpha, tween(CARD_MOVE_MS), label = "alpha")
     val moving = x.isRunning || y.isRunning
+    val sliding = leaving && (card.removal == Removal.Discard || back || dealt)
     Box(
         Modifier
             .offset { IntOffset(x.value.roundToInt(), y.value.roundToInt()) }
             .size(card.width, card.height)
+            .testTag(cardTag(card.key))
             // A card on the move (or leaving) passes over the others.
-            .zIndex(if (leaving && card.removal == Removal.Discard || moving) card.z + 1000f else if (leaving) card.z - 0.25f else card.z)
+            .zIndex(if (sliding || moving) card.z + 1000f else if (leaving) card.z - 0.25f else card.z)
             .graphicsLayer {
-                rotationY = turn
+                rotationY = flip.value
+                alpha = fade.value
                 cameraDistance = 12f * this.density
             },
     ) {
         PlayingCard(
             card = card.card,
-            faceDown = turn > 90f,
+            faceDown = flip.value > 90f,
             overlay = card.overlay,
             selection = card.selection,
             indexHeight = card.indexHeight,
-            under = card.under,
+            indexWidth = card.indexWidth,
+            under = { shade.value },
             modifier = Modifier.fillMaxSize(),
         )
     }
 }
-

@@ -36,7 +36,7 @@ class RandomPlayTest {
 
     @Test fun memory() = fuzz(Memory) { s, r -> Memory.tap(s, r.nextInt(20)) }
 
-    @Test fun lightsOut() = fuzz(LightsOut, games = 5) { s, r -> LightsOut.tap(s, r.nextInt(25)) }
+    @Test fun lightsOut() = fuzz(LightsOut, games = 5) { s, r -> LightsOut.tap(s, r.nextInt(LightsOut.CELLS)) }
 
     @Test fun hanoi() = fuzz(TowerOfHanoi) { s, r -> TowerOfHanoi.move(s, r.nextInt(3), r.nextInt(3)) }
 

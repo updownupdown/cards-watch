@@ -20,14 +20,17 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
-import com.updownupdown.cards.watch.cards.CardOverlay
 import com.updownupdown.cards.watch.cards.CardLayout
+import com.updownupdown.cards.watch.cards.CardOverlay
+import com.updownupdown.cards.watch.cards.CardStyle
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.cards.fullDeck
@@ -37,11 +40,13 @@ import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
+import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.GameButton
 import com.updownupdown.cards.watch.ui.LocalBoardSize
+import com.updownupdown.cards.watch.ui.Outfit
+import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /** A card on a prediction space: face up for a success, face down for a stone. */
 @Serializable
@@ -68,6 +73,9 @@ private const val SPACES = 8
 /** The phone game's Normal rules: a success frees stones beside it, not diagonally. */
 object Seer : Game<SeerState> {
     override val id = "seer"
+    override val thumbnail = R.drawable.thumb_seer
+    override val banner = R.drawable.banner_seer
+    override val accent = Color(0xFF2A4038)
     override val title = "Seer"
     override val stateSerializer: KSerializer<SeerState> = SeerState.serializer()
 
@@ -167,7 +175,7 @@ object Seer : Game<SeerState> {
         }
 
     /** The spaces' cards: four across, under a label strip, the same size as the turned-up card. */
-    private fun layout(board: Dp) = CardLayout(COLUMNS, 2, board, board - LABEL * 2, gap = 0.12f, extra = 0.1f)
+    private fun layout(board: Dp) = CardLayout(COLUMNS, 2, board, board - LABEL * 2, gap = 0.12f, extra = CardStyle.PILE_OFFSET)
 
     private val LABEL = 18.dp
 
@@ -185,18 +193,19 @@ object Seer : Game<SeerState> {
             } else {
                 Spacer(Modifier.width(side + cardWidth + 8.dp))
                 BasicText(
-                    text = "${state.stock.size}\nleft",
-                    style = TextStyle(color = Color(0xFFC9C6D3), fontSize = 11.sp, lineHeight = 12.sp),
+                    text = "Stock:\n${state.stock.size}",
+                    style = TextStyle(color = AppColors.TextMuted, fontFamily = Outfit, fontSize = 11.sp, lineHeight = 12.sp),
                     softWrap = false,
+                    overflow = TextOverflow.Visible,
                     modifier = Modifier.width(side),
                 )
             }
         }
     }
 
-    private val redText = Color(0xFFEF5350)
-    private val blackText = Color(0xFFCFD3D8)
-    private val plainText = Color(0xFFE8EAED)
+    private val redText = AppColors.LabelRed
+    private val blackText = AppColors.LabelBlack
+    private val plainText = AppColors.LabelPlain
 
     private fun label(space: Int): AnnotatedString = buildAnnotatedString {
         fun part(text: String, color: Color) = withStyle(SpanStyle(color = color)) { append(text) }
@@ -223,7 +232,7 @@ object Seer : Game<SeerState> {
                     for (space in 0 until SPACES) {
                         BasicText(
                             text = label(space),
-                            style = TextStyle(fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, lineHeight = 9.sp),
+                            style = TextStyle(fontFamily = Outfit, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, lineHeight = 9.sp),
                             maxLines = 2,
                             autoSize = TextAutoSize.StepBased(minFontSize = 6.sp, maxFontSize = 11.sp),
                             modifier = Modifier

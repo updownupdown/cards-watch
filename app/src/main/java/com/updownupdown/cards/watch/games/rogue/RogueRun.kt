@@ -1,14 +1,30 @@
 package com.updownupdown.cards.watch.games.rogue
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
+import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.BoardText
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardLayout
@@ -17,15 +33,19 @@ import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.cards.fullDeck
+import com.updownupdown.cards.watch.cards.pileEdge
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
+import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.BottomActions
+import com.updownupdown.cards.watch.ui.GameButton
+import com.updownupdown.cards.watch.ui.LocalBoardSize
+import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /**
  * Scoundrel, as the phone's Rogue Run plays it.
@@ -55,6 +75,9 @@ private const val MAX_HEALTH = 20
 
 object RogueRun : Game<RogueState> {
     override val id = "rogue-run"
+    override val thumbnail = R.drawable.thumb_rogue_run
+    override val banner = R.drawable.banner_rogue_run
+    override val accent = Color(0xFF33343A)
     override val title = "Rogue Run"
     override val stateSerializer: KSerializer<RogueState> = RogueState.serializer()
 
@@ -67,7 +90,8 @@ object RogueRun : Game<RogueState> {
         "- **Diamonds are weapons.** A weapon takes its value off each monster's damage. After it kills a monster it can only fight monsters of **equal or lower** value than the last one it killed.",
         "- **Hearts are potions** and heal you by their value, up to 20.",
         "## Rooms",
-        "- Tap a card, then choose what to do with it at the bottom.",
+        "- Tap a card, then choose what to do with it at the bottom. When there's only one thing to do, tapping the card again does it.",
+        "- With a monster picked, **Fist** is at the bottom and **Wpn** (when your weapon can fight it) is at the top right.",
         "- Resolve any three cards of a room to move on; the fourth stays for the next room.",
         "- With no card picked, **Run** puts the whole room at the bottom of the dungeon. You can't run from two rooms in a row.",
     )
@@ -213,12 +237,14 @@ object RogueRun : Game<RogueState> {
 
     private val totalRooms = 1 + (DECK.size - ROOM + ROOM - 2) / (ROOM - 1)
 
+    override val scoreName = "Score"
+
+    /** The health left, plus the last potion's value when it was drunk at full health. */
+    override fun score(state: RogueState) = state.health + if (state.health == MAX_HEALTH) state.lastWasPotion ?: 0 else 0
+
     override fun outcome(state: RogueState): Outcome? = when {
         state.health <= 0 -> Outcome(false, "Slain in room ${state.roomNumber}")
-        state.deck.isEmpty() && state.room.all { it == null } -> {
-            val bonus = if (state.health == MAX_HEALTH) state.lastWasPotion ?: 0 else 0
-            Outcome(true, "Escaped! Score ${state.health + bonus}")
-        }
+        state.deck.isEmpty() && state.room.all { it == null } -> Outcome(true, "Escaped!")
         else -> null
     }
 
@@ -227,14 +253,12 @@ object RogueRun : Game<RogueState> {
         val card = index?.let { state.room[it] }
             ?: return listOf(GameAction("Run", enabled = canRun(state)) { run(it) ?: it })
         return when (kind(card)) {
-            Kind.Potion -> listOf(GameAction("Drink +${minOf(value(card), MAX_HEALTH - state.health)}") { drink(it, index) ?: it })
-            Kind.Weapon -> listOf(GameAction("Equip") { equip(it, index) ?: it })
-            Kind.Monster -> buildList {
-                if (canUseWeapon(state, card)) {
-                    add(GameAction("Arm −${maxOf(0, value(card) - value(state.weapon!!))}") { fight(it, index, true) ?: it })
-                }
-                add(GameAction("Fist −${value(card)}") { fight(it, index, false) ?: it })
-            }
+            Kind.Potion -> listOf(
+                GameAction("Heal +${minOf(value(card), MAX_HEALTH - state.health)}", color = AppColors.Good) { drink(it, index) ?: it },
+            )
+            Kind.Weapon -> listOf(GameAction("Equip", color = AppColors.Neutral) { equip(it, index) ?: it })
+            // The weapon, when it can be used, has its own button on the board.
+            Kind.Monster -> listOf(GameAction("Fist −${value(card)}", color = AppColors.Bad) { fight(it, index, false) ?: it })
         }
     }
 
@@ -243,39 +267,116 @@ object RogueRun : Game<RogueState> {
         BottomActions(actions(state), null, state, play, feedback, size)
     }
 
+    /** The health bar's row and the bar itself. */
+    private val HEALTH_ROW = 16.dp
+    /** The weapon button's height. */
+    private val WEAPON_BUTTON = 36.dp
+    private val HEALTH_BAR = 7.2.dp
+    /** The gaps between the three rows, × what would spread them over the whole board. */
+    private const val ROW_GAPS = 0.6f
+
+    /**
+     * Top: the weapon, the pile of monsters it has killed, then the room
+     * number and stock. Middle: health. Bottom: the room's four cards.
+     */
+    private class Rows(board: Dp) {
+        val layout = CardLayout(ROOM, 1, board, board, gap = 0.12f)
+        val cardWidth = layout.cardWidth
+        val edge = pileEdge(cardWidth)
+        val pileHeight = layout.cardHeight + edge
+        private val gap = (board - pileHeight - HEALTH_ROW - layout.cardHeight) / 2 * ROW_GAPS
+        // Nearer the top than the foot, to stand clear of the buttons.
+        val topY = (board - pileHeight - HEALTH_ROW - layout.cardHeight - gap * 2) / 4
+        val healthY = topY + pileHeight + gap
+        val roomY = healthY + HEALTH_ROW + gap
+    }
+
     @Composable
     override fun Board(state: RogueState, play: (RogueState) -> Unit, feedback: Feedback, modifier: Modifier) {
+        val board = LocalBoardSize.current
         CardTable(
             modifier,
             overlay = {
-                Column(
-                    Modifier.align(Alignment.BottomEnd).fillMaxWidth(0.7f).fillMaxHeight(0.45f),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    BoardText("Health ${state.health}/$MAX_HEALTH")
-                    BoardText("Room ${state.roomNumber + state.roomsSkipped} of ${totalRooms + state.roomsSkipped}")
-                    BoardText("${state.deck.size} cards left")
+                val rows = Rows(board)
+                // The text's left edge, shared by the room, the stock and the health.
+                val textX = rows.layout.x(2)
+                val picked = state.selected
+                val monster = picked?.let { state.room[it] }?.takeIf { kind(it) == Kind.Monster }
+                if (picked != null && monster != null && canUseWeapon(state, monster) && outcome(state) == null) {
+                    // Fighting with the weapon, in place of the room and stock while a monster is picked.
+                    Box(Modifier.offset(x = textX, y = rows.topY).size(board - textX, rows.pileHeight), contentAlignment = Alignment.CenterEnd) {
+                        GameButton(
+                            label = "Wpn −${maxOf(0, value(monster) - value(state.weapon!!))}",
+                            onClick = { feedback.tryMove(fight(state, picked, true), play) },
+                            // Clear of the pile beside it.
+                            width = board - textX - 6.dp,
+                            height = WEAPON_BUTTON,
+                            color = AppColors.Purple,
+                        )
+                    }
+                } else {
+                    Column(
+                        Modifier.offset(x = textX, y = rows.topY).size(board - textX, rows.pileHeight),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.Start,
+                    ) {
+                        BoardText("Room: ${state.roomNumber + state.roomsSkipped}")
+                        BoardText("Stock: ${state.deck.size}")
+                    }
+                }
+                Row(Modifier.offset(y = rows.healthY).fillMaxWidth().height(HEALTH_ROW), verticalAlignment = Alignment.CenterVertically) {
+                    Box(Modifier.width(textX - 6.dp).height(HEALTH_BAR).clip(CircleShape).background(AppColors.DeepBlue)) {
+                        Box(
+                            Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth(state.health / MAX_HEALTH.toFloat())
+                                .clip(CircleShape)
+                                .background(AppColors.Good),
+                        )
+                    }
+                    Spacer(Modifier.width(6.dp))
+                    // On one line, running past the board's edge if it must: the screen is wide here.
+                    Text(
+                        text = "HP: ${state.health} / $MAX_HEALTH",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        softWrap = false,
+                        overflow = TextOverflow.Visible,
+                    )
                 }
             },
         ) {
-            val layout = CardLayout(ROOM, 1, width, height * 0.5f, gap = 0.12f)
-            val roomY = 0.dp
+            val rows = Rows(width)
+            val layout = rows.layout
+            val weapon = state.weapon
+            if (weapon != null) {
+                card(weapon, weapon, layout.x(0), rows.topY + rows.edge, rows.cardWidth)
+                pile(state.weaponUsedOn, layout.x(1), rows.topY, rows.cardWidth)
+            } else {
+                slot(layout.x(0), rows.topY + rows.edge, rows.cardWidth)
+            }
             state.room.forEachIndexed { i, card ->
                 val x = layout.x(i)
                 if (card != null) {
-                    card(card, card, x, roomY, layout.cardWidth, selection = if (state.selected == i) Selection.Neutral else null)
+                    card(card, card, x, rows.roomY, rows.cardWidth, selection = if (state.selected == i) Selection.Neutral else null)
                 } else {
-                    slot(x, roomY, layout.cardWidth)
+                    slot(x, rows.roomY, rows.cardWidth)
                 }
-                tap(x, roomY, layout.cardWidth, layout.cardHeight) {
-                    feedback.tryMove(if (outcome(state) == null) select(state, i) else null, play)
+                tap(x, rows.roomY, rows.cardWidth, layout.cardHeight) {
+                    // A second tap on the picked card does the one thing it can
+                    // (a monster the weapon can fight has two).
+                    val choice = card != null && kind(card) == Kind.Monster && canUseWeapon(state, card)
+                    val only = actions(state).singleOrNull()?.takeIf { state.selected == i && !choice }
+                    when {
+                        outcome(state) != null -> feedback.reject()
+                        only != null -> {
+                            feedback.move()
+                            play(only.perform(state))
+                        }
+                        else -> feedback.tryMove(select(state, i), play)
+                    }
                 }
             }
-            // The weapon, with the monsters it has killed over it.
-            val lowerY = layout.cardHeight + layout.gap * 2
-            val weapon = listOfNotNull(state.weapon) + state.weaponUsedOn
-            fan(weapon, layout.x(0), lowerY, layout.cardWidth, height - lowerY)
         }
     }
 }

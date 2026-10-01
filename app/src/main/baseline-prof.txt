@@ -1,0 +1,6 @@
+# The app's own code, compiled when it's installed rather than as it runs,
+# so the first launch and first game aren't interpreted. The Compose and Wear
+# libraries bring their own profiles. A profile measured on a watch
+# (androidx.baselineprofile) would be tighter; this needs no device.
+HSPLcom/updownupdown/cards/watch/**->**(**)**
+Lcom/updownupdown/cards/watch/**;

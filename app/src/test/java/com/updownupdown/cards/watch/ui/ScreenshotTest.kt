@@ -1,5 +1,6 @@
 package com.updownupdown.cards.watch.ui
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,41 +9,43 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.wear.compose.material3.AppScaffold
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.text.rememberTextMeasurer
-import com.updownupdown.cards.watch.cards.LocalCardText
-import androidx.wear.compose.material3.ScreenScaffold
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.captureRoboImage
-import com.updownupdown.cards.watch.game.GameSession
-import com.updownupdown.cards.watch.game.SavedGame
-import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
-import com.updownupdown.cards.watch.games.fifteen.FifteenState
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.GameSession
+import com.updownupdown.cards.watch.game.GameStats
+import com.updownupdown.cards.watch.game.SavedGame
 import com.updownupdown.cards.watch.games.acesup.AcesUp
 import com.updownupdown.cards.watch.games.baroness.Baroness
 import com.updownupdown.cards.watch.games.beehive.Beehive
 import com.updownupdown.cards.watch.games.clock.Clock
 import com.updownupdown.cards.watch.games.dominion.Dominion
-import com.updownupdown.cards.watch.games.lycan.Lycan
-import com.updownupdown.cards.watch.games.rogue.RogueRun
-import com.updownupdown.cards.watch.games.seer.Seer
-import com.updownupdown.cards.watch.games.triplestack.TripleStack
+import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
+import com.updownupdown.cards.watch.games.fifteen.FifteenState
 import com.updownupdown.cards.watch.games.fortune.Call
 import com.updownupdown.cards.watch.games.fortune.FortunesCall
 import com.updownupdown.cards.watch.games.hanoi.TowerOfHanoi
 import com.updownupdown.cards.watch.games.lightsout.LightsOut
+import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.memory.Memory
+import com.updownupdown.cards.watch.cards.Card
+import com.updownupdown.cards.watch.cards.Rank
+import com.updownupdown.cards.watch.cards.Suit
+import com.updownupdown.cards.watch.games.rogue.RogueRun
+import com.updownupdown.cards.watch.games.rogue.RogueState
+import com.updownupdown.cards.watch.games.seer.Seer
+import com.updownupdown.cards.watch.games.triplestack.TripleStack
+import kotlin.random.Random
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
-import org.robolectric.RobolectricTestRunner
-import kotlin.random.Random
 
 /**
  * Renders screens on the small and large round watches, to check layouts
@@ -59,11 +62,9 @@ class ScreenshotTest {
     private fun capture(name: String, content: @Composable () -> Unit) {
         compose.setContent {
             AppTheme {
-                CompositionLocalProvider(LocalCardText provides rememberTextMeasurer()) {
-                    // Round mask, as the screen would clip it.
-                    Box(Modifier.fillMaxSize().clip(CircleShape).background(Color.Black)) {
-                        AppScaffold { content() }
-                    }
+                // Round mask, as the screen would clip it.
+                Box(Modifier.fillMaxSize().clip(CircleShape).background(Color.Black)) {
+                    AppScaffold { content() }
                 }
             }
         }
@@ -72,7 +73,7 @@ class ScreenshotTest {
 
     private fun <S : Any> game(game: Game<S>, state: S = game.newGame(Random(3))) {
         val session = GameSession(game, SavedGame(game.saveVersion, state)) {}
-        capture(game.id) { ScreenScaffold(timeText = {}) { GameScreen(session, {}, {}) } }
+        capture(game.id) { GameScreen(session, {}) }
     }
 
     private fun <S : Any> Game<S>.after(vararg moves: (S) -> S?): S =
@@ -84,13 +85,13 @@ class ScreenshotTest {
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
     fun fifteenLarge() = capture("fifteen_large") {
         val session = GameSession(FifteenPuzzle, SavedGame(1, FifteenPuzzle.newGame(Random(3)))) {}
-        ScreenScaffold(timeText = {}) { GameScreen(session, {}, {}) }
+        GameScreen(session, {})
     }
 
     @Test
     fun fifteenWon() = capture("fifteen_won") {
         val session = GameSession(FifteenPuzzle, SavedGame(1, FifteenState(FifteenPuzzle.SOLVED, moves = 87))) {}
-        ScreenScaffold(timeText = {}) { GameScreen(session, {}, {}) }
+        GameScreen(session, {})
     }
 
     @Test fun memory() = game(Memory, Memory.after({ Memory.tap(it, 0) }, { Memory.tap(it, 7) }))
@@ -113,6 +114,21 @@ class ScreenshotTest {
 
     @Test fun rogueRun() = game(RogueRun, RogueRun.after({ RogueRun.select(it, 1) }))
 
+    @Test
+    fun rogueWeapon() = capture("rogue_weapon") {
+        // A monster picked that the weapon can fight: Wpn takes the place of the room and stock.
+        val state = RogueState(
+            deck = RogueRun.DECK.take(12),
+            room = listOf(Card(Rank.King, Suit.Spades), Card(Rank.Five, Suit.Clubs), null, Card(Rank.Four, Suit.Hearts)),
+            roomNumber = 7,
+            weapon = Card(Rank.Seven, Suit.Diamonds),
+            weaponUsedOn = listOf(Card(Rank.Nine, Suit.Clubs), Card(Rank.Six, Suit.Spades)),
+            health = 11,
+            selected = 1,
+        )
+        GameScreen(GameSession(RogueRun, SavedGame(RogueRun.saveVersion, state)) {}, {})
+    }
+
     @Test fun seer() = game(Seer, Seer.after({ Seer.predict(it, 0) }, { Seer.predict(it, 2) }, { Seer.predict(it, 1) }))
 
     @Test fun lycan() = game(Lycan, Lycan.after({ Lycan.togglePlayer(it, it.player[0].id) }))
@@ -127,10 +143,33 @@ class ScreenshotTest {
 
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
-    fun rules() = capture("rules") { RulesScreen(FifteenPuzzle) }
+    fun rules() = capture("rules") {
+        // Scrolled a screen down, to the top of the rules.
+        val session = GameSession(FifteenPuzzle, SavedGame(1, FifteenPuzzle.newGame(Random(3)))) {}
+        GameScreen(session, {}, ScrollState(454))
+    }
 
     @Test
-    fun ambient() = capture("ambient") { AmbientScreen("Tower of Hanoi") }
+    fun actions() = capture("actions") {
+        // Scrolled to where the view snaps: Reset and Undo under the board.
+        val session = GameSession(Baroness, SavedGame(1, Baroness.newGame(Random(3)))) {}
+        GameScreen(session, {}, ScrollState(actionsSnap(384, LocalDensity.current)))
+    }
+
+    @Test
+    fun rulesEnd() = capture("rules_end") {
+        val session = GameSession(FifteenPuzzle, SavedGame(1, FifteenPuzzle.newGame(Random(3)))) {}
+        GameScreen(session, {}, ScrollState(100_000), GameStats(won = 5, lost = 3, streak = 1, bestStreak = 3, bestScore = 64, bestTimeMs = 92_000))
+    }
+
+    @Test
+    fun ambient() = capture("ambient") { AmbientScreen(null) }
+
+    @Test
+    fun ambientGame() = capture("ambient_game") {
+        val state = Beehive.after({ Beehive.draw(it) })
+        AmbientScreen(GameSession(Beehive, SavedGame(Beehive.saveVersion, state)) {})
+    }
 
     @Test fun hanoiMoved() = game(TowerOfHanoi, TowerOfHanoi.after({ TowerOfHanoi.move(it, 0, 1) }, { TowerOfHanoi.move(it, 0, 2) }))
 }

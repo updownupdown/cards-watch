@@ -1,18 +1,23 @@
 package com.updownupdown.cards.watch.games.memory
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardLayout
 import com.updownupdown.cards.watch.cards.CardOverlay
 import com.updownupdown.cards.watch.cards.CardTable
+import com.updownupdown.cards.watch.cards.PAIR_SHOW_MS
 import com.updownupdown.cards.watch.cards.fullDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
+import kotlin.random.Random
+import kotlinx.coroutines.delay
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /** One of the two copies of a card on the board. */
 @Serializable
@@ -21,7 +26,7 @@ data class MemoryCard(val card: Card, val copy: Int)
 /**
  * @param cells the board row by row; null once a pair is taken.
  * @param open the face-up cards (at most two). An open pair stays up, green
- *   if it matches and red if not, until the next tap.
+ *   if it matches and red if not, for [PAIR_SHOW_MS] or until the next tap.
  */
 @Serializable
 data class MemoryState(
@@ -35,6 +40,9 @@ object Memory : Game<MemoryState> {
     const val ROWS = 4
 
     override val id = "memory"
+    override val thumbnail = R.drawable.thumb_memory
+    override val banner = R.drawable.banner_memory
+    override val accent = Color(0xFF40392A)
     override val title = "Memory"
     override val stateSerializer: KSerializer<MemoryState> = MemoryState.serializer()
     override val saveVersion = 2
@@ -74,17 +82,32 @@ object Memory : Game<MemoryState> {
         return settled.copy(open = open, moves = settled.moves + if (open.size == 2) 1 else 0)
     }
 
+    /** A pair settling by itself isn't a move to undo. */
+    override fun isUndoStep(previous: MemoryState, next: MemoryState) = next != settle(previous) || previous.open.size < 2
+
     override fun outcome(state: MemoryState): Outcome? {
         val left = state.cells.count { it != null }
         val done = left == 0 || left == 2 && isPair(state)
         return if (done) Outcome(true, "Cleared in ${state.moves} moves") else null
     }
 
-    override fun status(state: MemoryState) = if (state.moves == 1) "1 move" else "${state.moves} moves"
+    override val scoreName = "Moves"
+    override val lowScoreWins = true
+    override fun score(state: MemoryState) = state.moves
+
+    // No count under the board: the board takes that room, for larger cards.
+    override val boardFraction = 0.7f
+    override val boardLift = -0.02f
 
     @Composable
     override fun Board(state: MemoryState, play: (MemoryState) -> Unit, feedback: Feedback, modifier: Modifier) {
         val pair = isPair(state)
+        LaunchedEffect(state) {
+            if (state.open.size == 2 && outcome(state) == null) {
+                delay(PAIR_SHOW_MS)
+                play(settle(state))
+            }
+        }
         CardTable(modifier) {
             val layout = CardLayout(COLUMNS, ROWS, width, height)
             state.cells.forEachIndexed { i, cell ->

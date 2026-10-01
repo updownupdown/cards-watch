@@ -3,8 +3,10 @@ package com.updownupdown.cards.watch.games.triplestack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.BoardText
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardLayout
@@ -16,10 +18,10 @@ import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
-import com.updownupdown.cards.watch.ui.GameButton
+import com.updownupdown.cards.watch.ui.BottomButton
+import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /**
  * @param hand eight places; null where a card was served and not replaced.
@@ -38,6 +40,9 @@ object TripleStack : Game<TripleStackState> {
     const val HAND = 8
 
     override val id = "triple-stack"
+    override val thumbnail = R.drawable.thumb_triple_stack
+    override val banner = R.drawable.banner_triple_stack
+    override val accent = Color(0xFF49261D)
     override val title = "Triple Stack"
     override val stateSerializer: KSerializer<TripleStackState> = TripleStackState.serializer()
 
@@ -122,13 +127,7 @@ object TripleStack : Game<TripleStackState> {
     override fun Bottom(state: TripleStackState, play: (TripleStackState) -> Unit, feedback: Feedback, size: DpSize) {
         val picked = selectedCards(state)
         val earned = if (isSandwich(picked)) refills(picked) else 0
-        GameButton(
-            label = "Serve ($earned)",
-            enabled = earned > 0,
-            width = size.width,
-            height = size.height,
-            onClick = { feedback.tryMove(serve(state), play) },
-        )
+        BottomButton("Serve ($earned)", { feedback.tryMove(serve(state), play) }, earned > 0)
     }
 
     @Composable
@@ -141,7 +140,7 @@ object TripleStack : Game<TripleStackState> {
         }
         CardTable(
             modifier,
-            overlay = { BoardText("Ingredients ${state.deck.size}", Modifier.align(Alignment.TopCenter)) },
+            overlay = { BoardText("Ingredients: ${state.deck.size}", Modifier.align(Alignment.TopCenter)) },
         ) {
             // The hand, centred below the ingredients count.
             val label = 16.dp

@@ -1,11 +1,12 @@
 package com.updownupdown.cards.watch.games.acesup
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.updownupdown.cards.watch.cards.BoardText
+import androidx.compose.ui.graphics.Color
+import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardLayout
+import com.updownupdown.cards.watch.cards.CardStyle
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.shuffledDeck
@@ -14,9 +15,9 @@ import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
+import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /** Four piles, each bottom to top, and the undealt deck. */
 @Serializable
@@ -26,14 +27,17 @@ object AcesUp : Game<AcesUpState> {
     const val PILES = 4
 
     override val id = "aces-up"
+    override val thumbnail = R.drawable.thumb_aces_up
+    override val banner = R.drawable.banner_aces_up
+    override val accent = Color(0xFF3A3A2C)
     override val title = "Aces Up"
     override val stateSerializer: KSerializer<AcesUpState> = AcesUpState.serializer()
 
     override val rules = listOf(
         "## Objective",
-        "Discard the whole deck except the four Aces, leaving one Ace on each pile.",
-        "## Discarding",
-        "- Compare the top cards of the piles. Tap a card to discard it when another pile shows a **higher card of the same suit**.",
+        "Discard the whole deck except the four Aces (one per pile).",
+        "## Rules",
+        "- Tap a card to discard it when another pile shows a **higher card of the same suit**.",
         "- **Aces are high** and can never be discarded.",
         "- When a pile is empty, tap any other top card to move it there.",
         "- When you're stuck, tap **Deal** for one more card on each pile.",
@@ -89,19 +93,16 @@ object AcesUp : Game<AcesUpState> {
     }
 
     override fun actions(state: AcesUpState) = listOf(
-        GameAction<AcesUpState>("Deal", enabled = state.deck.isNotEmpty()) { deal(it) },
+        GameAction<AcesUpState>("Deal (${state.deck.size})", enabled = state.deck.isNotEmpty()) { deal(it) },
     )
 
     @Composable
     override fun Board(state: AcesUpState, play: (AcesUpState) -> Unit, feedback: Feedback, modifier: Modifier) {
-        CardTable(
-            modifier,
-            overlay = { BoardText("${state.deck.size} in the deck", Modifier.align(Alignment.BottomCenter)) },
-        ) {
-            // The four piles side by side across the full width.
-            val layout = CardLayout(PILES, 1, width, height * 0.8f, gap = 0.12f, extra = 0.1f)
+        CardTable(modifier) {
+            // The four piles two by two, short of the board's foot to stand clear of the Deal button.
+            val layout = CardLayout(2, 2, width, height * 0.9f, gap = 0.12f, extra = CardStyle.PILE_OFFSET)
             state.piles.forEachIndexed { index, pile ->
-                pile(pile, layout.x(index), layout.y(0), layout.cardWidth) {
+                pile(pile, layout.xOf(index), layout.yOf(index), layout.cardWidth) {
                     feedback.tryMove(if (outcome(state) == null) tap(state, index) else null, play)
                 }
             }

@@ -1,7 +1,5 @@
 package com.updownupdown.cards.watch.ui
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,8 +10,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
@@ -21,10 +20,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -33,10 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.EdgeButton
+import androidx.wear.compose.material3.EdgeButtonSize
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
-import com.updownupdown.cards.watch.R
+import androidx.wear.compose.material3.TimeText
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.GameAction
 import kotlin.math.sqrt
@@ -45,99 +44,68 @@ import kotlin.math.sqrt
 const val BOARD_FRACTION = 0.64f
 
 /** The space between the board and the top of the bottom buttons. */
-private val BOTTOM_PAD = 3.dp
+private val BOTTOM_PAD = 5.dp
 
-/** The board's side, for games laying out the bottom crescent to match their cards. */
+/**
+ * How far the board sits above the middle, as a fraction of the screen's
+ * diameter: room below for Wear's edge button, which needs about 44dp. Past
+ * 0.06 the board's top corners leave the round screen.
+ */
+const val BOARD_LIFT = 0.05f
+
+/** The least room under the board that holds a button, and the height the edge button gets without it. */
+private val MIN_CRESCENT = 36.dp
+private val EDGE_BUTTON = 44.dp
+
+/** The board's side, for games laying out text or the bottom crescent to match their cards. */
 val LocalBoardSize = staticCompositionLocalOf { 0.dp }
 
 /**
- * Every game's screen: a square board in the middle, with the home icon
- * above it, undo to its left, rules to its right, and [bottom] (a status or
- * buttons) in the crescent below. [bottom] gets the width that fits inside
+ * Every game's screen: a square board in the middle, with the time above it
+ * and [bottom] (a status or buttons) in the crescent below. [bottom] gets the width that fits inside
  * the round screen at the foot of a button, and the button height.
  */
 @Composable
 fun GameLayout(
-    onHome: () -> Unit,
-    onUndo: () -> Unit,
-    onUndoHold: () -> Unit,
-    canUndo: Boolean,
-    onRules: () -> Unit,
+    boardFraction: Float = BOARD_FRACTION,
+    boardLift: Float = BOARD_LIFT,
+    showTime: Boolean = true,
     bottom: @Composable (size: DpSize) -> Unit,
     board: @Composable BoxScope.() -> Unit,
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val diameter = min(maxWidth, maxHeight)
-        val boardSize = diameter * BOARD_FRACTION
+        val boardSize = diameter * boardFraction
         // The depth of the space between the board and the screen's edge.
         val band = (diameter - boardSize) / 2
-        val icon = min(band * 0.8f, 36.dp)
-        val inset = (band - icon) / 2
+
+        if (showTime) TimeText()
 
         // Above the rest, so a card can sit over the bottom buttons (a drawn card).
-        Box(Modifier.align(Alignment.Center).size(boardSize).zIndex(1f), content = board)
+        val lift = diameter * boardLift
+        CompositionLocalProvider(LocalBoardSize provides boardSize) {
+            Box(Modifier.align(Alignment.Center).offset(y = -lift).size(boardSize).zIndex(1f), content = board)
+        }
 
-        PlainIcon(R.drawable.ic_home, "Home", onHome, icon, Modifier.align(Alignment.TopCenter).offset(y = inset))
-        PlainIcon(
-            R.drawable.ic_undo,
-            "Undo. Hold for a new game",
-            onUndo,
-            icon,
-            Modifier.align(Alignment.CenterStart).offset(x = inset),
-            onLongClick = onUndoHold,
-            dimmed = !canUndo,
-        )
-        PlainIcon(R.drawable.ic_rules, "Rules", onRules, icon, Modifier.align(Alignment.CenterEnd).offset(x = -inset))
-
+        val crescent = band + lift - BOTTOM_PAD
         // The widest a button can be and still clear the round edge at its foot.
         val buttonHeight = min(band * 0.58f, 28.dp)
         val radius = diameter / 2
-        val foot = boardSize / 2 + BOTTOM_PAD + buttonHeight
+        val foot = boardSize / 2 - lift + BOTTOM_PAD + buttonHeight
         val halfWidth = sqrt((radius.value * radius.value - foot.value * foot.value).coerceAtLeast(0f)).dp - 6.dp
         Box(
             Modifier
-                .align(Alignment.TopCenter)
-                .offset(y = radius + boardSize / 2 + BOTTOM_PAD)
-                .size(halfWidth * 2, band),
+                // The crescent from under the board to the screen's foot, full width. A board
+                // that leaves no room for a button (Clock) has it over its foot instead.
+                .align(Alignment.BottomCenter)
+                .zIndex(if (crescent < MIN_CRESCENT) 2f else 0f)
+                .size(diameter, if (crescent < MIN_CRESCENT) EDGE_BUTTON else crescent),
             contentAlignment = Alignment.TopCenter,
         ) {
             CompositionLocalProvider(LocalBoardSize provides boardSize) {
                 bottom(DpSize(halfWidth * 2, buttonHeight))
             }
         }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-private fun PlainIcon(
-    @DrawableRes icon: Int,
-    label: String,
-    onClick: () -> Unit,
-    size: Dp,
-    modifier: Modifier = Modifier,
-    onLongClick: (() -> Unit)? = null,
-    dimmed: Boolean = false,
-) {
-    Box(
-        modifier
-            .size(size)
-            .combinedClickable(
-                interactionSource = null,
-                indication = null,
-                role = Role.Button,
-                onClickLabel = label,
-                onLongClick = onLongClick,
-                onClick = onClick,
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            painter = painterResource(icon),
-            contentDescription = label,
-            tint = AppColors.Icon,
-            modifier = Modifier.size(size * 0.66f).alpha(if (dimmed) 0.35f else 1f),
-        )
     }
 }
 
@@ -155,7 +123,32 @@ fun StatusText(text: String, width: Dp) {
     )
 }
 
-/** A pill-shaped button inside a game, such as "Deal". */
+/**
+ * The one action under the board, such as "Deal": Wear's edge button, hugging
+ * the foot of the round screen.
+ */
+@Composable
+fun BottomButton(label: String, onClick: () -> Unit, enabled: Boolean = true, color: Color = AppColors.GameButton) {
+    BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+        EdgeButton(
+            onClick = onClick,
+            enabled = enabled,
+            // Up to the board: under 44dp the edge button starts to fade its label.
+            modifier = Modifier.requiredHeight(maxHeight + BOTTOM_PAD).offset(y = -BOTTOM_PAD / 2),
+            buttonSize = EdgeButtonSize.ExtraSmall,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = color,
+                contentColor = AppColors.GameButtonText,
+                disabledContainerColor = color.copy(alpha = 0.4f),
+                disabledContentColor = AppColors.GameButtonText,
+            ),
+        ) {
+            Text(label, maxLines = 1)
+        }
+    }
+}
+
+/** A pill-shaped button inside a game, where there are several, such as "Reveal" and "Return". */
 @Composable
 fun GameButton(
     label: String,
@@ -164,18 +157,25 @@ fun GameButton(
     height: Dp,
     enabled: Boolean = true,
     modifier: Modifier = Modifier,
+    color: Color = AppColors.GameButton,
+    textColor: Color = AppColors.GameButtonText,
 ) {
+    // Asleep, a button keeps its place but isn't drawn.
+    if (LocalAmbient.current) {
+        Box(modifier.size(width, height))
+        return
+    }
     Box(
         modifier
             .size(width, height)
-            .clip(RoundedCornerShape(50))
-            .background(if (enabled) AppColors.GameButton else AppColors.GameButtonDisabled)
+            .clip(CircleShape)
+            .background(if (enabled) color else color.copy(alpha = 0.4f))
             .combinedClickable(enabled = enabled, role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         BasicText(
             text = label,
-            style = MaterialTheme.typography.labelMedium.copy(color = AppColors.DeepBlue, textAlign = TextAlign.Center),
+            style = MaterialTheme.typography.labelMedium.copy(color = textColor, textAlign = TextAlign.Center),
             maxLines = 1,
             autoSize = TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = MaterialTheme.typography.labelMedium.fontSize),
         )
@@ -196,13 +196,7 @@ fun <S> BottomActions(
         0 -> status?.let { StatusText(it, size.width) }
         1 -> {
             val action = actions[0]
-            GameButton(
-                label = action.label,
-                onClick = { feedback.move(); play(action.perform(state)) },
-                width = size.width,
-                height = size.height,
-                enabled = action.enabled,
-            )
+            BottomButton(action.label, { feedback.move(); play(action.perform(state)) }, action.enabled, action.color ?: AppColors.GameButton)
         }
         else -> Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             actions.take(2).forEach { action ->
@@ -212,27 +206,9 @@ fun <S> BottomActions(
                     width = (size.width - 4.dp) / 2,
                     height = size.height,
                     enabled = action.enabled,
+                    color = action.color ?: AppColors.GameButton,
                 )
             }
         }
-    }
-}
-
-/** A message across the middle of the board, such as when the game is won. */
-@Composable
-fun BoxScope.BoardBanner(text: String) {
-    Box(
-        Modifier
-            .align(Alignment.Center)
-            .clip(RoundedCornerShape(12.dp))
-            .background(Color.Black.copy(alpha = 0.82f))
-            .padding(horizontal = 10.dp, vertical = 8.dp),
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.titleSmall,
-            color = AppColors.PaleYellow,
-            textAlign = TextAlign.Center,
-        )
     }
 }
