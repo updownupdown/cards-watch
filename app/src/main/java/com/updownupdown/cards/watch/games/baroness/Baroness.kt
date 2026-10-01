@@ -1,6 +1,5 @@
 package com.updownupdown.cards.watch.games.baroness
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,8 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.updownupdown.cards.watch.cards.BoardText
 import com.updownupdown.cards.watch.cards.Card
-import com.updownupdown.cards.watch.cards.CardGrid
-import com.updownupdown.cards.watch.cards.CardPile
+import com.updownupdown.cards.watch.cards.CardLayout
+import com.updownupdown.cards.watch.cards.CardTable
+import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
@@ -108,38 +108,40 @@ object Baroness : Game<BaronessState> {
     @Composable
     override fun Board(state: BaronessState, play: (BaronessState) -> Unit, feedback: Feedback, modifier: Modifier) {
         var selected by remember(state) { mutableStateOf<Int?>(null) }
-        // Three piles above two, with the stock count in the last cell.
-        CardGrid(
-            columns = 3,
-            rows = 2,
-            modifier = modifier,
-            gap = 0.12f,
-            onTap = { index ->
-                if (index >= PILES || outcome(state) != null) {
-                    feedback.reject()
-                    return@CardGrid
+        CardTable(
+            modifier,
+            overlay = { BoardText("${state.stock.size} in stock", Modifier.align(Alignment.BottomCenter)) },
+        ) {
+            // All five piles in one row.
+            val layout = CardLayout(PILES, 1, width, height * 0.8f, gap = 0.1f, extra = 0.1f)
+            state.piles.forEachIndexed { index, pile ->
+                pile(
+                    cards = pile,
+                    x = layout.x(index),
+                    y = layout.y(0),
+                    cardWidth = layout.cardWidth,
+                    selection = if (selected == index) Selection.Neutral else null,
+                ) {
+                    if (outcome(state) != null) {
+                        feedback.reject()
+                        return@pile
+                    }
+                    val (next, select) = tap(state, selected, index)
+                    when {
+                        next != null -> {
+                            feedback.move()
+                            play(next)
+                        }
+                        select != null -> {
+                            feedback.move()
+                            selected = select
+                        }
+                        else -> {
+                            if (selected == null) feedback.reject()
+                            selected = null
+                        }
+                    }
                 }
-                val (next, select) = tap(state, selected, index)
-                when {
-                    next != null -> {
-                        feedback.move()
-                        play(next)
-                    }
-                    select != null -> {
-                        feedback.move()
-                        selected = select
-                    }
-                    else -> {
-                        if (selected == null) feedback.reject()
-                        selected = null
-                    }
-                }
-            },
-        ) { index ->
-            if (index < PILES) {
-                CardPile(state.piles[index], selected = selected == index)
-            } else {
-                Box(contentAlignment = Alignment.Center) { BoardText("Stock\n${state.stock.size}") }
             }
         }
     }

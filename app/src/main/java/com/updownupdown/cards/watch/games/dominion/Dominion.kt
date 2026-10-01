@@ -1,8 +1,5 @@
 package com.updownupdown.cards.watch.games.dominion
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,17 +9,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.updownupdown.cards.watch.cards.Card
-import com.updownupdown.cards.watch.cards.CardGrid
+import com.updownupdown.cards.watch.cards.CardLayout
+import com.updownupdown.cards.watch.cards.CardTable
+import com.updownupdown.cards.watch.cards.Removal
+import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.CardOverlay
-import com.updownupdown.cards.watch.cards.CardPile
-import com.updownupdown.cards.watch.cards.PlayingCard
-import com.updownupdown.cards.watch.cards.SlideSlot
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
-import com.updownupdown.cards.watch.ui.ActionButton
-import com.updownupdown.cards.watch.ui.bottomButtonHeight
+import com.updownupdown.cards.watch.game.tryMove
+import com.updownupdown.cards.watch.ui.GameButton
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
@@ -60,7 +57,7 @@ object Dominion : Game<DominionState> {
         "- A card may also conquer a card further along the same row or column when every space between them is empty.",
         "- The conqueror moves onto the conquered card's space, leaving its own space empty.",
         "## Reserve",
-        "- Once a space is empty, tap **Reserve** to turn over the next reserve card.",
+        "- Once a space is empty, tap **Draw** to turn over the next reserve card.",
         "- Tap an empty space to place it before conquering again.",
         "- All three reserve cards must be played to win.",
     )
@@ -146,69 +143,65 @@ object Dominion : Game<DominionState> {
 
     @Composable
     override fun Bottom(state: DominionState, play: (DominionState) -> Unit, feedback: Feedback, size: DpSize) {
-        val drawn = state.drawn
-        if (drawn != null) {
-            // The turned-up reserve card sits where the button was.
-            val height = size.height * 0.92f
-            SlideSlot(drawn, key = { it }) {
-                PlayingCard(it, Modifier.padding(top = 2.dp).size(height / 1.4f, height), selected = true)
-            }
-        } else {
-            ActionButton(
-                label = "Reserve ${state.reserve.size}",
-                enabled = drawReserve(state) != null,
-                width = size.width * 0.7f,
-                height = bottomButtonHeight(size),
-                onClick = {
-                    val next = drawReserve(state)
-                    if (next == null) feedback.reject() else {
-                        feedback.move()
-                        play(next)
-                    }
-                },
-                modifier = Modifier.padding(top = 4.dp),
-            )
-        }
+        // A drawn card is shown on the board's layer, over this button.
+        GameButton(
+            label = "Draw (${state.reserve.size})",
+            enabled = drawReserve(state) != null,
+            width = size.width,
+            height = size.height,
+            onClick = { feedback.tryMove(drawReserve(state), play) },
+        )
     }
 
     @Composable
     override fun Board(state: DominionState, play: (DominionState) -> Unit, feedback: Feedback, modifier: Modifier) {
         var selected by remember(state) { mutableStateOf<Int?>(null) }
-        CardGrid(
-            columns = COLUMNS,
-            rows = ROWS,
-            modifier = modifier,
-            gap = 0.1f,
-            onTap = { cell ->
-                val from = selected
-                val next = when {
-                    outcome(state) != null -> null
-                    state.drawn != null -> place(state, cell)
-                    from != null && from != cell -> conquer(state, from, cell)
-                    else -> null
-                }
-                when {
-                    next != null -> {
-                        feedback.move()
-                        play(next)
-                    }
-                    state.drawn == null && from == cell -> selected = null
-                    state.drawn == null && state.board[cell].isNotEmpty() -> {
-                        feedback.move()
-                        selected = cell
-                    }
-                    else -> feedback.reject()
-                }
-            },
-        ) { cell ->
+        CardTable(modifier) {
+            val layout = CardLayout(COLUMNS, ROWS, width, height, gap = 0.12f)
             val from = selected
-            Box {
-                CardPile(
-                    cards = state.board[cell],
-                    selected = from == cell,
-                    overlay = if (from != null && canConquer(state, from, cell)) CardOverlay.Hint else null,
-                )
+            state.board.forEachIndexed { cell, pile ->
+                val x = layout.xOf(cell)
+                val y = layout.yOf(cell)
+                if (pile.isEmpty()) slot(x, y, layout.cardWidth)
+                // Conquered cards stay hidden under the conqueror, so a conquest
+                // is one card gliding onto another.
+                pile.forEachIndexed { i, card ->
+                    val top = i == pile.lastIndex
+                    card(
+                        key = card,
+                        card = card,
+                        x = x,
+                        y = y,
+                        width = layout.cardWidth,
+                        z = i.toFloat(),
+                        selection = if (top && from == cell) Selection.Neutral else null,
+                        overlay = if (top && from != null && canConquer(state, from, cell)) CardOverlay.Hint else null,
+                        removal = Removal.Vanish,
+                    )
+                }
+                tap(x, y, layout.cardWidth, layout.cardHeight) {
+                    val next = when {
+                        outcome(state) != null -> null
+                        state.drawn != null -> place(state, cell)
+                        from != null && from != cell -> conquer(state, from, cell)
+                        else -> null
+                    }
+                    when {
+                        next != null -> {
+                            feedback.move()
+                            play(next)
+                        }
+                        state.drawn == null && from == cell -> selected = null
+                        state.drawn == null && pile.isNotEmpty() -> {
+                            feedback.move()
+                            selected = cell
+                        }
+                        else -> feedback.reject()
+                    }
+                }
             }
+            // The drawn reserve card waits below the board, over the Draw button.
+            state.drawn?.let { card(it, it, (width - layout.cardWidth) / 2, height + 2.dp, layout.cardWidth, z = 50f, selection = Selection.Neutral) }
         }
     }
 }

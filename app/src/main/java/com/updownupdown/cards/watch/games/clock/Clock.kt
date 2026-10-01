@@ -1,21 +1,21 @@
 package com.updownupdown.cards.watch.games.clock
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardOverlay
-import com.updownupdown.cards.watch.cards.CardPile
+import com.updownupdown.cards.watch.cards.CARD_ASPECT
+import com.updownupdown.cards.watch.cards.CardTable
+import com.updownupdown.cards.watch.cards.pileEdge
 import com.updownupdown.cards.watch.cards.Rank
-import com.updownupdown.cards.watch.cards.cellBounds
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.tryMove
+import androidx.compose.ui.unit.min
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
@@ -90,50 +90,36 @@ object Clock : Game<ClockState> {
 
     override fun status(state: ClockState) = "Kings ${state.kings} of 4"
 
-    /** Where each pile sits on a 4×4 grid: the hours clockwise round the edge, Kings in the middle. */
-    private val HOUR_CELLS = listOf(1, 2, 3, 7, 11, 15, 14, 13, 12, 8, 4, 0) // 12, 1, 2, … 11 o'clock
-
-    private fun cellOf(pile: Int) = if (pile == 0) -1 else HOUR_CELLS[pile % 12]
-
     @Composable
     override fun Board(state: ClockState, play: (ClockState) -> Unit, feedback: Feedback, modifier: Modifier) {
-        BoxWithConstraints(modifier) {
-            val over = outcome(state) != null
+        val over = outcome(state) != null
+        CardTable(modifier) {
+            // The hours round a circle, clockwise from 12 at the top; Kings in the middle.
+            val cardWidth = width * 0.145f
+            val edge = pileEdge(cardWidth)
+            val pileWidth = cardWidth + edge
+            val pileHeight = cardWidth * CARD_ASPECT + edge
+            val radius = (min(width, height) - pileHeight) / 2
             for (pile in 0 until 13) {
-                val bounds = if (pile == 0) {
-                    // The Kings take the middle, the size of one card.
-                    val a = cellBounds(4, 4, maxWidth, maxHeight, GAP, 5)
-                    val b = cellBounds(4, 4, maxWidth, maxHeight, GAP, 10)
-                    a.copy(
-                        x = (a.x + b.x) / 2,
-                        y = (a.y + b.y) / 2,
-                    )
+                val (cx, cy) = if (pile == 0) {
+                    width / 2 to height / 2
                 } else {
-                    cellBounds(4, 4, maxWidth, maxHeight, GAP, cellOf(pile))
+                    val angle = Math.toRadians(pile * 30.0)
+                    (width / 2 + radius * sin(angle).toFloat()) to (height / 2 - radius * cos(angle).toFloat())
                 }
                 val cards = state.piles[pile]
-                Box(
-                    Modifier
-                        .offset(bounds.x, bounds.y)
-                        .size(bounds.width, bounds.height)
-                        .clickable(interactionSource = null, indication = null) {
-                            val next = if (pile == state.next) reveal(state) else null
-                            if (next == null) feedback.reject() else {
-                                feedback.move()
-                                play(next)
-                            }
-                        },
+                pile(
+                    cards = cards.map { it.card },
+                    x = cx - pileWidth / 2,
+                    y = cy - pileHeight / 2,
+                    cardWidth = cardWidth,
+                    faceDown = { !cards[it].faceUp },
+                    overlay = if (!over && pile == state.next) CardOverlay.Hint else null,
+                    z = if (pile == 0) 1f else 0f,
                 ) {
-                    CardPile(
-                        cards = cards.map { it.card },
-                        faceUp = { cards[it].faceUp },
-                        overlay = if (!over && pile == state.next) CardOverlay.Hint else null,
-                        modifier = Modifier.size(bounds.width, bounds.height),
-                    )
+                    feedback.tryMove(if (pile == state.next) reveal(state) else null, play)
                 }
             }
         }
     }
-
-    private const val GAP = 0.1f
 }

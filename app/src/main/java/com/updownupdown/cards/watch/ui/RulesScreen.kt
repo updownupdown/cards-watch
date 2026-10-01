@@ -32,7 +32,7 @@ fun RulesScreen(game: Game<*>) {
                     line.startsWith("## ") -> Text(
                         text = line.removePrefix("## "),
                         style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.primary,
+                        color = AppColors.PaleYellow,
                         modifier = transformed(spec).fillMaxWidth()
                             .padding(top = 8.dp, start = 14.dp, end = 14.dp),
                     )

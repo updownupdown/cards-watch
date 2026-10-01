@@ -1,18 +1,16 @@
 package com.updownupdown.cards.watch.games.beehive
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.updownupdown.cards.watch.cards.BoardText
 import com.updownupdown.cards.watch.cards.Card
-import com.updownupdown.cards.watch.cards.CardGrid
-import com.updownupdown.cards.watch.cards.CardPile
+import com.updownupdown.cards.watch.cards.CardLayout
+import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.tryMove
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
@@ -37,7 +35,6 @@ object Beehive : Game<BeehiveState> {
 
     // Board cells on a 3×3 grid.
     private const val BEEHIVE_CELL = 6
-    private const val STOCK_CELL = 7
     private const val WASTE_CELL = 8
 
     override val id = "beehive"
@@ -158,39 +155,27 @@ object Beehive : Game<BeehiveState> {
 
     override fun actions(state: BeehiveState) = listOf(
         GameAction<BeehiveState>(
-            label = if (state.stock.isEmpty()) "Recycle" else "Draw",
+            label = if (state.stock.isEmpty()) "Recycle" else "Draw (${state.stock.size})",
             enabled = state.stock.isNotEmpty() || state.waste.isNotEmpty(),
         ) { draw(it) },
     )
 
     @Composable
     override fun Board(state: BeehiveState, play: (BeehiveState) -> Unit, feedback: Feedback, modifier: Modifier) {
-        CardGrid(
-            columns = 3,
-            rows = 3,
-            modifier = modifier,
-            gap = 0.12f,
-            onTap = { cell ->
-                val next = when {
-                    outcome(state) != null -> null
-                    cell < TABLEAU -> joinPile(state, cell)
-                    cell == BEEHIVE_CELL -> playBeehive(state)
-                    cell == WASTE_CELL -> playWaste(state)
-                    else -> null
-                }
-                if (next == null) feedback.reject() else {
-                    feedback.move()
-                    play(next)
-                }
-            },
-        ) { cell ->
-            when {
-                cell < TABLEAU -> CardPile(state.tableau[cell])
-                cell == BEEHIVE_CELL -> CardPile(state.beehive, faceUp = { it == state.beehive.lastIndex })
-                cell == WASTE_CELL -> CardPile(state.waste)
-                cell == STOCK_CELL -> Box(contentAlignment = Alignment.Center) {
-                    BoardText("Stock\n${state.stock.size}")
-                }
+        val over = outcome(state) != null
+        CardTable(modifier) {
+            // Six piles above the beehive, the stock count and the waste.
+            val layout = CardLayout(3, 3, width, height, gap = 0.12f, extra = 0.1f)
+            fun x(cell: Int) = layout.x(cell % 3)
+            fun y(cell: Int) = layout.y(cell / 3)
+            state.tableau.forEachIndexed { i, pile ->
+                pile(pile, x(i), y(i), layout.cardWidth) { feedback.tryMove(if (over) null else joinPile(state, i), play) }
+            }
+            pile(state.beehive, x(BEEHIVE_CELL), y(BEEHIVE_CELL), layout.cardWidth, faceDown = { it != state.beehive.lastIndex }) {
+                feedback.tryMove(if (over) null else playBeehive(state), play)
+            }
+            pile(state.waste, x(WASTE_CELL), y(WASTE_CELL), layout.cardWidth) {
+                feedback.tryMove(if (over) null else playWaste(state), play)
             }
         }
     }

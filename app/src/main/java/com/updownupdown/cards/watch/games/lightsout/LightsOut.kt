@@ -3,13 +3,14 @@ package com.updownupdown.cards.watch.games.lightsout
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.updownupdown.cards.watch.cards.Card
-import com.updownupdown.cards.watch.cards.CardGrid
-import com.updownupdown.cards.watch.cards.PlayingCard
+import com.updownupdown.cards.watch.cards.CardLayout
+import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.tryMove
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
@@ -119,21 +120,16 @@ object LightsOut : Game<LightsOutState> {
 
     @Composable
     override fun Board(state: LightsOutState, play: (LightsOutState) -> Unit, feedback: Feedback, modifier: Modifier) {
-        CardGrid(
-            columns = SIZE,
-            rows = SIZE,
-            modifier = modifier,
-            gap = 0.1f,
-            onTap = { index ->
-                if (outcome(state) != null) {
-                    feedback.reject()
-                } else {
-                    feedback.move()
-                    play(tap(state, index))
+        CardTable(modifier) {
+            val layout = CardLayout(SIZE, SIZE, width, height, gap = 0.12f)
+            CARDS.forEachIndexed { i, card ->
+                val x = layout.xOf(i)
+                val y = layout.yOf(i)
+                card(card, card, x, y, layout.cardWidth, faceDown = !state.faceUp[i])
+                tap(x, y, layout.cardWidth, layout.cardHeight) {
+                    feedback.tryMove(if (outcome(state) != null) null else tap(state, i), play)
                 }
-            },
-        ) { index ->
-            PlayingCard(CARDS[index], faceDown = !state.faceUp[index])
+            }
         }
     }
 }

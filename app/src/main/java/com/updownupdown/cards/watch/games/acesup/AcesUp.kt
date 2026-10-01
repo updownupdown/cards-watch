@@ -1,25 +1,19 @@
 package com.updownupdown.cards.watch.games.acesup
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.updownupdown.cards.watch.cards.BoardText
 import com.updownupdown.cards.watch.cards.Card
-import com.updownupdown.cards.watch.cards.CardPile
+import com.updownupdown.cards.watch.cards.CardLayout
+import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.tryMove
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
@@ -100,28 +94,16 @@ object AcesUp : Game<AcesUpState> {
 
     @Composable
     override fun Board(state: AcesUpState, play: (AcesUpState) -> Unit, feedback: Feedback, modifier: Modifier) {
-        BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
-            val gap = 4.dp
-            val pileWidth = (maxWidth - gap * (PILES - 1)) / PILES
-            val pileHeight = pileWidth * 1.5f
-            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(gap)) {
-                    state.piles.forEachIndexed { index, pile ->
-                        CardPile(
-                            cards = pile,
-                            modifier = Modifier
-                                .size(pileWidth, pileHeight)
-                                .clickable(interactionSource = null, indication = null) {
-                                    val next = if (outcome(state) == null) tap(state, index) else null
-                                    if (next == null) feedback.reject() else {
-                                        feedback.move()
-                                        play(next)
-                                    }
-                                },
-                        )
-                    }
+        CardTable(
+            modifier,
+            overlay = { BoardText("${state.deck.size} in the deck", Modifier.align(Alignment.BottomCenter)) },
+        ) {
+            // The four piles side by side across the full width.
+            val layout = CardLayout(PILES, 1, width, height * 0.8f, gap = 0.12f, extra = 0.1f)
+            state.piles.forEachIndexed { index, pile ->
+                pile(pile, layout.x(index), layout.y(0), layout.cardWidth) {
+                    feedback.tryMove(if (outcome(state) == null) tap(state, index) else null, play)
                 }
-                BoardText("${state.deck.size} in the deck")
             }
         }
     }

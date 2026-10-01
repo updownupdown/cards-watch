@@ -23,6 +23,14 @@ android {
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
         }
+        // Release speed for testing on the watch: shrunk and optimised, not
+        // debuggable, signed with the debug key. Debug builds of Compose run
+        // many times slower than this.
+        create("fast") {
+            initWith(getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            matchingFallbacks += "release"
+        }
     }
 
     buildFeatures {
@@ -44,6 +52,8 @@ dependencies {
     implementation(libs.wear.compose.navigation)
     implementation(libs.wear.tooling.preview)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.wear)
+    implementation(libs.profileinstaller)
     debugImplementation(libs.compose.ui.tooling)
     debugImplementation(libs.compose.ui.test.manifest)
 

@@ -1,15 +1,13 @@
 package com.updownupdown.cards.watch.games.seer
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
@@ -23,15 +21,14 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.updownupdown.cards.watch.cards.BoardText
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardOverlay
-import com.updownupdown.cards.watch.cards.CardPile
-import com.updownupdown.cards.watch.cards.PlayingCard
-import com.updownupdown.cards.watch.cards.SlideSlot
+import com.updownupdown.cards.watch.cards.CardLayout
+import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.cards.fullDeck
 import com.updownupdown.cards.watch.cards.isRed
@@ -39,7 +36,9 @@ import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
-import com.updownupdown.cards.watch.ui.BottomActions
+import com.updownupdown.cards.watch.game.tryMove
+import com.updownupdown.cards.watch.ui.GameButton
+import com.updownupdown.cards.watch.ui.LocalBoardSize
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
@@ -82,7 +81,7 @@ object Seer : Game<SeerState> {
         "- On a miss, the card is discarded and the next card goes on the space face down as a **stone**. Three stones block a space.",
         "## Freeing stones",
         "- A match frees the top stone of each space directly above, below, left and right of it.",
-        "- The freed stones turn blue. Then choose: **Reveal** discards the freed stones face up; **Return** puts them face down under the stock.",
+        "- The freed stones turn yellow. Then choose: **Reveal** discards the freed stones face up; **Return** puts them face down under the stock.",
         "- Stones under a completed card are trapped.",
         "## Replaying",
         "- A completed space can be played again to free more stones.",
@@ -167,24 +166,30 @@ object Seer : Game<SeerState> {
             )
         }
 
+    /** The spaces' cards: four across, under a label strip, the same size as the turned-up card. */
+    private fun layout(board: Dp) = CardLayout(COLUMNS, 2, board, board - LABEL * 2, gap = 0.12f, extra = 0.1f)
+
+    private val LABEL = 18.dp
+
     @Composable
     override fun Bottom(state: SeerState, play: (SeerState) -> Unit, feedback: Feedback, size: DpSize) {
-        if (state.freed.isNotEmpty()) {
-            BottomActions(actions(state), null, state, play, feedback, size)
-        } else {
-            // The last card turned up, beside what's left of the stock.
-            Row(
-                Modifier.padding(top = 2.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                val height = size.height * 0.8f
-                Box(Modifier.size(height / 1.4f, height)) {
-                    SlideSlot(state.table.lastOrNull(), key = { it }) { card ->
-                        if (card != null) PlayingCard(card, Modifier.size(height / 1.4f, height))
-                    }
-                }
-                BoardText("Stock ${state.stock.size}")
+        // The last card turned up sits in the middle (drawn with the board);
+        // the choice for freed stones goes either side of it, or else the stock count.
+        val cardWidth = layout(LocalBoardSize.current).cardWidth
+        val side = (size.width - cardWidth) / 2 - 4.dp
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (state.freed.isNotEmpty()) {
+                GameButton("Reveal", { feedback.tryMove(dispose(state, toStock = false), play) }, side, size.height)
+                Spacer(Modifier.width(cardWidth + 8.dp))
+                GameButton("Return", { feedback.tryMove(dispose(state, toStock = true), play) }, side, size.height)
+            } else {
+                Spacer(Modifier.width(side + cardWidth + 8.dp))
+                BasicText(
+                    text = "${state.stock.size}\nleft",
+                    style = TextStyle(color = Color(0xFFC9C6D3), fontSize = 11.sp, lineHeight = 12.sp),
+                    softWrap = false,
+                    modifier = Modifier.width(side),
+                )
             }
         }
     }
@@ -210,50 +215,52 @@ object Seer : Game<SeerState> {
     @Composable
     override fun Board(state: SeerState, play: (SeerState) -> Unit, feedback: Feedback, modifier: Modifier) {
         BoxWithConstraints(modifier) {
-            val gap = 4.dp
-            val cellWidth = (maxWidth - gap * (COLUMNS - 1)) / COLUMNS
-            val cellHeight = (maxHeight - gap) / 2
-            val labelHeight = 20.dp
-            Column(verticalArrangement = Arrangement.spacedBy(gap)) {
-                for (row in 0 until 2) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(gap)) {
-                        for (col in 0 until COLUMNS) {
-                            val space = row * COLUMNS + col
-                            val pile = state.board[space]
-                            Column(
-                                Modifier
-                                    .size(cellWidth, cellHeight)
-                                    .clickable(interactionSource = null, indication = null) {
-                                        val next = predict(state, space)
-                                        when {
-                                            next == null -> feedback.reject()
-                                            next.table.size > state.table.size -> feedback.reject().also { play(next) }
-                                            else -> feedback.move().also { play(next) }
-                                        }
-                                    },
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                BasicText(
-                                    text = label(space),
-                                    style = TextStyle(fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, lineHeight = 9.sp),
-                                    maxLines = 2,
-                                    autoSize = TextAutoSize.StepBased(minFontSize = 6.sp, maxFontSize = 11.sp),
-                                    modifier = Modifier.fillMaxWidth().height(labelHeight),
-                                )
-                                CardPile(
-                                    cards = pile.map { it.card },
-                                    faceUp = { pile[it].faceUp },
-                                    overlay = when {
-                                        space in state.freed -> CardOverlay.Hint
-                                        isComplete(pile) -> CardOverlay.Good
-                                        isBlocked(pile) -> CardOverlay.Bad
-                                        else -> null
-                                    },
-                                    modifier = Modifier.size(cellWidth, cellHeight - labelHeight),
-                                )
-                            }
+            val layout = layout(maxWidth)
+            val rowHeight = LABEL + layout.cellHeight
+            CardTable(
+                Modifier.fillMaxSize(),
+                overlay = {
+                    for (space in 0 until SPACES) {
+                        BasicText(
+                            text = label(space),
+                            style = TextStyle(fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, lineHeight = 9.sp),
+                            maxLines = 2,
+                            autoSize = TextAutoSize.StepBased(minFontSize = 6.sp, maxFontSize = 11.sp),
+                            modifier = Modifier
+                                .offset(layout.xOf(space), rowHeight * (space / COLUMNS) + layout.gap * (space / COLUMNS))
+                                .size(layout.cellWidth, LABEL),
+                        )
+                    }
+                },
+            ) {
+                for (space in 0 until SPACES) {
+                    val pile = state.board[space]
+                    val x = layout.xOf(space)
+                    val y = LABEL + (rowHeight + layout.gap) * (space / COLUMNS)
+                    pile(
+                        cards = pile.map { it.card },
+                        x = x,
+                        y = y,
+                        cardWidth = layout.cardWidth,
+                        faceDown = { !pile[it].faceUp },
+                        overlay = when {
+                            space in state.freed -> CardOverlay.Hint
+                            isComplete(pile) -> CardOverlay.Good
+                            isBlocked(pile) -> CardOverlay.Bad
+                            else -> null
+                        },
+                    ) {
+                        val next = predict(state, space)
+                        when {
+                            next == null -> feedback.reject()
+                            next.table.size > state.table.size -> feedback.reject().also { play(next) }
+                            else -> feedback.move().also { play(next) }
                         }
                     }
+                }
+                // The last card turned up, in the middle of the crescent below.
+                state.table.lastOrNull()?.let {
+                    card(it, it, (width - layout.cardWidth) / 2, height + 2.dp, layout.cardWidth, z = 50f)
                 }
             }
         }

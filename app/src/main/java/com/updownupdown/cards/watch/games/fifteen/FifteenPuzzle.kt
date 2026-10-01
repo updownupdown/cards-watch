@@ -3,14 +3,15 @@ package com.updownupdown.cards.watch.games.fifteen
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.updownupdown.cards.watch.cards.Card
-import com.updownupdown.cards.watch.cards.CardGrid
+import com.updownupdown.cards.watch.cards.CardLayout
+import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.CardOverlay
-import com.updownupdown.cards.watch.cards.PlayingCard
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.tryMove
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
@@ -91,31 +92,21 @@ object FifteenPuzzle : Game<FifteenState> {
         if (state.moves == 1) "1 move" else "${state.moves} moves"
 
     @Composable
-    override fun Board(
-        state: FifteenState,
-        play: (FifteenState) -> Unit,
-        feedback: Feedback,
-        modifier: Modifier,
-    ) {
-        CardGrid(
-            columns = SIZE,
-            rows = SIZE,
-            modifier = modifier,
-            onTap = { index ->
-                val next = if (isSolved(state)) null else slide(state, index)
-                if (next != null) {
-                    feedback.move()
-                    play(next)
+    override fun Board(state: FifteenState, play: (FifteenState) -> Unit, feedback: Feedback, modifier: Modifier) {
+        CardTable(modifier) {
+            val layout = CardLayout(SIZE, SIZE, width, height)
+            state.cells.forEachIndexed { i, card ->
+                val x = layout.xOf(i)
+                val y = layout.yOf(i)
+                if (card == null) {
+                    slot(x, y, layout.cardWidth)
                 } else {
-                    feedback.reject()
+                    card(card, card, x, y, layout.cardWidth, overlay = if (card == SOLVED[i]) CardOverlay.Good else null)
                 }
-            },
-        ) { index ->
-            val card = state.cells[index]
-            PlayingCard(
-                card = card,
-                overlay = if (card != null && card == SOLVED[index]) CardOverlay.Good else null,
-            )
+                tap(x, y, layout.cardWidth, layout.cardHeight) {
+                    feedback.tryMove(if (isSolved(state)) null else slide(state, i), play)
+                }
+            }
         }
     }
 }

@@ -1,14 +1,6 @@
 package com.updownupdown.cards.watch.games.lycan
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,13 +10,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import com.updownupdown.cards.watch.cards.BoardText
 import com.updownupdown.cards.watch.cards.Card
-import com.updownupdown.cards.watch.cards.PlayingCard
+import com.updownupdown.cards.watch.cards.CARD_ASPECT
+import com.updownupdown.cards.watch.cards.CardTable
+import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.BottomActions
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -220,80 +215,40 @@ object Lycan : Game<LycanState> {
 
     @Composable
     override fun Board(state: LycanState, play: (LycanState) -> Unit, feedback: Feedback, modifier: Modifier) {
-        BoxWithConstraints(modifier) {
-            val gap = 3.dp
-            val columns = 5
-            val middle = 30.dp
-            val cardWidth = (maxWidth - gap * (columns - 1)) / columns
-            val wolfRows = maxOf(1, (state.wolf.size + columns - 1) / columns)
-            val playerRows = maxOf(1, (state.player.size + columns - 1) / columns)
-            val rows = wolfRows + playerRows
-            val cardHeight = min(cardWidth * 1.35f, (maxHeight - middle - gap * (rows + 1)) / rows)
-            val playing = state.roundResult == null && outcome(state) == null
-
-            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(gap)) {
-                Hand(state.wolf, state.pickedWolf, columns, cardWidth, cardHeight, gap) { id ->
-                    if (playing) {
-                        feedback.move()
-                        play(toggleWolf(state, id))
-                    } else {
-                        feedback.reject()
-                    }
-                }
-                Row(
-                    Modifier.fillMaxWidth().height(middle),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    state.deck.lastOrNull()?.let {
-                        PlayingCard(it.card, Modifier.size((middle - 2.dp) / 1.35f, middle - 2.dp))
-                    }
-                    val result = state.roundResult
-                    BoardText(
-                        when {
-                            result == null -> "You ${state.playerScore} · Wolf ${state.wolfScore}"
-                            result.won -> "Round won +${result.points}\nYou ${state.playerScore} · Wolf ${state.wolfScore}"
-                            else -> "Wolf +${result.points}\nYou ${state.playerScore} · Wolf ${state.wolfScore}"
-                        },
-                    )
-                }
-                Hand(state.player, state.pickedPlayer, columns, cardWidth, cardHeight, gap) { id ->
-                    if (playing) {
-                        feedback.move()
-                        play(togglePlayer(state, id))
-                    } else {
-                        feedback.reject()
+        val playing = state.roundResult == null && outcome(state) == null
+        val result = state.roundResult
+        CardTable(
+            modifier,
+            overlay = {
+                BoardText(
+                    when {
+                        result == null -> "You ${state.playerScore}\nWolf ${state.wolfScore}"
+                        result.won -> "Round +${result.points}\nYou ${state.playerScore} · Wolf ${state.wolfScore}"
+                        else -> "Wolf +${result.points}\nYou ${state.playerScore} · Wolf ${state.wolfScore}"
+                    },
+                    Modifier.align(Alignment.CenterEnd).fillMaxWidth(0.62f),
+                )
+            },
+        ) {
+            // Three rows of one card size: the Wolf's hand, the next card, yours.
+            val gap = 4.dp
+            val cardHeight = (height - gap * 2) / 3
+            val cardWidth = cardHeight / CARD_ASPECT
+            fun hand(cards: List<LycanCard>, picked: List<Int>, y: Dp, toggle: (LycanState, Int) -> LycanState) {
+                // One row, overlapping once it outgrows the width.
+                val step = if (cards.size > 1) min(cardWidth + gap, (width - cardWidth) / (cards.size - 1)) else 0.dp
+                val left = (width - step * (cards.size - 1) - cardWidth) / 2
+                cards.forEachIndexed { i, c ->
+                    val x = left + step * i
+                    card(c.id, c.card, x, y, cardWidth, z = i.toFloat(), selection = if (c.id in picked) Selection.Neutral else null)
+                    tap(x, y, if (i == cards.lastIndex) cardWidth else step, cardHeight) {
+                        if (playing) feedback.tryMove(toggle(state, c.id), play) else feedback.reject()
                     }
                 }
             }
-        }
-    }
-
-    @Composable
-    private fun Hand(
-        cards: List<LycanCard>,
-        picked: List<Int>,
-        columns: Int,
-        cardWidth: Dp,
-        cardHeight: Dp,
-        gap: Dp,
-        onTap: (Int) -> Unit,
-    ) {
-        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(gap)) {
-            if (cards.isEmpty()) Box(Modifier.height(cardHeight))
-            cards.chunked(columns).forEach { row ->
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(gap, Alignment.CenterHorizontally)) {
-                    row.forEach { card ->
-                        PlayingCard(
-                            card = card.card,
-                            selected = card.id in picked,
-                            modifier = Modifier
-                                .size(cardWidth, cardHeight)
-                                .clickable(interactionSource = null, indication = null) { onTap(card.id) },
-                        )
-                    }
-                }
-            }
+            hand(state.wolf, state.pickedWolf, 0.dp, ::toggleWolf)
+            state.deck.lastOrNull()?.let { card(it.id, it.card, width * 0.12f, cardHeight + gap, cardWidth) }
+            hand(state.player, state.pickedPlayer, (cardHeight + gap) * 2, ::togglePlayer)
         }
     }
 }

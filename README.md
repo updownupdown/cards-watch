@@ -24,6 +24,14 @@ the Solitarius phone app. Kotlin + Compose for Wear OS.
 If the watch drops off Wi-Fi, put it on its charger while testing. After a
 restart, `adb connect` again (the port changes).
 
+## Speed: use the `fast` build
+
+Debug builds of Compose run many times slower than release builds (no code
+shrinking or optimisation, debuggable runtime), and the debug APK is ~38 MB to
+push over Wi-Fi. To judge speed, switch **Build Variants** (View → Tool Windows
+→ Build Variants) to **fast**: optimised like a release, signed with the debug
+key, ~2 MB. Use **debug** only when you need the debugger.
+
 ## Emulator
 
 Device Manager → Create device → Wear OS → Small Round and Large Round. Good for

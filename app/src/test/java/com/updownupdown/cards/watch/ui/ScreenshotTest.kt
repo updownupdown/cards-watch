@@ -11,7 +11,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.wear.compose.material3.AppScaffold
-import androidx.wear.compose.material3.MaterialTheme
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.text.rememberTextMeasurer
+import com.updownupdown.cards.watch.cards.LocalCardText
 import androidx.wear.compose.material3.ScreenScaffold
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -56,10 +58,12 @@ class ScreenshotTest {
 
     private fun capture(name: String, content: @Composable () -> Unit) {
         compose.setContent {
-            MaterialTheme {
-                // Round mask, as the screen would clip it.
-                Box(Modifier.fillMaxSize().clip(CircleShape).background(Color.Black)) {
-                    AppScaffold { content() }
+            AppTheme {
+                CompositionLocalProvider(LocalCardText provides rememberTextMeasurer()) {
+                    // Round mask, as the screen would clip it.
+                    Box(Modifier.fillMaxSize().clip(CircleShape).background(Color.Black)) {
+                        AppScaffold { content() }
+                    }
                 }
             }
         }
@@ -124,4 +128,9 @@ class ScreenshotTest {
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
     fun rules() = capture("rules") { RulesScreen(FifteenPuzzle) }
+
+    @Test
+    fun ambient() = capture("ambient") { AmbientScreen("Tower of Hanoi") }
+
+    @Test fun hanoiMoved() = game(TowerOfHanoi, TowerOfHanoi.after({ TowerOfHanoi.move(it, 0, 1) }, { TowerOfHanoi.move(it, 0, 2) }))
 }

@@ -1,7 +1,6 @@
 package com.updownupdown.cards.watch.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -9,7 +8,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.updownupdown.cards.watch.game.GameSession
 
 @Composable
@@ -49,12 +47,11 @@ fun <S : Any> GameScreen(
         },
         bottom = { size ->
             if (outcome != null) {
-                ActionButton(
+                GameButton(
                     label = "New game",
                     onClick = { haptics.move(); session.newGame() },
-                    width = size.width * 0.7f,
-                    height = bottomButtonHeight(size),
-                    modifier = Modifier.padding(top = 4.dp),
+                    width = size.width,
+                    height = size.height,
                 )
             } else {
                 game.Bottom(state, session::play, haptics, size)

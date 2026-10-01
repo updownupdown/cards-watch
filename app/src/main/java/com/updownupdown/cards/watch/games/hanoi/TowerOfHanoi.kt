@@ -1,9 +1,5 @@
 package com.updownupdown.cards.watch.games.hanoi
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,12 +8,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.updownupdown.cards.watch.cards.Card
-import com.updownupdown.cards.watch.cards.CardFan
+import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.tryMove
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
@@ -33,6 +30,7 @@ object TowerOfHanoi : Game<HanoiState> {
     override val id = "tower-of-hanoi"
     override val title = "Tower of Hanoi"
     override val stateSerializer: KSerializer<HanoiState> = HanoiState.serializer()
+    override val saveVersion = 2
 
     override val rules = listOf(
         "## Objective",
@@ -44,7 +42,7 @@ object TowerOfHanoi : Game<HanoiState> {
     )
 
     override fun newGame(random: Random): HanoiState {
-        val cards = RANKS.map { Card(it, Suit.Clubs) }.shuffled(random)
+        val cards = RANKS.map { Card(it, Suit.Spades) }.shuffled(random)
         return HanoiState(cards.chunked(3))
     }
 
@@ -74,36 +72,25 @@ object TowerOfHanoi : Game<HanoiState> {
     @Composable
     override fun Board(state: HanoiState, play: (HanoiState) -> Unit, feedback: Feedback, modifier: Modifier) {
         var selected by remember(state) { mutableStateOf<Int?>(null) }
-        Row(modifier, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        CardTable(modifier) {
+            val gap = 6.dp
+            val cardWidth = (width - gap * (PILES - 1)) / PILES
             state.piles.forEachIndexed { index, pile ->
-                CardFan(
-                    cards = pile,
-                    selectedFrom = if (selected == index) pile.lastIndex else null,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxHeight()
-                        .clickable(interactionSource = null, indication = null) {
-                            val from = selected
-                            when {
-                                outcome(state) != null -> feedback.reject()
-                                from == null && pile.isNotEmpty() -> {
-                                    feedback.move()
-                                    selected = index
-                                }
-                                from == null -> feedback.reject()
-                                from == index -> selected = null
-                                else -> {
-                                    val next = move(state, from, index)
-                                    if (next == null) {
-                                        feedback.reject()
-                                    } else {
-                                        feedback.move()
-                                        play(next)
-                                    }
-                                }
-                            }
-                        },
-                )
+                val x = (cardWidth + gap) * index
+                fan(pile, x, 0.dp, cardWidth, height, selectedFrom = if (selected == index) pile.lastIndex else null)
+                tap(x, 0.dp, cardWidth, height) {
+                    val from = selected
+                    when {
+                        outcome(state) != null -> feedback.reject()
+                        from == null && pile.isNotEmpty() -> {
+                            feedback.move()
+                            selected = index
+                        }
+                        from == null -> feedback.reject()
+                        from == index -> selected = null
+                        else -> feedback.tryMove(move(state, from, index), play)
+                    }
+                }
             }
         }
     }

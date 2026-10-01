@@ -5,20 +5,20 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.text.BasicText
-import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -32,20 +32,29 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.GameAction
+import kotlin.math.sqrt
 
 /** The board's side as a fraction of the screen's diameter. */
 const val BOARD_FRACTION = 0.64f
 
+/** The space between the board and the top of the bottom buttons. */
+private val BOTTOM_PAD = 3.dp
+
+/** The board's side, for games laying out the bottom crescent to match their cards. */
+val LocalBoardSize = staticCompositionLocalOf { 0.dp }
+
 /**
- * Every game's screen: a square board in the middle, with the home button
+ * Every game's screen: a square board in the middle, with the home icon
  * above it, undo to its left, rules to its right, and [bottom] (a status or
- * an action button) in the crescent below.
+ * buttons) in the crescent below. [bottom] gets the width that fits inside
+ * the round screen at the foot of a button, and the button height.
  */
 @Composable
 fun GameLayout(
@@ -62,48 +71,46 @@ fun GameLayout(
         val boardSize = diameter * BOARD_FRACTION
         // The depth of the space between the board and the screen's edge.
         val band = (diameter - boardSize) / 2
-        val button = min(band * 0.86f, 40.dp)
-        val inset = (band - button) / 2
+        val icon = min(band * 0.8f, 36.dp)
+        val inset = (band - icon) / 2
 
-        Box(Modifier.align(Alignment.Center).size(boardSize), content = board)
+        // Above the rest, so a card can sit over the bottom buttons (a drawn card).
+        Box(Modifier.align(Alignment.Center).size(boardSize).zIndex(1f), content = board)
 
-        RoundButton(
-            icon = R.drawable.ic_home,
-            label = "Home",
-            onClick = onHome,
-            size = button,
-            modifier = Modifier.align(Alignment.TopCenter).offset(y = inset),
-        )
-        RoundButton(
-            icon = R.drawable.ic_undo,
-            label = "Undo. Hold for a new game",
-            onClick = onUndo,
+        PlainIcon(R.drawable.ic_home, "Home", onHome, icon, Modifier.align(Alignment.TopCenter).offset(y = inset))
+        PlainIcon(
+            R.drawable.ic_undo,
+            "Undo. Hold for a new game",
+            onUndo,
+            icon,
+            Modifier.align(Alignment.CenterStart).offset(x = inset),
             onLongClick = onUndoHold,
-            size = button,
             dimmed = !canUndo,
-            modifier = Modifier.align(Alignment.CenterStart).offset(x = inset),
         )
-        RoundButton(
-            icon = R.drawable.ic_rules,
-            label = "Rules",
-            onClick = onRules,
-            size = button,
-            modifier = Modifier.align(Alignment.CenterEnd).offset(x = -inset),
-        )
-        // The crescent is as wide as the screen where it meets the board.
-        val bottomWidth = diameter * 0.74f
+        PlainIcon(R.drawable.ic_rules, "Rules", onRules, icon, Modifier.align(Alignment.CenterEnd).offset(x = -inset))
+
+        // The widest a button can be and still clear the round edge at its foot.
+        val buttonHeight = min(band * 0.58f, 28.dp)
+        val radius = diameter / 2
+        val foot = boardSize / 2 + BOTTOM_PAD + buttonHeight
+        val halfWidth = sqrt((radius.value * radius.value - foot.value * foot.value).coerceAtLeast(0f)).dp - 6.dp
         Box(
-            Modifier.align(Alignment.BottomCenter).size(bottomWidth, band),
+            Modifier
+                .align(Alignment.TopCenter)
+                .offset(y = radius + boardSize / 2 + BOTTOM_PAD)
+                .size(halfWidth * 2, band),
             contentAlignment = Alignment.TopCenter,
         ) {
-            bottom(DpSize(bottomWidth, band))
+            CompositionLocalProvider(LocalBoardSize provides boardSize) {
+                bottom(DpSize(halfWidth * 2, buttonHeight))
+            }
         }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun RoundButton(
+private fun PlainIcon(
     @DrawableRes icon: Int,
     label: String,
     onClick: () -> Unit,
@@ -115,9 +122,9 @@ private fun RoundButton(
     Box(
         modifier
             .size(size)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceContainer)
             .combinedClickable(
+                interactionSource = null,
+                indication = null,
                 role = Role.Button,
                 onClickLabel = label,
                 onLongClick = onLongClick,
@@ -128,29 +135,29 @@ private fun RoundButton(
         Icon(
             painter = painterResource(icon),
             contentDescription = label,
-            tint = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.size(size * 0.55f).alpha(if (dimmed) 0.35f else 1f),
+            tint = AppColors.Icon,
+            modifier = Modifier.size(size * 0.66f).alpha(if (dimmed) 0.35f else 1f),
         )
     }
 }
 
-/** A short line of text for the bottom crescent, such as a move count. */
+/** A short line of text for the bottom crescent, shrinking to fit. */
 @Composable
-fun StatusText(text: String) {
+fun StatusText(text: String, width: Dp) {
     val style = MaterialTheme.typography.labelMedium
-    // Shrinks to fit the crescent rather than being cut off.
     BasicText(
         text = text,
         style = style.copy(color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center),
         maxLines = 1,
-        autoSize = TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = style.fontSize),
-        modifier = Modifier.padding(top = 6.dp).fillMaxWidth(0.72f),
+        softWrap = false,
+        autoSize = TextAutoSize.StepBased(minFontSize = 7.sp, maxFontSize = style.fontSize),
+        modifier = Modifier.padding(top = 4.dp).size(width, 20.dp),
     )
 }
 
-/** A pill-shaped button for the bottom crescent, such as "Deal". */
+/** A pill-shaped button inside a game, such as "Deal". */
 @Composable
-fun ActionButton(
+fun GameButton(
     label: String,
     onClick: () -> Unit,
     width: Dp,
@@ -162,24 +169,20 @@ fun ActionButton(
         modifier
             .size(width, height)
             .clip(RoundedCornerShape(50))
-            .background(MaterialTheme.colorScheme.primary)
-            .alpha(if (enabled) 1f else 0.4f)
+            .background(if (enabled) AppColors.GameButton else AppColors.GameButtonDisabled)
             .combinedClickable(enabled = enabled, role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
+        BasicText(
             text = label,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onPrimary,
+            style = MaterialTheme.typography.labelMedium.copy(color = AppColors.DeepBlue, textAlign = TextAlign.Center),
             maxLines = 1,
+            autoSize = TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = MaterialTheme.typography.labelMedium.fontSize),
         )
     }
 }
 
-/** The height of a button in the bottom crescent of the given [size]. */
-fun bottomButtonHeight(size: DpSize): Dp = min(size.height * 0.7f, 32.dp)
-
-/** One or two action buttons side by side, or else a status line. */
+/** One or two game buttons side by side, or else a status line. */
 @Composable
 fun <S> BottomActions(
     actions: List<GameAction<S>>,
@@ -190,29 +193,24 @@ fun <S> BottomActions(
     size: DpSize,
 ) {
     when (actions.size) {
-        0 -> status?.let { StatusText(it) }
+        0 -> status?.let { StatusText(it, size.width) }
         1 -> {
             val action = actions[0]
-            ActionButton(
+            GameButton(
                 label = action.label,
                 onClick = { feedback.move(); play(action.perform(state)) },
-                width = size.width * 0.7f,
-                height = bottomButtonHeight(size),
+                width = size.width,
+                height = size.height,
                 enabled = action.enabled,
-                modifier = Modifier.padding(top = 4.dp),
             )
         }
-        // Two buttons sit higher and smaller, clear of the screen's curve.
-        else -> Row(
-            Modifier.padding(top = 2.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
+        else -> Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             actions.take(2).forEach { action ->
-                ActionButton(
+                GameButton(
                     label = action.label,
                     onClick = { feedback.move(); play(action.perform(state)) },
-                    width = size.width * 0.37f,
-                    height = min(size.height * 0.6f, 26.dp),
+                    width = (size.width - 4.dp) / 2,
+                    height = size.height,
                     enabled = action.enabled,
                 )
             }
@@ -227,13 +225,13 @@ fun BoxScope.BoardBanner(text: String) {
         Modifier
             .align(Alignment.Center)
             .clip(RoundedCornerShape(12.dp))
-            .background(Color.Black.copy(alpha = 0.8f))
+            .background(Color.Black.copy(alpha = 0.82f))
             .padding(horizontal = 10.dp, vertical = 8.dp),
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.titleSmall,
-            color = Color.White,
+            color = AppColors.PaleYellow,
             textAlign = TextAlign.Center,
         )
     }

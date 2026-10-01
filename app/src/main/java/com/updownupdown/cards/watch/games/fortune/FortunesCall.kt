@@ -2,25 +2,24 @@ package com.updownupdown.cards.watch.games.fortune
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardOverlay
-import com.updownupdown.cards.watch.cards.PlayingCard
-import com.updownupdown.cards.watch.cards.SlideSlot
+import com.updownupdown.cards.watch.cards.CARD_ASPECT
+import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.isRed
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
-import com.updownupdown.cards.watch.ui.ActionButton
+import com.updownupdown.cards.watch.ui.GameButton
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
@@ -102,51 +101,48 @@ object FortunesCall : Game<FortuneState> {
 
     @Composable
     override fun Board(state: FortuneState, play: (FortuneState) -> Unit, feedback: Feedback, modifier: Modifier) {
-        BoxWithConstraints(modifier) {
-            val gap = 6.dp
-            val cardHeight = maxHeight * 0.56f
-            val cardWidth = cardHeight / 1.4f
-            val buttonHeight = (maxHeight - cardHeight - gap * 2) / 2
-            val buttonWidth = (maxWidth - gap) / 2
-            Column(verticalArrangement = Arrangement.spacedBy(gap)) {
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(gap, Alignment.CenterHorizontally),
+        val gap = 6.dp
+        CardTable(
+            modifier,
+            overlay = {
+                // The four calls under the cards.
+                Column(
+                    Modifier.align(Alignment.BottomCenter).fillMaxWidth().fillMaxHeight(0.42f),
+                    verticalArrangement = Arrangement.spacedBy(gap, Alignment.Bottom),
                 ) {
-                    Box(Modifier.size(cardWidth, cardHeight)) {
-                        state.previous?.let {
-                            PlayingCard(
-                                card = it,
-                                overlay = if (state.lastCorrect == true) CardOverlay.Good else CardOverlay.Bad,
-                                modifier = Modifier.size(cardWidth, cardHeight),
-                            )
-                        }
-                    }
-                    SlideSlot(state.anchor, key = { it }) {
-                        PlayingCard(it, Modifier.size(cardWidth, cardHeight))
-                    }
-                }
-                Call.entries.chunked(2).forEach { pair ->
-                    Row(horizontalArrangement = Arrangement.spacedBy(gap)) {
-                        pair.forEach { call ->
-                            ActionButton(
-                                label = call.label,
-                                width = buttonWidth,
-                                height = buttonHeight,
-                                enabled = outcome(state) == null,
-                                onClick = {
-                                    val next = call(state, call)
-                                    when {
-                                        next == null -> feedback.reject()
-                                        next.lastCorrect == true -> feedback.move().also { play(next) }
-                                        else -> feedback.reject().also { play(next) }
-                                    }
-                                },
-                            )
+                    Call.entries.chunked(2).forEach { pair ->
+                        Row(Modifier.fillMaxWidth().weight(1f), horizontalArrangement = Arrangement.spacedBy(gap)) {
+                            pair.forEach { call ->
+                                Box(Modifier.weight(1f).fillMaxHeight()) {
+                                    GameButton(
+                                        label = call.label,
+                                        width = 200.dp,
+                                        height = 200.dp,
+                                        enabled = outcome(state) == null,
+                                        modifier = Modifier.matchParentSize(),
+                                        onClick = {
+                                            val next = call(state, call)
+                                            when {
+                                                next == null -> feedback.reject()
+                                                next.lastCorrect == true -> feedback.move().also { play(next) }
+                                                else -> feedback.reject().also { play(next) }
+                                            }
+                                        },
+                                    )
+                                }
+                            }
                         }
                     }
                 }
+            },
+        ) {
+            val cardHeight = height * 0.56f
+            val cardWidth = cardHeight / CARD_ASPECT
+            val left = width / 2 - cardWidth - gap / 2
+            state.previous?.let {
+                card(it, it, left, 0.dp, cardWidth, overlay = if (state.lastCorrect == true) CardOverlay.Good else CardOverlay.Bad)
             }
+            card(state.anchor, state.anchor, width / 2 + gap / 2, 0.dp, cardWidth)
         }
     }
 }

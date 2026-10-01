@@ -1,13 +1,9 @@
 package com.updownupdown.cards.watch.games.rogue
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,17 +11,17 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.updownupdown.cards.watch.cards.BoardText
 import com.updownupdown.cards.watch.cards.Card
-import com.updownupdown.cards.watch.cards.CardFan
-import com.updownupdown.cards.watch.cards.CardGrid
-import com.updownupdown.cards.watch.cards.PlayingCard
+import com.updownupdown.cards.watch.cards.CardLayout
+import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
-import com.updownupdown.cards.watch.cards.SlideSlot
+import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.cards.fullDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.BottomActions
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -249,47 +245,37 @@ object RogueRun : Game<RogueState> {
 
     @Composable
     override fun Board(state: RogueState, play: (RogueState) -> Unit, feedback: Feedback, modifier: Modifier) {
-        BoxWithConstraints(modifier) {
-            val gap = 6.dp
-            val roomHeight = maxHeight * 0.5f
-            val lowerHeight = maxHeight - roomHeight - gap
-            val cardWidth = (maxWidth - gap * 3) / ROOM
-            Column(verticalArrangement = Arrangement.spacedBy(gap)) {
-                CardGrid(
-                    columns = ROOM,
-                    rows = 1,
-                    modifier = Modifier.fillMaxWidth().height(roomHeight),
-                    onTap = { index ->
-                        val next = if (outcome(state) == null) select(state, index) else null
-                        if (next == null) feedback.reject() else {
-                            feedback.move()
-                            play(next)
-                        }
-                    },
-                ) { index ->
-                    SlideSlot(state.room[index], key = { it }) { card ->
-                        PlayingCard(card, selected = card != null && state.selected == index)
-                    }
-                }
-                Row(
-                    Modifier.fillMaxWidth().height(lowerHeight),
-                    horizontalArrangement = Arrangement.spacedBy(gap),
-                    verticalAlignment = Alignment.CenterVertically,
+        CardTable(
+            modifier,
+            overlay = {
+                Column(
+                    Modifier.align(Alignment.BottomEnd).fillMaxWidth(0.7f).fillMaxHeight(0.45f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    // The weapon, with the last monster it killed over it.
-                    Box(Modifier.size(cardWidth, lowerHeight)) {
-                        CardFan(
-                            cards = listOfNotNull(state.weapon, state.weaponUsedOn.lastOrNull()),
-                            modifier = Modifier.size(cardWidth, lowerHeight),
-                        )
-                    }
-                    Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                        BoardText("Health ${state.health}/$MAX_HEALTH")
-                        BoardText("Room ${state.roomNumber + state.roomsSkipped} of ${totalRooms + state.roomsSkipped}")
-                        BoardText("${state.deck.size} cards left")
-                    }
+                    BoardText("Health ${state.health}/$MAX_HEALTH")
+                    BoardText("Room ${state.roomNumber + state.roomsSkipped} of ${totalRooms + state.roomsSkipped}")
+                    BoardText("${state.deck.size} cards left")
+                }
+            },
+        ) {
+            val layout = CardLayout(ROOM, 1, width, height * 0.5f, gap = 0.12f)
+            val roomY = 0.dp
+            state.room.forEachIndexed { i, card ->
+                val x = layout.x(i)
+                if (card != null) {
+                    card(card, card, x, roomY, layout.cardWidth, selection = if (state.selected == i) Selection.Neutral else null)
+                } else {
+                    slot(x, roomY, layout.cardWidth)
+                }
+                tap(x, roomY, layout.cardWidth, layout.cardHeight) {
+                    feedback.tryMove(if (outcome(state) == null) select(state, i) else null, play)
                 }
             }
+            // The weapon, with the monsters it has killed over it.
+            val lowerY = layout.cardHeight + layout.gap * 2
+            val weapon = listOfNotNull(state.weapon) + state.weaponUsedOn
+            fan(weapon, layout.x(0), lowerY, layout.cardWidth, height - lowerY)
         }
     }
 }

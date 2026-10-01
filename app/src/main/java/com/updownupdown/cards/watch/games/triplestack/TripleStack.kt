@@ -1,31 +1,22 @@
 package com.updownupdown.cards.watch.games.triplestack
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.updownupdown.cards.watch.cards.BoardText
 import com.updownupdown.cards.watch.cards.Card
-import com.updownupdown.cards.watch.cards.CardGrid
-import com.updownupdown.cards.watch.cards.CardOverlay
-import com.updownupdown.cards.watch.cards.PlayingCard
-import com.updownupdown.cards.watch.cards.SlideSlot
+import com.updownupdown.cards.watch.cards.CardLayout
+import com.updownupdown.cards.watch.cards.CardTable
+import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.isRed
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
-import com.updownupdown.cards.watch.ui.ActionButton
-import com.updownupdown.cards.watch.ui.bottomButtonHeight
+import com.updownupdown.cards.watch.game.tryMove
+import com.updownupdown.cards.watch.ui.GameButton
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlin.random.Random
@@ -129,53 +120,42 @@ object TripleStack : Game<TripleStackState> {
 
     @Composable
     override fun Bottom(state: TripleStackState, play: (TripleStackState) -> Unit, feedback: Feedback, size: DpSize) {
-        ActionButton(
-            label = "Serve",
-            enabled = isSandwich(selectedCards(state)),
-            width = size.width * 0.7f,
-            height = bottomButtonHeight(size),
-            onClick = {
-                val next = serve(state)
-                if (next == null) feedback.reject() else {
-                    feedback.move()
-                    play(next)
-                }
-            },
-            modifier = Modifier.padding(top = 4.dp),
+        val picked = selectedCards(state)
+        val earned = if (isSandwich(picked)) refills(picked) else 0
+        GameButton(
+            label = "Serve ($earned)",
+            enabled = earned > 0,
+            width = size.width,
+            height = size.height,
+            onClick = { feedback.tryMove(serve(state), play) },
         )
     }
 
     @Composable
     override fun Board(state: TripleStackState, play: (TripleStackState) -> Unit, feedback: Feedback, modifier: Modifier) {
         val picked = selectedCards(state)
-        val pickedOverlay = when {
-            picked.size < 3 -> null
-            isSandwich(picked) -> CardOverlay.Good
-            else -> CardOverlay.Bad
+        val selection = when {
+            picked.size < 3 -> Selection.Neutral
+            isSandwich(picked) -> Selection.Valid
+            else -> Selection.Invalid
         }
-        Column(modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            CardGrid(
-                columns = 4,
-                rows = 2,
-                modifier = Modifier.fillMaxWidth().weight(1f),
-                onTap = { index ->
-                    val next = toggle(state, index)
-                    if (next == null) feedback.reject() else {
-                        feedback.move()
-                        play(next)
-                    }
-                },
-            ) { index ->
-                SlideSlot(state.hand[index], key = { it }) { card ->
-                    val isPicked = index in state.selected && card == state.hand[index]
-                    PlayingCard(
-                        card = card,
-                        selected = isPicked,
-                        overlay = if (isPicked) pickedOverlay else null,
-                    )
+        CardTable(
+            modifier,
+            overlay = { BoardText("Ingredients ${state.deck.size}", Modifier.align(Alignment.TopCenter)) },
+        ) {
+            // The hand, centred below the ingredients count.
+            val label = 16.dp
+            val layout = CardLayout(4, 2, width, height - label * 2)
+            state.hand.forEachIndexed { i, card ->
+                val x = layout.xOf(i)
+                val y = label + layout.yOf(i)
+                if (card != null) {
+                    card(card, card, x, y, layout.cardWidth, selection = if (i in state.selected) selection else null)
+                } else {
+                    slot(x, y, layout.cardWidth)
                 }
+                tap(x, y, layout.cardWidth, layout.cardHeight) { feedback.tryMove(toggle(state, i), play) }
             }
-            BoardText("Ingredients ${state.deck.size}")
         }
     }
 }

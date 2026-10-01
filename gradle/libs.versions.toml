@@ -7,6 +7,8 @@ wearCompose = "1.7.0"
 wearToolingPreview = "1.0.0"
 serializationJson = "1.11.0"
 junit = "4.13.2"
+wear = "1.4.0"
+profileinstaller = "1.4.1"
 robolectric = "4.17"
 roborazzi = "1.76.0"
 
@@ -21,6 +23,8 @@ wear-compose-foundation = { module = "androidx.wear.compose:compose-foundation",
 wear-compose-navigation = { module = "androidx.wear.compose:compose-navigation", version.ref = "wearCompose" }
 wear-tooling-preview = { module = "androidx.wear:wear-tooling-preview", version.ref = "wearToolingPreview" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serializationJson" }
+wear = { module = "androidx.wear:wear", version.ref = "wear" }
+profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
 junit = { module = "junit:junit", version.ref = "junit" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 roborazzi = { module = "io.github.takahirom.roborazzi:roborazzi", version.ref = "roborazzi" }
