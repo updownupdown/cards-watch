@@ -6,11 +6,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
-import com.updownupdown.cards.watch.cards.CardStyle
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Suit
@@ -29,11 +28,11 @@ data class HanoiState(val piles: List<List<Card>>, val moves: Int = 0)
 object TowerOfHanoi : Game<HanoiState> {
     const val PILES = 3
     /** A card's width, × the board's. */
-    private const val CARD_WIDTH = 0.219f
+    private const val CARD_WIDTH = 0.18f
     /** The gap between piles, × the board's width. */
     private const val PILE_GAP = 0.073f
-    /** How far down each card sits from the one above, × a card's height: more than other fans. */
-    private const val SPREAD = CardStyle.FAN_SPREAD * 1.52f
+    /** How far down each card sits from the one above, × a card's height: enough to show each card's rank, even past the board's foot. */
+    private const val SPREAD = 0.56f
 
     /** One suit for each few ranks, always the same, to tell the cards apart. */
     fun suitOf(rank: Rank) = when (rank.value) {
@@ -47,18 +46,19 @@ object TowerOfHanoi : Game<HanoiState> {
     override val id = "tower-of-hanoi"
     override val thumbnail = R.drawable.thumb_tower_of_hanoi
     override val banner = R.drawable.banner_tower_of_hanoi
-    override val accent = Color(0xFF25483F)
+    override val accent = R.color.game_tower_of_hanoi
+    override val accentPale = R.color.game_tower_of_hanoi_pale
     override val title = "Tower of Hanoi"
     override val stateSerializer: KSerializer<HanoiState> = HanoiState.serializer()
     override val saveVersion = 3
 
     override val rules = listOf(
         "## Objective",
-        "Build one pile ordered from **9** at the bottom up to **Ace** at the top.",
+        "Build one pile ordered from **9** to **Ace**.",
         "## Gameplay",
-        "- Tap a pile to pick up its top card, then tap the pile to put it on.",
-        "- A card goes on an empty pile or on a card of **higher rank**.",
-        "- There is no losing: keep moving until the tower is built.",
+        "Tap a pile to pick up its top card, then tap another pile to move it there.",
+        "A card can be moved to an empty pile, or on a card of **higher rank**.",
+        "There is no losing: keep moving until the tower is built.",
     )
 
     override fun newGame(random: Random): HanoiState {
@@ -103,7 +103,7 @@ object TowerOfHanoi : Game<HanoiState> {
             val left = (width - cardWidth * PILES - gap * (PILES - 1)) / 2
             state.piles.forEachIndexed { index, pile ->
                 val x = left + (cardWidth + gap) * index
-                fan(pile, x, 0.dp, cardWidth, height, selectedFrom = if (selected == index) pile.lastIndex else null, spread = SPREAD)
+                fan(pile, x, 0.dp, cardWidth, Dp.Infinity, selectedFrom = if (selected == index) pile.lastIndex else null, spread = SPREAD)
                 tap(x, 0.dp, cardWidth, height) {
                     val from = selected
                     when {

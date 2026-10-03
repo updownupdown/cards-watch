@@ -3,7 +3,6 @@ package com.updownupdown.cards.watch.games.memory
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardLayout
@@ -42,7 +41,8 @@ object Memory : Game<MemoryState> {
     override val id = "memory"
     override val thumbnail = R.drawable.thumb_memory
     override val banner = R.drawable.banner_memory
-    override val accent = Color(0xFF40392A)
+    override val accent = R.color.game_memory
+    override val accentPale = R.color.game_memory_pale
     override val title = "Memory"
     override val stateSerializer: KSerializer<MemoryState> = MemoryState.serializer()
     override val saveVersion = 2
@@ -51,9 +51,8 @@ object Memory : Game<MemoryState> {
         "## Objective",
         "Clear the board by finding all matching pairs.",
         "## Matching",
-        "- Tap a card to turn it over, then tap a second card.",
-        "- A pair must match in both rank and suit.",
-        "- A matching pair turns green and leaves on your next tap; a pair that doesn't match turns red and turns back over.",
+        "Tap a card to turn it over, then tap a second card.",
+        "A pair must match in **both rank and suit**.",
     )
 
     override fun newGame(random: Random): MemoryState {

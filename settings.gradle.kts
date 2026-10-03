@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "cards-watch"
 include(":app")
+include(":baselineprofile")

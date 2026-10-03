@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -15,26 +16,31 @@ import androidx.compose.ui.test.onRoot
 import androidx.wear.compose.material3.AppScaffold
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.captureRoboImage
+import com.updownupdown.cards.watch.cards.Card
+import com.updownupdown.cards.watch.cards.Rank
+import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameSession
 import com.updownupdown.cards.watch.game.GameStats
 import com.updownupdown.cards.watch.game.SavedGame
+import com.updownupdown.cards.watch.games.accordion.Accordion
 import com.updownupdown.cards.watch.games.acesup.AcesUp
 import com.updownupdown.cards.watch.games.baroness.Baroness
 import com.updownupdown.cards.watch.games.beehive.Beehive
 import com.updownupdown.cards.watch.games.clock.Clock
 import com.updownupdown.cards.watch.games.dominion.Dominion
+import com.updownupdown.cards.watch.games.ebbandflow.EbbAndFlow
 import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
 import com.updownupdown.cards.watch.games.fifteen.FifteenState
 import com.updownupdown.cards.watch.games.fortune.Call
 import com.updownupdown.cards.watch.games.fortune.FortunesCall
+import com.updownupdown.cards.watch.games.fourseasons.FourSeasons
 import com.updownupdown.cards.watch.games.hanoi.TowerOfHanoi
+import com.updownupdown.cards.watch.games.jailbreak.Jailbreak
 import com.updownupdown.cards.watch.games.lightsout.LightsOut
 import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.memory.Memory
-import com.updownupdown.cards.watch.cards.Card
-import com.updownupdown.cards.watch.cards.Rank
-import com.updownupdown.cards.watch.cards.Suit
+import com.updownupdown.cards.watch.games.nestor.Nestor
 import com.updownupdown.cards.watch.games.rogue.RogueRun
 import com.updownupdown.cards.watch.games.rogue.RogueState
 import com.updownupdown.cards.watch.games.seer.Seer
@@ -68,6 +74,8 @@ class ScreenshotTest {
                 }
             }
         }
+        // Long enough for a result to come up after a winning move.
+        compose.mainClock.advanceTimeBy(2_000)
         compose.onRoot().captureRoboImage("build/outputs/roborazzi/$name.png")
     }
 
@@ -90,7 +98,10 @@ class ScreenshotTest {
 
     @Test
     fun fifteenWon() = capture("fifteen_won") {
-        val session = GameSession(FifteenPuzzle, SavedGame(1, FifteenState(FifteenPuzzle.SOLVED, moves = 87))) {}
+        // One slide from solved, then that slide.
+        val nearly = FifteenPuzzle.slide(FifteenState(FifteenPuzzle.SOLVED, moves = 85), 14)!!
+        val session = GameSession(FifteenPuzzle, SavedGame(1, nearly)) {}
+        LaunchedEffect(Unit) { session.play(FifteenPuzzle.slide(session.state, 15)!!) }
         GameScreen(session, {})
     }
 
@@ -133,12 +144,28 @@ class ScreenshotTest {
 
     @Test fun lycan() = game(Lycan, Lycan.after({ Lycan.togglePlayer(it, it.player[0].id) }))
 
+    @Test fun ebbAndFlow() = game(EbbAndFlow)
+
+    @Test
+    fun ebbAndFlowPlayed() = capture("ebb-and-flow_played") {
+        val state = EbbAndFlow.after({ EbbAndFlow.play(it, it.hand.first(), 0) }, { EbbAndFlow.play(it, it.hand.last(), 2) })
+        GameScreen(GameSession(EbbAndFlow, SavedGame(EbbAndFlow.saveVersion, state)) {}, {})
+    }
+
+    @Test fun fourSeasons() = game(FourSeasons, FourSeasons.after({ FourSeasons.draw(it) }, { FourSeasons.draw(it) }))
+
+    @Test fun nestor() = game(Nestor)
+
+    @Test fun jailbreak() = game(Jailbreak, Jailbreak.after({ Jailbreak.draw(it) }, { Jailbreak.draw(it) }))
+
+    @Test fun accordion() = game(Accordion)
+
     @Test fun fortune() = game(FortunesCall, FortunesCall.after({ FortunesCall.call(it, Call.Red) }))
 
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
     fun home() = capture("home") {
-        HomeScreen(lastGame = FifteenPuzzle, onOpen = {})
+        HomeScreen(recent = listOf(FifteenPuzzle, Seer), pinned = listOf(Lycan.id), onOpen = {}, onPin = {}, haptics = true, onHaptics = {})
     }
 
     @Test

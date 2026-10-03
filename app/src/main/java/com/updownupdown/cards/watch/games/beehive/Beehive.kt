@@ -1,15 +1,21 @@
 package com.updownupdown.cards.watch.games.beehive
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.min
 import com.updownupdown.cards.watch.R
-import com.updownupdown.cards.watch.cards.CARD_ASPECT
+import kotlinx.coroutines.delay
 import com.updownupdown.cards.watch.cards.Card
+import com.updownupdown.cards.watch.cards.CardLayout
 import com.updownupdown.cards.watch.cards.CardStyle
 import com.updownupdown.cards.watch.cards.CardTable
-import com.updownupdown.cards.watch.cards.pileEdge
+import com.updownupdown.cards.watch.cards.RoundScreen
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
@@ -45,20 +51,20 @@ object Beehive : Game<BeehiveState> {
     override val id = "beehive"
     override val thumbnail = R.drawable.thumb_beehive
     override val banner = R.drawable.banner_beehive
-    override val accent = Color(0xFF5A2A1A)
+    override val accent = R.color.game_beehive
+    override val accentPale = R.color.game_beehive_pale
     override val title = "Beehive"
     override val stateSerializer: KSerializer<BeehiveState> = BeehiveState.serializer()
 
     override val rules = listOf(
         "## Objective",
         "Clear all 52 cards by gathering sets of four cards of the same rank.",
-        "## Board",
-        "- The six piles on the left hold one rank each. A set of four is cleared at once.",
-        "- Top right is the **beehive**; under it is the **waste**, its last three cards spread out with the top one lowest.",
-        "## Playing",
-        "- Tap the beehive or the waste to move its top card onto a pile of the same rank, or else into an empty pile.",
-        "- Tap a pile to join it to another pile of the same rank.",
-        "- Tap **Draw** to turn up three cards from the stock onto the waste. When the stock runs out, **Recycle** turns the waste back over.",
+        "## Gameplay",
+        "The six piles in the middle hold one rank each. A set of four is cleared at once.",
+        "The **beehive** is on the left; the **waste** runs down the right. The stock is not shown.",
+        "Tap the beehive or the waste to move its top card onto a pile of the same rank, or else into an empty pile.",
+        "Tap a pile to join it to another pile of the same rank.",
+        "Tap **Draw** to turn up three cards from the stock onto the waste. When the stock runs out, **Recycle** turns the waste back over, and draws again.",
     )
 
     override fun newGame(random: Random): BeehiveState {
@@ -168,63 +174,100 @@ object Beehive : Game<BeehiveState> {
         ) { draw(it) },
     )
 
+    private const val COLUMNS = 2
+    private const val ROWS = 3
     private const val GAP = 0.12f
-    /** The gap between the piles and the column to their right, × a card's width. */
-    private const val COLUMN_GAP = 0.6f
     /** How many of the waste's cards show. */
     private const val WASTE_SHOWN = 3
+    /** How much of each waste card the next one covers, × a card's height. */
+    private const val WASTE_OVERLAP = 0.35f
+    /** How far the beehive and the waste sit in from the screen's edge, towards the grid, × a card's width. */
+    private const val SIDE_PULL = 0.4f
     /** The cards' height, × the board's: short of its foot, to stand clear of the Draw button. */
     private const val BOARD_HEIGHT = 0.9f
+    /** How long a recycle waits before it draws. */
+    private const val RECYCLE_DRAW_MS = 300L
+
+    /**
+     * Where everything sits on a board [board] wide and [high] high: the
+     * grid of piles in the middle, as large as the height allows, with the
+     * beehive to its left and the waste in a column to its right, each a little
+     * in from as far out as the round screen allows, and the same gap from it.
+     */
+    private class Places(board: Dp, high: Dp) {
+        private val grid = CardLayout(COLUMNS, ROWS, board, high * BOARD_HEIGHT, gap = GAP, extra = CardStyle.PILE_OFFSET)
+        val width = grid.cardWidth
+        val height = grid.cardHeight
+        private val gridWidth = grid.cellWidth * COLUMNS + grid.gap * (COLUMNS - 1)
+        val gridHeight = grid.cellHeight * ROWS + grid.gap * (ROWS - 1)
+        val gridTop = grid.y(0)
+        private val gridLeft = (board - gridWidth) / 2
+
+        /**
+         * The waste's three places, overlapping, centred on the grid. They're
+         * fixed, so the first card stays put however many there are.
+         */
+        private val wasteStep = height * (1 - WASTE_OVERLAP)
+        private val wasteTop = gridTop + (gridHeight - height - wasteStep * (WASTE_SHOWN - 1)) / 2
+        val wasteY = List(WASTE_SHOWN) { wasteTop + wasteStep * it }
+
+        val beehiveY = gridTop + (gridHeight - grid.cellHeight) / 2
+        private val screen = RoundScreen(board)
+        private val side = min(
+            gridLeft - grid.cellWidth - screen.left(beehiveY, beehiveY + grid.cellHeight),
+            screen.right(wasteTop, wasteY.last() + height) - width - (gridLeft + gridWidth),
+        ) - width * SIDE_PULL
+        val beehiveX = gridLeft - side - grid.cellWidth
+        val wasteX = gridLeft + gridWidth + side
+
+        fun pileX(index: Int) = gridLeft + (grid.cellWidth + grid.gap) * (index % COLUMNS)
+        fun pileY(index: Int) = grid.yOf(index)
+    }
 
     @Composable
     override fun Board(state: BeehiveState, play: (BeehiveState) -> Unit, feedback: Feedback, modifier: Modifier) {
         val over = outcome(state) != null
+
+        // A recycle then draws, after a short wait.
+        var before by remember { mutableStateOf(state) }
+        LaunchedEffect(state) {
+            val recycled = before.stock.isEmpty() && before.waste.isNotEmpty() && state.waste.isEmpty() && state.stock.isNotEmpty()
+            before = state
+            if (recycled && !over) {
+                delay(RECYCLE_DRAW_MS)
+                play(draw(state))
+            }
+        }
+
         CardTable(modifier) {
-            val height = height * BOARD_HEIGHT
-            // Six piles, two across and three down, on the left. To their right, well apart,
-            // the beehive at the top and the waste spread downwards from the middle row.
-            val edge = CardStyle.PILE_OFFSET
-            val cardWidth = min(
-                width / (3 * (1 + edge) + GAP + COLUMN_GAP),
-                height / (3 * (CARD_ASPECT + edge) + 2 * GAP),
-            )
-            val gap = cardWidth * GAP
-            val cellWidth = cardWidth * (1 + edge)
-            val cellHeight = cardWidth * (CARD_ASPECT + edge)
-            val cardHeight = cardWidth * CARD_ASPECT
-            val left = (width - cellWidth * 3 - gap - cardWidth * COLUMN_GAP) / 2
-            val top = (height - cellHeight * 3 - gap * 2) / 2
-            fun rowY(row: Int) = top + (cellHeight + gap) * row
+            val places = Places(width, height)
+            val cardWidth = places.width
             state.tableau.forEachIndexed { i, pile ->
-                pile(pile, left + (cellWidth + gap) * (i % 2), rowY(i / 2), cardWidth) {
+                pile(pile, places.pileX(i), places.pileY(i), cardWidth) {
                     feedback.tryMove(if (over) null else joinPile(state, i), play)
                 }
             }
-            val rightX = left + cellWidth * 2 + gap + cardWidth * COLUMN_GAP
-            pile(state.beehive, rightX, rowY(0), cardWidth, faceDown = { it != state.beehive.lastIndex }) {
+            pile(state.beehive, places.beehiveX, places.beehiveY, cardWidth, faceDown = { it != state.beehive.lastIndex }) {
                 feedback.tryMove(if (over) null else playBeehive(state), play)
             }
             // The waste's older cards stay under its first place, so cards glide in and out.
-            // Its first card is level with the middle row, and its third with the bottom one.
-            val wasteY = rowY(1) + pileEdge(cardWidth)
-            val step = (cellHeight + gap) / (WASTE_SHOWN - 1)
             val hidden = (state.waste.size - WASTE_SHOWN).coerceAtLeast(0)
             state.waste.forEachIndexed { i, card ->
-                val covered = i != state.waste.lastIndex
+                val place = (i - hidden).coerceAtLeast(0)
                 card(
                     key = card,
                     card = card,
-                    x = rightX,
-                    y = wasteY + step * (i - hidden).coerceAtLeast(0),
+                    x = places.wasteX,
+                    y = places.wasteY[place],
                     width = cardWidth,
                     z = i * 0.01f,
-                    under = covered,
+                    under = i != state.waste.lastIndex,
                     // The stock is off to the right.
                     fromRight = true,
                 )
             }
-            if (state.waste.isEmpty()) slot(rightX, wasteY, cardWidth)
-            tap(rightX, wasteY, cardWidth, cardHeight + step * (WASTE_SHOWN - 1)) {
+            slot(places.wasteX, places.wasteY[0], cardWidth)
+            tap(places.wasteX, places.gridTop, cardWidth, places.gridHeight) {
                 feedback.tryMove(if (over) null else playWaste(state), play)
             }
         }

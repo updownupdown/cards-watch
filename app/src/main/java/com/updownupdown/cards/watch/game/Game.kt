@@ -1,5 +1,6 @@
 package com.updownupdown.cards.watch.game
 
+import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -32,8 +33,13 @@ interface Game<S : Any> {
     @get:DrawableRes
     val banner: Int
 
-    /** A dark colour from that picture, laid over it on the button so the title reads. */
-    val accent: Color
+    /** A dark colour from that picture (in colors.xml), laid over it on the button so the title reads. */
+    @get:ColorRes
+    val accent: Int
+
+    /** The same colour made pale, for the game's action button and its rules' headings. */
+    @get:ColorRes
+    val accentPale: Int
 
     /** Rules text: "## " starts a heading, "- " a bullet, **text** is bold. */
     val rules: List<String>

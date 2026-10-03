@@ -2,7 +2,6 @@ package com.updownupdown.cards.watch.games.fifteen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardLayout
@@ -35,7 +34,8 @@ object FifteenPuzzle : Game<FifteenState> {
     override val id = "fifteen-puzzle"
     override val thumbnail = R.drawable.thumb_fifteen_puzzle
     override val banner = R.drawable.banner_fifteen_puzzle
-    override val accent = Color(0xFF5A3414)
+    override val accent = R.color.game_fifteen_puzzle
+    override val accentPale = R.color.game_fifteen_puzzle_pale
     override val title = "Fifteen Puzzle"
     override val stateSerializer: KSerializer<FifteenState> = FifteenState.serializer()
 
@@ -47,9 +47,9 @@ object FifteenPuzzle : Game<FifteenState> {
         "- **Diamonds**",
         "- **Spades** (there is no 4 of Spades)",
         "## Gameplay",
-        "- Tap a card above, below, left or right of the gap to slide it into the gap.",
-        "- Cards turn green when they are in their place.",
-        "- Every puzzle is shuffled with legal moves, so it can always be solved.",
+        "Tap a card above, below, left or right of the gap to slide it into the gap.",
+        "Cards turn green when they are in their place.",
+        "Every puzzle is shuffled with legal moves, so it can always be solved.",
     )
 
     fun neighbours(index: Int): List<Int> {
@@ -109,11 +109,9 @@ object FifteenPuzzle : Game<FifteenState> {
             state.cells.forEachIndexed { i, card ->
                 val x = layout.xOf(i)
                 val y = layout.yOf(i)
-                if (card == null) {
-                    slot(x, y, layout.cardWidth)
-                } else {
-                    card(card, card, x, y, layout.cardWidth, overlay = if (card == SOLVED[i]) CardOverlay.Good else null)
-                }
+                // Each place shows under its card, so it looks the same while cards come and go.
+                slot(x, y, layout.cardWidth)
+                if (card != null) card(card, card, x, y, layout.cardWidth, overlay = if (card == SOLVED[i]) CardOverlay.Good else null)
                 tap(x, y, layout.cardWidth, layout.cardHeight) {
                     feedback.tryMove(if (isSolved(state)) null else slide(state, i), play)
                 }

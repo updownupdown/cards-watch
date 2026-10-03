@@ -2,7 +2,6 @@ package com.updownupdown.cards.watch.games.lightsout
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardLayout
@@ -37,7 +36,8 @@ object LightsOut : Game<LightsOutState> {
     override val id = "lights-out"
     override val thumbnail = R.drawable.thumb_lights_out
     override val banner = R.drawable.banner_lights_out
-    override val accent = Color(0xFF46303A)
+    override val accent = R.color.game_lights_out
+    override val accentPale = R.color.game_lights_out_pale
     override val title = "Lights Out"
     override val stateSerializer: KSerializer<LightsOutState> = LightsOutState.serializer()
     override val saveVersion = 2
@@ -46,9 +46,8 @@ object LightsOut : Game<LightsOutState> {
         "## Objective",
         "Turn all 20 cards face down.",
         "## Gameplay",
-        "- Tapping a card turns over that card and the cards directly above, below, left and right of it.",
-        "- Diagonal cards are not affected.",
-        "- Every deal is made by tapping a finished board, so it can always be solved.",
+        "Tapping a card turns over that card, and orthogonal cards.",
+        "Every deal can be solved.",
     )
 
     /** The cards shown when face up: a fixed pattern, as in the phone game. */

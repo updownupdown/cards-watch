@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardLayout
@@ -33,20 +32,19 @@ object Baroness : Game<BaronessState> {
     override val id = "baroness"
     override val thumbnail = R.drawable.thumb_baroness
     override val banner = R.drawable.banner_baroness
-    override val accent = Color(0xFF1F2647)
+    override val accent = R.color.game_baroness
+    override val accentPale = R.color.game_baroness_pale
     override val title = "Baroness"
     override val stateSerializer: KSerializer<BaronessState> = BaronessState.serializer()
 
     override val rules = listOf(
         "## Objective",
-        "- **Win** by discarding all 52 cards.",
-        "- **Lose** when the stock is empty and no move is left.",
-        "## Discarding",
-        "- Tap a **King** to discard it.",
-        "- Tap two top cards that add up to **13** to discard them. Aces are worth 1, Jacks 11 and Queens 12.",
-        "- Only the top card of each pile can be played.",
-        "- To fill an empty pile, tap a top card, then the empty pile.",
-        "- When you're stuck, tap **Deal** for one more card on each pile.",
+        "**Win** by discarding all 52 cards.",
+        "**Lose** when the stock is empty and no move is left.",
+        "## Gameplay",
+        "Tap a **King**, or two top cards that add up to **13**, to discard them. Aces are worth 1, Jacks 11, and Queens 12.",
+        "To fill an empty pile, tap a card, then the empty pile.",
+        "When stuck, tap **Deal** to deal one per pile.",
     )
 
     override fun newGame(random: Random) = deal(BaronessState(List(PILES) { emptyList() }, shuffledDeck(random)))
@@ -113,14 +111,14 @@ object Baroness : Game<BaronessState> {
     override fun Board(state: BaronessState, play: (BaronessState) -> Unit, feedback: Feedback, modifier: Modifier) {
         var selected by remember(state) { mutableStateOf<Int?>(null) }
         CardTable(modifier) {
-            // Three piles in a row, over two centred under them.
+            // Two piles centred in a row, over three under them.
             val layout = CardLayout(3, 2, width, height, gap = 0.12f, extra = CardStyle.PILE_OFFSET)
             val step = layout.cellWidth + layout.gap
             state.piles.forEachIndexed { index, pile ->
                 pile(
                     cards = pile,
-                    x = if (index < 3) layout.x(index) else layout.x(index - 3) + step / 2,
-                    y = layout.y(index / 3),
+                    x = if (index < 2) layout.x(index) + step / 2 else layout.x(index - 2),
+                    y = layout.y(if (index < 2) 0 else 1),
                     cardWidth = layout.cardWidth,
                     selection = if (selected == index) Selection.Neutral else null,
                 ) {

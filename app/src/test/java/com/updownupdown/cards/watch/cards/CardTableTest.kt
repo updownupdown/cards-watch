@@ -39,6 +39,7 @@ class CardTableTest {
 
     private var laid by mutableStateOf(listOf<TableCard>())
     private var undoing by mutableStateOf(false)
+    private var deal by mutableStateOf(0)
 
     private fun at(card: Card, x: Int, y: Int = 0, removal: Removal = Removal.Discard, from: DpOffset? = null, fromRight: Boolean = false) =
         TableCard(card, card, x.dp, y.dp, 20.dp, removal = removal, from = from, fromRight = fromRight)
@@ -47,7 +48,7 @@ class CardTableTest {
         laid = first.toList()
         compose.mainClock.autoAdvance = false
         compose.setContent {
-            CompositionLocalProvider(LocalUndoing provides undoing) {
+            CompositionLocalProvider(LocalUndoing provides undoing, LocalDeal provides deal) {
                 CardTable(Modifier.size(150.dp)) { laid.forEach { card(it) } }
             }
         }
@@ -107,6 +108,21 @@ class CardTableTest {
         settle()
         node(two).assertDoesNotExist()
         assertAt(ace, 10)
+    }
+
+    @Test
+    fun aNewDealClearsTheTableBeforeItArrives() {
+        show(at(ace, 10, removal = Removal.Vanish))
+        deal++
+        change(next = listOf(at(three, 40)))
+        compose.mainClock.advanceTimeBy(CARD_MOVE_MS / 2L)
+        assertTrue("the old card slides right, though it would vanish in play", place(ace).x > px(10))
+        assertTrue("the new card waits off screen", place(three).x < 0)
+        compose.mainClock.advanceTimeBy(CARD_MOVE_MS / 2L + CARD_CLEAR_PAUSE_MS / 2L)
+        node(ace).assertDoesNotExist()
+        assertTrue("and still waits", place(three).x < 0)
+        settle()
+        assertAt(three, 40)
     }
 
     @Test

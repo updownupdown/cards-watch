@@ -1,15 +1,13 @@
 package com.updownupdown.cards.watch.ui
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollScope
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +26,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,11 +36,11 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
@@ -49,7 +48,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.LifecycleResumeEffect
-import androidx.wear.compose.foundation.rememberActiveFocusRequester
+import androidx.wear.compose.foundation.requestFocusOnHierarchyActive
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material3.Icon
@@ -58,6 +57,7 @@ import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.CARD_MOVE_MS
+import com.updownupdown.cards.watch.cards.LocalDeal
 import com.updownupdown.cards.watch.cards.LocalUndoing
 import com.updownupdown.cards.watch.game.GameSession
 import com.updownupdown.cards.watch.game.GameStats
@@ -65,10 +65,8 @@ import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.formatTime
 import kotlin.math.max
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 
 /** How far towards the Reset and Undo buttons a drag must go to stay there, as a fraction of the way. */
 private const val SNAP_DRAG = 0.6f
@@ -83,15 +81,25 @@ private const val SETTLE_MS = 400L
 private val ACTIONS_TOP = 14.dp
 private val ACTIONS_HEIGHT = 40.dp
 private const val ACTIONS_AT = 0.72f
-/** How long the reset button must be held, and how long its hint shows. */
-private const val RESET_HOLD_MS = 2000
+/** How long the reset button's hint shows. */
 private const val HINT_MS = 2500L
-/** The Home and Play Again buttons' height. */
+/** The gap between the result's message, its buttons and the score, and the buttons' height. */
+private val RESULT_GAP = 16.dp
 private val RESULT_BUTTON = 44.dp
 /** The space between those buttons and the game's title, where the reset hint shows. */
 private val RULES_TOP = 30.dp
 /** How long after the last move the result comes up, so the move can be seen. */
 private const val RESULT_DELAY_MS = CARD_MOVE_MS + 500L
+
+/**
+ * How far a board with more cards than it has room for (Accordion) is scrolled:
+ * such a board scrolls by this, so the crown can turn it too. Null off the
+ * game's screen (asleep), where it keeps its own.
+ */
+val LocalBoardScroll = compositionLocalOf<ScrollState?> { null }
+
+/** Whether a board scrolls by this: until one is laid out with it, it would take any scroll, having no end. */
+private val ScrollState.inUse: Boolean get() = viewportSize > 0
 
 /**
  * How far down the view snaps to from the board, on a screen [page] pixels
@@ -114,6 +122,14 @@ fun <S : Any> GameScreen(
     scroll: ScrollState = rememberScrollState(),
     stats: GameStats = GameStats(),
 ) {
+    // The game's buttons and headings take its pale colour.
+    CompositionLocalProvider(LocalGameAccent provides colorResource(session.game.accentPale)) {
+        GameScreenContent(session, onHome, scroll, stats)
+    }
+}
+
+@Composable
+private fun <S : Any> GameScreenContent(session: GameSession<S>, onHome: () -> Unit, scroll: ScrollState, stats: GameStats) {
     val haptics = rememberHaptics()
     val game = session.game
     val state = session.state
@@ -122,7 +138,12 @@ fun <S : Any> GameScreen(
     // Buzz when a move ends the game, but not when opening an ended game,
     // then show the result once the last move has played out.
     var wasOver by remember { mutableStateOf(outcome != null) }
-    var showResult by remember { mutableStateOf(outcome != null) }
+    var showResult by remember { mutableStateOf(false) }
+    // Coming back to a finished game (having left its result unanswered) starts a new one.
+    val cameBackOver = remember { outcome != null }
+    LaunchedEffect(Unit) {
+        if (cameBackOver) session.newGame()
+    }
     LaunchedEffect(outcome) {
         if (outcome == null) {
             showResult = false
@@ -141,6 +162,7 @@ fun <S : Any> GameScreen(
     }
 
     val scope = rememberCoroutineScope()
+    val boardScroll = rememberScrollState()
     val toBoard: () -> Unit = { scope.launch { scroll.animateScrollTo(0) } }
 
     // No time from the scaffold: the board carries its own, so it scrolls away with it.
@@ -151,6 +173,19 @@ fun <S : Any> GameScreen(
             val flick = with(density) { FLICK_SPEED.toPx() }
             val rulesFling = ScrollableDefaults.flingBehavior()
             val fling = remember(scroll, stop, flick, rulesFling) { BoardSnap(scroll, stop, flick, rulesFling) }
+            // The crown turns a board that scrolls (Accordion) to its foot before it moves the
+            // view, and brings the view back to the board before the board's cards.
+            val crown = remember(scroll, boardScroll) {
+                ScrollableState { delta ->
+                    // Most boards don't scroll, and the board's state, never laid out, would take everything.
+                    if (!boardScroll.inUse) return@ScrollableState scroll.dispatchRawDelta(delta)
+                    val (first, then) = if (delta > 0) boardScroll to scroll else scroll to boardScroll
+                    val used = first.dispatchRawDelta(delta)
+                    used + then.dispatchRawDelta(delta - used)
+                }
+            }
+            val crownFling = remember(scroll, boardScroll, fling, rulesFling) { CrownFling(scroll, boardScroll, fling, rulesFling) }
+            val crownFocus = remember { FocusRequester() }
 
             // The crown has no release to snap on: settle once it rests between the two.
             LaunchedEffect(scroll, stop) {
@@ -179,8 +214,17 @@ fun <S : Any> GameScreen(
             Column(
                 Modifier
                     .fillMaxSize()
-                    .verticalScroll(scroll, flingBehavior = fling)
-                    .rotaryScrollable(RotaryScrollableDefaults.behavior(scroll, flingBehavior = fling), rememberActiveFocusRequester()),
+                    // The result has to be answered first: no scrolling away from it.
+                    .verticalScroll(scroll, enabled = !showResult, flingBehavior = fling)
+                    .then(
+                        if (showResult) {
+                            Modifier
+                        } else {
+                            Modifier
+                                .requestFocusOnHierarchyActive()
+                                .rotaryScrollable(RotaryScrollableDefaults.behavior(crown, flingBehavior = crownFling), crownFocus)
+                        },
+                    ),
             ) {
                 Box(Modifier.fillMaxWidth().height(this@BoxWithConstraints.maxHeight)) {
                     GameLayout(
@@ -188,7 +232,7 @@ fun <S : Any> GameScreen(
                         boardLift = game.boardLift,
                         bottom = { size -> game.Bottom(state, session::play, haptics, size) },
                     ) {
-                        CompositionLocalProvider(LocalUndoing provides session.undone) {
+                        CompositionLocalProvider(LocalUndoing provides session.undone, LocalDeal provides session.deal, LocalBoardScroll provides boardScroll) {
                             game.Board(state, session::play, haptics, Modifier.fillMaxSize())
                         }
                     }
@@ -201,7 +245,6 @@ fun <S : Any> GameScreen(
                             ).joinToString("  -  "),
                             onNewGame = { haptics.move(); session.newGame() },
                             onHome = { haptics.press(); onHome() },
-                            onDismiss = { showResult = false },
                         )
                     }
                 }
@@ -220,7 +263,7 @@ fun <S : Any> GameScreen(
                     ResetButton(
                         size = ACTIONS_HEIGHT,
                         onTap = { hint = true },
-                        onHeld = {
+                        onDoubleTap = {
                             haptics.longPress()
                             hint = false
                             session.newGame()
@@ -236,9 +279,9 @@ fun <S : Any> GameScreen(
                 Box(Modifier.fillMaxWidth().height(RULES_TOP), contentAlignment = Alignment.Center) {
                     if (hint) {
                         Text(
-                            text = "Hold ${RESET_HOLD_MS / 1000}s to reset game",
+                            text = "Double-tap to reset game",
                             style = MaterialTheme.typography.labelSmall,
-                            color = AppColors.PaleYellow,
+                            color = LocalGameAccent.current,
                         )
                     }
                 }
@@ -248,64 +291,44 @@ fun <S : Any> GameScreen(
     }
 }
 
-/**
- * The round button that deals a new game once it's been held for
- * [RESET_HOLD_MS], filling as it's held. A tap only says so ([onTap]).
- */
+/** The round button that deals a new game when it's tapped twice. One tap only says so ([onTap]). */
 @Composable
-private fun ResetButton(size: Dp, onTap: () -> Unit, onHeld: () -> Unit) {
-    val held = remember { Animatable(0f) }
+private fun ResetButton(size: Dp, onTap: () -> Unit, onDoubleTap: () -> Unit) {
     Box(
         Modifier
             .size(size)
             .clip(CircleShape)
             .background(AppColors.ListButton)
-            .drawBehind { drawRect(AppColors.Bad.copy(alpha = 0.6f), size = this.size.copy(height = this.size.height * held.value), topLeft = Offset(0f, this.size.height * (1 - held.value))) }
-            .pointerInput(Unit) {
-                coroutineScope {
-                    detectTapGestures(
-                        onPress = {
-                            val filling = launch { held.animateTo(1f, tween(RESET_HOLD_MS, easing = LinearEasing)) }
-                            val released = withTimeoutOrNull(RESET_HOLD_MS.toLong()) { tryAwaitRelease() }
-                            filling.cancel()
-                            held.snapTo(0f)
-                            when (released) {
-                                null -> onHeld()
-                                true -> onTap()
-                                else -> {}
-                            }
-                        },
-                    )
-                }
-            },
+            // A lone tap is only reported once the time for a second has passed.
+            .pointerInput(Unit) { detectTapGestures(onTap = { onTap() }, onDoubleTap = { onDoubleTap() }) },
         contentAlignment = Alignment.Center,
     ) {
-        Icon(painterResource(R.drawable.ic_reset), contentDescription = "Reset. Hold to deal a new game", tint = AppColors.ListButtonText, modifier = Modifier.size(size * 0.5f))
+        Icon(painterResource(R.drawable.ic_reset), contentDescription = "Reset. Double-tap to deal a new game", tint = AppColors.ListButtonText, modifier = Modifier.size(size * 0.5f))
     }
 }
 
 /**
  * How the game ended, over the board: the message, what to do next, and
- * [detail] (the score and time). Tapping anywhere else puts it away, to look
- * at the final board.
+ * [detail] (the score and time). It stays until one of the two is chosen.
  */
 @Composable
-private fun ResultScreen(outcome: Outcome, detail: String, onNewGame: () -> Unit, onHome: () -> Unit, onDismiss: () -> Unit) {
+private fun ResultScreen(outcome: Outcome, detail: String, onNewGame: () -> Unit, onHome: () -> Unit) {
     BoxWithConstraints(
         Modifier
             .fillMaxSize()
             .zIndex(2f)
             .background(Color.Black.copy(alpha = 0.86f))
-            .clickable(interactionSource = null, indication = null, onClick = onDismiss),
+            // Taps go no further: the board under it isn't to be played.
+            .clickable(interactionSource = null, indication = null, onClick = {}),
         contentAlignment = Alignment.Center,
     ) {
         // Play Again has the longer name, so the larger share.
         val row = maxWidth * 0.86f - 6.dp
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(verticalArrangement = Arrangement.spacedBy(RESULT_GAP), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = outcome.message,
                 style = MaterialTheme.typography.titleSmall,
-                color = AppColors.PaleYellow,
+                color = LocalGameAccent.current,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 26.dp),
             )
@@ -315,6 +338,29 @@ private fun ResultScreen(outcome: Outcome, detail: String, onNewGame: () -> Unit
             }
             Text(detail, style = MaterialTheme.typography.labelMedium, color = AppColors.TextMuted)
         }
+    }
+}
+
+/**
+ * The crown's fling: while the view is at the board and the board's own cards
+ * can still scroll that way, they coast ([coast]), going no further than
+ * their end; otherwise the view does as it would for a finger ([snap]).
+ */
+private class CrownFling(
+    private val scroll: ScrollState,
+    private val boardScroll: ScrollState,
+    private val snap: FlingBehavior,
+    private val coast: FlingBehavior,
+) : FlingBehavior {
+    override suspend fun ScrollScope.performFling(initialVelocity: Float): Float {
+        val onBoard = scroll.value == 0 && boardScroll.inUse &&
+            if (initialVelocity > 0) boardScroll.canScrollForward else boardScroll.canScrollBackward
+        if (!onBoard) return with(snap) { performFling(initialVelocity) }
+        val cards = object : ScrollScope {
+            override fun scrollBy(pixels: Float) = boardScroll.dispatchRawDelta(pixels)
+        }
+        with(coast) { cards.performFling(initialVelocity) }
+        return 0f
     }
 }
 

@@ -1,6 +1,8 @@
 package com.updownupdown.cards.watch.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,7 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
@@ -33,8 +38,8 @@ import androidx.compose.ui.zIndex
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.EdgeButton
 import androidx.wear.compose.material3.EdgeButtonSize
+import androidx.wear.compose.material3.LocalTextStyle
 import androidx.wear.compose.material3.MaterialTheme
-import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TimeText
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.GameAction
@@ -59,6 +64,9 @@ private val EDGE_BUTTON = 44.dp
 
 /** The board's side, for games laying out text or the bottom crescent to match their cards. */
 val LocalBoardSize = staticCompositionLocalOf { 0.dp }
+
+/** The colour of the buttons of the game on screen: its pale accent. */
+val LocalGameAccent = staticCompositionLocalOf { AppColors.GameButton }
 
 /**
  * Every game's screen: a square board in the middle, with the time above it
@@ -128,7 +136,7 @@ fun StatusText(text: String, width: Dp) {
  * the foot of the round screen.
  */
 @Composable
-fun BottomButton(label: String, onClick: () -> Unit, enabled: Boolean = true, color: Color = AppColors.GameButton) {
+fun BottomButton(label: String, onClick: () -> Unit, enabled: Boolean = true, color: Color = LocalGameAccent.current) {
     BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
         EdgeButton(
             onClick = onClick,
@@ -143,7 +151,15 @@ fun BottomButton(label: String, onClick: () -> Unit, enabled: Boolean = true, co
                 disabledContentColor = AppColors.GameButtonText,
             ),
         ) {
-            Text(label, maxLines = 1)
+            // Shrinks to fit, so a longer label ("Draw (45)") isn't cut short.
+            val style = LocalTextStyle.current
+            BasicText(
+                text = label,
+                style = style.copy(color = AppColors.GameButtonText, textAlign = TextAlign.Center),
+                maxLines = 1,
+                softWrap = false,
+                autoSize = TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = style.fontSize),
+            )
         }
     }
 }
@@ -157,8 +173,14 @@ fun GameButton(
     height: Dp,
     enabled: Boolean = true,
     modifier: Modifier = Modifier,
-    color: Color = AppColors.GameButton,
+    color: Color = LocalGameAccent.current,
     textColor: Color = AppColors.GameButtonText,
+    /** Drawn in place of the [label], which still names the button to a screen reader. */
+    icon: (@Composable BoxScope.() -> Unit)? = null,
+    /** Fully rounded, but where a game asks for another shape (Fortune's Call). */
+    shape: Shape = CircleShape,
+    /** A line round the button, to stand it apart from what it lies over. */
+    border: BorderStroke? = null,
 ) {
     // Asleep, a button keeps its place but isn't drawn.
     if (LocalAmbient.current) {
@@ -168,17 +190,23 @@ fun GameButton(
     Box(
         modifier
             .size(width, height)
-            .clip(CircleShape)
+            .then(if (border != null) Modifier.border(border, shape) else Modifier)
+            .clip(shape)
             .background(if (enabled) color else color.copy(alpha = 0.4f))
+            .then(if (icon != null) Modifier.semantics { contentDescription = label } else Modifier)
             .combinedClickable(enabled = enabled, role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        BasicText(
-            text = label,
-            style = MaterialTheme.typography.labelMedium.copy(color = textColor, textAlign = TextAlign.Center),
-            maxLines = 1,
-            autoSize = TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = MaterialTheme.typography.labelMedium.fontSize),
-        )
+        if (icon != null) {
+            icon()
+        } else {
+            BasicText(
+                text = label,
+                style = MaterialTheme.typography.labelMedium.copy(color = textColor, textAlign = TextAlign.Center),
+                maxLines = 1,
+                autoSize = TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = MaterialTheme.typography.labelMedium.fontSize),
+            )
+        }
     }
 }
 
@@ -196,7 +224,7 @@ fun <S> BottomActions(
         0 -> status?.let { StatusText(it, size.width) }
         1 -> {
             val action = actions[0]
-            BottomButton(action.label, { feedback.move(); play(action.perform(state)) }, action.enabled, action.color ?: AppColors.GameButton)
+            BottomButton(action.label, { feedback.move(); play(action.perform(state)) }, action.enabled, action.color ?: LocalGameAccent.current)
         }
         else -> Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             actions.take(2).forEach { action ->
@@ -206,7 +234,7 @@ fun <S> BottomActions(
                     width = (size.width - 4.dp) / 2,
                     height = size.height,
                     enabled = action.enabled,
-                    color = action.color ?: AppColors.GameButton,
+                    color = action.color ?: LocalGameAccent.current,
                 )
             }
         }

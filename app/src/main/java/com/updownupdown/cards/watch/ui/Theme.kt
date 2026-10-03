@@ -22,11 +22,12 @@ object AppColors {
     val PaleYellow = Color(0xFFFFCF87)
     /** List buttons, card faces and the text on game buttons. */
     val DeepBlue = Color(0xFF262737)
+    val DeepBlueBorder = Color(0xFF1F1F28)
 
     /** Buttons on lists and menus. */
     val ListButton = DeepBlue
     val ListButtonText = Color.White
-    /** Buttons inside a game. */
+    /** Buttons inside a game, where the game's own pale colour isn't to hand. */
     val GameButton = PaleYellow
     val GameButtonText = DeepBlue
     // A disabled game button is its colour at 40%.
@@ -38,33 +39,49 @@ object AppColors {
 
     // Cards.
     val CardFace = DeepBlue
-    val CardBack = Color(0xFF7A7C9F)
+    val CardBack = Color(0xFF656573)
     /** The Solitarius logo on a card's back, and the line around it. */
     val CardBackLogo = DeepBlue
-    val CardBackBorder = DeepBlue
+    val CardBackBorder = DeepBlueBorder
     /**
      * Shades a card that isn't on top (under a pile's top card, or behind
      * the last of a spread): 40% black, which turns a [CardFace] into #171721.
      */
-    val CardUnderShade = Color(0x66000000)
+    val CardUnderShade = Color(0x00000000)
     /** An empty pile or space: darker than a card, but showing against the black screen. */
     val CardEmptySlot = Color(0xFF12121A)
     /** The thin dark edge around every card, so overlapping cards stand apart. */
     val CardEdge = Color(0xFF000000)
 
+    /** The unfilled part of a progress bar. */
+    val Track = Color(0xFF3A3A44)
+
+    /** A mark in an empty slot, such as Ebb & Flow's arrows. */
+    val SlotMark = Color(0xFF7C7C88)
+
     // A colour for each suit.
-    val Hearts = Color(0xFFE82D4D)
-    val Spades = Color(0xFF9FBAC5)
-    val Diamonds = Color(0xFFE82D9D)
-    val Clubs = Color(0xFFC8E6B8)
+    val Hearts = Color(0xFFFF677B)
+    val Spades = Color(0xFF9EE3FF)
+    val Diamonds = Color(0xFFFFAA7C)
+    val Clubs = Color(0xFFA2E3A2)
+
+    /** Jailbreak's Joker, in prison orange. */
+    val Joker = Color(0xFFFF8A2A)
 
     // A selected card's border (centred on its edge) and 30% tint, and status tints over a card
     // (also 30%; a hint, such as a valid move, is [PaleYellow]).
     val Neutral = Color(0xFF7BD5FF)
     val Good = Color(0xFF78EBB1)
     val Bad = Color(0xFFE0485C)
-    /** With the three above, colours an action's button (Rogue Run: heal, equip, weapon, fist). */
-    val Purple = Color(0xFFB79CFF)
+
+    // Buttons whose colour says what they do (Rogue Run: heal, equip, weapon,
+    // fist, run; Lycan's captures), each light enough for the dark text on it.
+    val ButtonGreen = Color(0xFF8EF0C0)
+    val ButtonBlue = Color(0xFF9BDFFF)
+    val ButtonPurple = Color(0xFFC9B5FF)
+    val ButtonRed = Color(0xFFFF8A98)
+    val ButtonOrange = Color(0xFFFFB070)
+    val ButtonPink = Color(0xFFFFA6D5)
 
     // Text labels standing for red cards, black cards and either.
     val LabelRed = Color(0xFFEF5350)
@@ -75,7 +92,7 @@ object AppColors {
 /** The app's font, for all text. One variable font file, at the weights the app uses. */
 @OptIn(ExperimentalTextApi::class)
 val Outfit = FontFamily(
-    listOf(FontWeight.Normal, FontWeight.Medium, FontWeight.SemiBold, FontWeight.Bold).map {
+    listOf(FontWeight.Light, FontWeight.Normal, FontWeight.Medium, FontWeight.SemiBold, FontWeight.Bold).map {
         Font(R.font.outfit, it, variationSettings = FontVariation.Settings(FontVariation.weight(it.weight)))
     },
 )

@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
 import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.LocalAmbient
-import kotlin.math.min
 
 /** The cards' colours, all set in `ui/Theme.kt`. */
 object CardColors {
@@ -24,6 +23,10 @@ object CardColors {
     val BackLogo get() = AppColors.CardBackLogo
     val BackBorder get() = AppColors.CardBackBorder
     val EmptySlot get() = AppColors.CardEmptySlot
+    /** The line round a place for several cards. */
+    val Zone get() = AppColors.Track
+    /** The line round a card's warning dot. */
+    val DotEdge get() = Color.Black
     val Edge get() = AppColors.CardEdge
     val Under get() = AppColors.CardUnderShade
     /** Everything on a card while the watch is asleep. */
@@ -54,14 +57,19 @@ enum class Selection(val color: Color) {
     Neutral(AppColors.Neutral),
     Valid(AppColors.Good),
     Invalid(AppColors.Bad),
+    // The colours of the game buttons, for a selection that says what its action will be.
+    Green(AppColors.ButtonGreen),
+    Purple(AppColors.ButtonPurple),
+    Pink(AppColors.ButtonPink),
+    Orange(AppColors.ButtonOrange),
+    Red(AppColors.ButtonRed),
+    Blue(AppColors.ButtonBlue),
 }
 
 /**
  * A playing card filling its bounds (which should be [CARD_ASPECT]): the rank
- * above the suit, or with [indexHeight], the rank and suit along the top edge
- * (so they show when cards overlap) and a large suit below, or with
- * [indexWidth], both down the left edge (for cards overlapping sideways). [CardStyle] sets
- * the sizes.
+ * over the suit, both in the middle. Every card in every game is drawn this way; [CardStyle]
+ * sets the sizes.
  *
  * The layout is worked out once per size and kept, so redrawing is cheap.
  *
@@ -69,6 +77,7 @@ enum class Selection(val color: Color) {
  * @param overlay a status colour (see [CardOverlay]) tinting the card.
  * @param under how far (0 to 1) the card is shaded as the one under a pile's
  *   top card. Read while drawing, so it can animate.
+ * @param dot the colour of a warning dot in the top right corner of a face-up card.
  */
 @Composable
 fun PlayingCard(
@@ -77,9 +86,8 @@ fun PlayingCard(
     faceDown: Boolean = false,
     overlay: Color? = null,
     selection: Selection? = null,
-    indexHeight: Float? = null,
-    indexWidth: Float? = null,
     under: () -> Float = { 0f },
+    dot: Color? = null,
 ) {
     val icons = CardIcons.get(LocalContext.current.assets)
     val ambient = LocalAmbient.current
@@ -90,9 +98,7 @@ fun PlayingCard(
             val face = when {
                 card == null -> null
                 faceDown -> backFace(icons, ambient)
-                indexHeight != null -> indexFace(card, icons, indexHeight, ink)
-                indexWidth != null -> sideFace(card, icons, indexWidth, ink)
-                else -> centreFace(card, icons, ink)
+                else -> face(card, icons, ink)
             }
             if (ambient) {
                 // Asleep: a grey outline and the card's marks, on black so cards underneath don't show through.
@@ -131,6 +137,12 @@ fun PlayingCard(
                 }
                 // The selection border, centred on the card's edge.
                 if (card != null && selection != null) drawRoundRect(selection.color, cornerRadius = corner, style = selected)
+                if (card != null && !faceDown && dot != null) {
+                    val radius = size.width * CardStyle.DOT_RADIUS
+                    val middle = Offset(size.width * (1 - CardStyle.DOT_INSET), size.width * CardStyle.DOT_INSET)
+                    drawCircle(CardColors.DotEdge, radius + size.width * CardStyle.DOT_EDGE, middle)
+                    drawCircle(dot, radius, middle)
+                }
             }
         },
     )
@@ -168,47 +180,28 @@ private fun CacheDrawScope.backFace(icons: CardIcons, ambient: Boolean): DrawSco
     }
 }
 
-/** The rank above the suit, centred. */
-private fun CacheDrawScope.centreFace(card: Card, icons: CardIcons, color: Color): DrawScope.() -> Unit {
+/** The rank's mark [CardStyle.FACE_PAD_RANK] down from the top and the suit's [CardStyle.FACE_PAD_SUIT] up from the bottom, both in the middle. */
+private fun CacheDrawScope.face(card: Card, icons: CardIcons, color: Color): DrawScope.() -> Unit {
     val w = size.width
     val h = size.height
+    val padRank = w * CardStyle.FACE_PAD_RANK
+    val padSuit = w * CardStyle.FACE_PAD_SUIT
     val rank = icons.rank(card.rank)
     val suit = icons.suit(card.suit)
+    val rankScale = w * CardStyle.RANK_SIZE / rank.viewBox
+    val suitScale = w * CardStyle.SUIT_SIZE / suit.viewBox
     return {
-        drawIcon(rank, w / 2, h * CardStyle.RANK_Y, w * CardStyle.RANK_SIZE, color)
-        drawIcon(suit, w / 2, h * CardStyle.SUIT_Y, w * CardStyle.SUIT_SIZE, color)
+        drawMark(rank, w / 2 - rank.bounds.center.x * rankScale, padRank - rank.bounds.top * rankScale, rankScale, color)
+        drawMark(suit, w / 2 - suit.bounds.center.x * suitScale, h - padSuit - suit.bounds.bottom * suitScale, suitScale, color)
     }
 }
 
-/** The rank above the suit, in the strip down the card's left. */
-private fun CacheDrawScope.sideFace(card: Card, icons: CardIcons, indexWidth: Float, color: Color): DrawScope.() -> Unit {
-    val w = size.width
-    val h = size.height
-    val rank = icons.rank(card.rank)
-    val suit = icons.suit(card.suit)
-    val strip = w * indexWidth
-    val scale = min(1f, strip * 0.9f / (w * CardStyle.SUIT_SIZE))
-    return {
-        drawIcon(rank, strip / 2, h * CardStyle.RANK_Y, w * CardStyle.RANK_SIZE * scale, color)
-        drawIcon(suit, strip / 2, h * CardStyle.SUIT_Y, w * CardStyle.SUIT_SIZE * scale, color)
-    }
-}
-
-/** The rank and a small suit in the top strip, a large suit below. */
-private fun CacheDrawScope.indexFace(card: Card, icons: CardIcons, indexHeight: Float, color: Color): DrawScope.() -> Unit {
-    val w = size.width
-    val h = size.height
-    val rank = icons.rank(card.rank)
-    val suit = icons.suit(card.suit)
-    val strip = h * indexHeight
-    val small = min(strip * CardStyle.INDEX_SIZE, w * CardStyle.INDEX_MAX_SIZE)
-    val spread = small * CardStyle.INDEX_SPREAD
-    val stripY = strip / 2 + h * 0.01f
-    val body = h - strip
-    val big = min(w * CardStyle.SUIT_SIZE, body * 0.6f)
-    return {
-        drawIcon(rank, w / 2 - spread, stripY, small, color)
-        drawIcon(suit, w / 2 + spread, stripY, small, color)
-        if (big > strip * 0.8f) drawIcon(suit, w / 2, strip + body / 2, big, color)
+/** Draws [icon] at [scale], its square's corner at ([x], [y]). */
+private fun DrawScope.drawMark(icon: CardIcon, x: Float, y: Float, scale: Float, color: Color) {
+    withTransform({
+        translate(x, y)
+        scale(scale, scale, Offset.Zero)
+    }) {
+        drawPath(icon.path, color)
     }
 }

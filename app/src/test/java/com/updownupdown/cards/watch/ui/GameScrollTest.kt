@@ -2,7 +2,9 @@ package com.updownupdown.cards.watch.ui
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performRotaryScrollInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeDown
 import androidx.compose.ui.test.swipeUp
@@ -79,5 +81,14 @@ class GameScrollTest {
         compose.onRoot().performTouchInput { swipeDown(centerY, centerY + height * 0.32f, 60) }
         compose.waitForIdle()
         assertEquals(0, scroll.value)
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun theCrownGoesToTheButtons() {
+        val page = show()
+        compose.onRoot().performRotaryScrollInput { rotateToScrollVertically(page.toFloat()) }
+        compose.waitForIdle()
+        assertEquals(page, scroll.value)
     }
 }

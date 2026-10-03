@@ -49,6 +49,15 @@
                 android:resource="@drawable/tile_preview" />
         </service>
 
+        <!-- After an update, a fresh tap for the complication (the old one dies with the old install). -->
+        <receiver
+            android:name=".widget.UpdatedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
         <!-- A watch face shortcut back into the last game. -->
         <service
             android:name=".widget.ContinueComplicationService"
@@ -61,7 +70,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.wearable.complications.SUPPORTED_TYPES"
-                android:value="SHORT_TEXT,MONOCHROMATIC_IMAGE,SMALL_IMAGE" />
+                android:value="SMALL_IMAGE,MONOCHROMATIC_IMAGE,SHORT_TEXT,LONG_TEXT" />
             <meta-data
                 android:name="android.support.wearable.complications.UPDATE_PERIOD_SECONDS"
                 android:value="0" />

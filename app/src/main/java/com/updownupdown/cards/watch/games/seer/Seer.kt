@@ -1,6 +1,5 @@
 package com.updownupdown.cards.watch.games.seer
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -75,7 +74,8 @@ object Seer : Game<SeerState> {
     override val id = "seer"
     override val thumbnail = R.drawable.thumb_seer
     override val banner = R.drawable.banner_seer
-    override val accent = Color(0xFF2A4038)
+    override val accent = R.color.game_seer
+    override val accentPale = R.color.game_seer_pale
     override val title = "Seer"
     override val stateSerializer: KSerializer<SeerState> = SeerState.serializer()
 

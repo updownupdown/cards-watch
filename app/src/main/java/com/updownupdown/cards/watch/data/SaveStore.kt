@@ -59,6 +59,25 @@ class SaveStore(private val context: Context, private val scope: CoroutineScope)
             refreshSurfaces(context)
         }
 
+    /** The games pinned to the top of the home list, in the order they were pinned. */
+    var pinnedGameIds: List<String> by mutableStateOf(prefs.getString(KEY_PINNED, null)?.split(',')?.filter { it.isNotEmpty() } ?: emptyList())
+        private set
+
+    /** Whether the app buzzes (the home screen's switch). */
+    var hapticsOn: Boolean by mutableStateOf(prefs.getBoolean(KEY_HAPTICS, true))
+        private set
+
+    fun setHaptics(on: Boolean) {
+        hapticsOn = on
+        prefs.edit().putBoolean(KEY_HAPTICS, on).apply()
+    }
+
+    /** Pins [game] to the top of the home list, or unpins it. */
+    fun togglePin(game: Game<*>) {
+        pinnedGameIds = if (game.id in pinnedGameIds) pinnedGameIds - game.id else pinnedGameIds + game.id
+        prefs.edit().putString(KEY_PINNED, pinnedGameIds.joinToString(",")).apply()
+    }
+
     /** How [game]'s deals have ended. Reads as state, so the screen follows it. */
     fun stats(game: Game<*>): GameStats = stats[game.id] ?: GameStats()
 
@@ -113,6 +132,8 @@ class SaveStore(private val context: Context, private val scope: CoroutineScope)
         const val TAG = "SaveStore"
         const val KEY_LAST_GAME = "lastGame"
         const val KEY_RECENT = "recentGames"
+        const val KEY_PINNED = "pinnedGames"
+        const val KEY_HAPTICS = "haptics"
         const val KEY_STATS = "stats:"
         const val KEY_WON = "won:"
         const val KEY_LOST = "lost:"

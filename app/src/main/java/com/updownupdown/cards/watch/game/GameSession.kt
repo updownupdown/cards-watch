@@ -1,6 +1,7 @@
 package com.updownupdown.cards.watch.game
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -38,6 +39,10 @@ class GameSession<S : Any>(
 
     /** Whether the last change was an undo, so the board can run it backwards. */
     var undone: Boolean by mutableStateOf(false)
+        private set
+
+    /** How many new deals there have been since the session began, so the board can clear before each. */
+    var deal: Int by mutableIntStateOf(0)
         private set
 
     val canUndo: Boolean get() = history.isNotEmpty()
@@ -115,6 +120,7 @@ class GameSession<S : Any>(
         elapsedMs = 0
         runningSince = null
         state = game.newGame()
+        deal++
         startClock()
         save()
     }

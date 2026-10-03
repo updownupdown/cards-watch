@@ -17,10 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextMeasurer
@@ -31,7 +33,6 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.MaterialTheme
@@ -45,10 +46,14 @@ import kotlin.math.abs
 /** The title's and the rules text's sizes, × the theme's title and body text. */
 private const val TITLE_SCALE = 1.53f
 private const val TEXT_SCALE = 1.2f
+/** The rules text's line height, × what that size would have. */
+private const val LINE_SCALE = 0.8f
 /** The space between a heading's capital letters. */
 private val HEADING_SPACING = 2.sp
+/** How much of the width between the margins the text takes, so less of it meets the round edge. */
+private const val RULES_WIDTH = 0.9f
 /** The space over a paragraph. */
-private val PARAGRAPH_TOP = 4.dp
+private val PARAGRAPH_TOP = 10.dp
 /** The space under the Top button, so the round screen's foot cuts nothing off. */
 private val RULES_BOTTOM = 64.dp
 /** The pale line between the rules and the stats. */
@@ -64,7 +69,7 @@ private val STATS_GAP = 12.dp
 /** How far from the middle (0) to the edge (1) a line starts to change. */
 private const val EDGE_START = 0.6f
 /** Its size and opacity at the very edge. */
-private const val EDGE_SCALE = 0.88f
+private const val EDGE_SCALE = 0.85f
 private const val EDGE_ALPHA = 0.45f
 
 /**
@@ -84,18 +89,26 @@ fun GameRules(
     modifier: Modifier = Modifier,
 ) {
     val edge = Modifier.edgeScaled(scroll, viewport)
-    BoxWithConstraints(modifier.fillMaxWidth().padding(start = 18.dp, end = 18.dp, bottom = RULES_BOTTOM)) {
-        val width = constraints.maxWidth
+    BoxWithConstraints(
+        modifier.fillMaxWidth().padding(start = 18.dp, end = 18.dp, bottom = RULES_BOTTOM),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        val width = (constraints.maxWidth * RULES_WIDTH).toInt()
         val body = MaterialTheme.typography.bodyMedium
-        val text = body.copy(fontSize = body.fontSize * TEXT_SCALE, lineHeight = body.lineHeight * TEXT_SCALE)
+        val text = body.copy(
+            fontSize = body.fontSize * TEXT_SCALE,
+            lineHeight = body.lineHeight * TEXT_SCALE * LINE_SCALE,
+            fontWeight = FontWeight.Light,
+        )
+        val accent = colorResource(game.accentPale)
         val measurer = rememberTextMeasurer()
         // Each paragraph as the lines it wraps to at this width.
         val paragraphs = remember(game, width, text) {
             game.rules.map { line ->
-                if (line.startsWith("## ")) null else lines(rich(line.replaceFirst(Regex("^- "), "• ")), text, width, measurer)
+                if (line.startsWith("## ")) null else lines(rich(line.removePrefix("- ")), text, width, measurer)
             }
         }
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(Modifier.fillMaxWidth(RULES_WIDTH), horizontalAlignment = Alignment.CenterHorizontally) {
             val title = MaterialTheme.typography.titleMedium
             Text(
                 text = game.title,
@@ -106,7 +119,7 @@ fun GameRules(
             game.rules.forEachIndexed { i, line ->
                 val wrapped = paragraphs[i]
                 if (wrapped == null) {
-                    Heading(line.removePrefix("## "), edge)
+                    Heading(line.removePrefix("## "), accent, edge)
                 } else {
                     wrapped.forEachIndexed { n, part ->
                         Text(
@@ -128,8 +141,8 @@ fun GameRules(
                     .height(STATS_LINE)
                     .background(AppColors.TextMuted.copy(alpha = 0.5f)),
             )
-            Heading("Stats", edge, TextAlign.Center)
-            val small = MaterialTheme.typography.bodyMedium
+            Heading("Stats", accent, edge, TextAlign.Center)
+            val small = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Light)
             Stat("Won", "${stats.won}", small, edge)
             Stat("Lost", "${stats.lost}", small, edge)
             Stat("Win %", stats.winPercent?.let { "$it%" } ?: "–", small, edge)
@@ -150,12 +163,12 @@ fun GameRules(
 }
 
 @Composable
-private fun Heading(text: String, edge: Modifier, align: TextAlign = TextAlign.Start) {
+private fun Heading(text: String, color: Color, edge: Modifier, align: TextAlign = TextAlign.Start) {
     Text(
         text = text.uppercase(),
         textAlign = align,
         style = MaterialTheme.typography.titleSmall.copy(letterSpacing = HEADING_SPACING),
-        color = AppColors.PaleYellow,
+        color = color,
         modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 2.dp).then(edge),
     )
 }

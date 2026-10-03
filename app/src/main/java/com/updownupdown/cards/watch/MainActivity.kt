@@ -11,10 +11,12 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.wear.ambient.AmbientLifecycleObserver
@@ -29,6 +31,10 @@ import com.updownupdown.cards.watch.ui.AmbientScreen
 import com.updownupdown.cards.watch.ui.AppTheme
 import com.updownupdown.cards.watch.ui.GameScreen
 import com.updownupdown.cards.watch.ui.HomeScreen
+import com.updownupdown.cards.watch.ui.LocalAsleep
+import com.updownupdown.cards.watch.ui.LocalHapticsOn
+import com.updownupdown.cards.watch.widget.refreshSurfaces
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     private var ambient by mutableStateOf(false)
@@ -99,19 +105,23 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(ambientObserver)
+        // A fresh tap for the complication, in case the app was reinstalled since the last one.
+        refreshSurfaces(this)
         // A fresh launch goes straight back into the last game played.
         val resume = if (savedInstanceState == null) gameById(intent.getStringExtra(EXTRA_GAME) ?: saves.lastGameId) else null
         setContent {
             AppTheme {
-                Box(Modifier.fillMaxSize()) {
-                    AppScaffold {
-                        App(saves, startRoute = resume?.let { gameRoute(it.id) } ?: HOME, requested = requested, onOpened = { requested = null }) {
+                CompositionLocalProvider(LocalHapticsOn provides saves.hapticsOn, LocalAsleep provides ambient) {
+                    Box(Modifier.fillMaxSize()) {
+                        AppScaffold {
+                            App(saves, startRoute = resume?.let { gameRoute(it.id) } ?: HOME, requested = requested, onOpened = { requested = null }) {
                                 playing = it
                                 stayAwake()
                             }
+                        }
+                        // Over the app, so the game underneath keeps its place.
+                        if (ambient) AmbientScreen(playing?.let { saves.session(it) }, ambientTick)
                     }
-                    // Over the app, so the game underneath keeps its place.
-                    if (ambient) AmbientScreen(playing?.let { saves.session(it) }, ambientTick)
                 }
             }
         }
@@ -123,6 +133,9 @@ private const val GAME_SCREEN_ON_MS = 10_000L
 
 /** The id of the game to open, on an intent from the tile or a complication. */
 const val EXTRA_GAME = "game"
+
+/** How long the home list stays blank under a game the app opens into. */
+private const val OPENING_MS = 600L
 
 private const val HOME = "home"
 private fun gameRoute(id: String) = "game/$id"
@@ -136,12 +149,19 @@ private fun App(saves: SaveStore, startRoute: String, requested: String?, onOpen
         nav.navigate(gameRoute(game.id))
         onOpened()
     }
+    // Opening into a game, the home list under it stays blank until the game is up, so it never flashes by.
+    var opening by remember { mutableStateOf(startRoute != HOME) }
     SwipeDismissableNavHost(navController = nav, startDestination = HOME) {
         composable(HOME) {
+            if (opening) return@composable
             LaunchedEffect(Unit) { onPlaying(null) }
             HomeScreen(
-                lastGame = gameById(saves.lastGameId),
+                recent = saves.recentGameIds.mapNotNull(::gameById),
+                pinned = saves.pinnedGameIds,
                 onOpen = { nav.navigate(gameRoute(it.id)) },
+                onPin = saves::togglePin,
+                haptics = saves.hapticsOn,
+                onHaptics = saves::setHaptics,
             )
         }
         composable("game/{id}") { entry ->
@@ -154,6 +174,10 @@ private fun App(saves: SaveStore, startRoute: String, requested: String?, onOpen
         }
     }
     if (startRoute != HOME) {
-        LaunchedEffect(Unit) { nav.navigate(startRoute) }
+        LaunchedEffect(Unit) {
+            nav.navigate(startRoute)
+            delay(OPENING_MS)
+            opening = false
+        }
     }
 }

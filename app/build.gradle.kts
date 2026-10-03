@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.roborazzi)
+    alias(libs.plugins.baselineprofile)
 }
 
 android {
@@ -45,6 +46,11 @@ android {
     }
 }
 
+// One profile, measured on a watch, for every build type.
+baselineProfile {
+    mergeIntoMain = true
+}
+
 dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
@@ -57,6 +63,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.wear)
     implementation(libs.profileinstaller)
+    // The profile measured on a watch: ./gradlew :app:generateBaselineProfile
+    baselineProfile(project(":baselineprofile"))
     implementation(libs.wear.tiles)
     implementation(libs.wear.protolayout)
     implementation(libs.wear.complications)

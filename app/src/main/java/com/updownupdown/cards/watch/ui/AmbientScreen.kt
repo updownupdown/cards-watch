@@ -36,6 +36,13 @@ import java.util.Date
  */
 val LocalAmbient = compositionLocalOf { false }
 
+/**
+ * Whether the watch is asleep, for the game screen under the sleep screen: a
+ * game that moves on by itself after a wait (Lycan's rounds) waits for it to
+ * wake, so the player sees it happen.
+ */
+val LocalAsleep = compositionLocalOf { false }
+
 private object NoFeedback : Feedback {
     override fun move() {}
     override fun reject() {}

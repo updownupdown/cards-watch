@@ -2,7 +2,6 @@ package com.updownupdown.cards.watch.games.acesup
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardLayout
@@ -29,18 +28,19 @@ object AcesUp : Game<AcesUpState> {
     override val id = "aces-up"
     override val thumbnail = R.drawable.thumb_aces_up
     override val banner = R.drawable.banner_aces_up
-    override val accent = Color(0xFF3A3A2C)
+    override val accent = R.color.game_aces_up
+    override val accentPale = R.color.game_aces_up_pale
     override val title = "Aces Up"
     override val stateSerializer: KSerializer<AcesUpState> = AcesUpState.serializer()
 
     override val rules = listOf(
         "## Objective",
         "Discard the whole deck except the four Aces (one per pile).",
-        "## Rules",
-        "- Tap a card to discard it when another pile shows a **higher card of the same suit**.",
-        "- **Aces are high** and can never be discarded.",
-        "- When a pile is empty, tap any other top card to move it there.",
-        "- When you're stuck, tap **Deal** for one more card on each pile.",
+        "## Gameplay",
+        "Tap a card to discard it when another pile shows a **higher card of the same suit**.",
+        "**Aces are high** and can never be discarded.",
+        "When a pile is empty, tap any other top card to move it there.",
+        "When you're stuck, tap **Deal** for one more card on each pile.",
     )
 
     private fun value(card: Card) = if (card.rank == Rank.Ace) 14 else card.rank.value
@@ -99,10 +99,21 @@ object AcesUp : Game<AcesUpState> {
     @Composable
     override fun Board(state: AcesUpState, play: (AcesUpState) -> Unit, feedback: Feedback, modifier: Modifier) {
         CardTable(modifier) {
-            // The four piles two by two, short of the board's foot to stand clear of the Deal button.
+            // Two piles one over the other in the middle, and one at each side, level with the middle of
+            // those two. The cards are as large as two rows allow, short of the board's foot to stand
+            // clear of the Deal button; the side piles reach a little past the board's sides.
             val layout = CardLayout(2, 2, width, height * 0.9f, gap = 0.12f, extra = CardStyle.PILE_OFFSET)
+            val middle = (width - layout.cellWidth) / 2
+            val across = layout.cellWidth + layout.gap
+            val places = listOf(
+                middle - across to (layout.y(0) + layout.y(1)) / 2,
+                middle to layout.y(0),
+                middle to layout.y(1),
+                middle + across to (layout.y(0) + layout.y(1)) / 2,
+            )
             state.piles.forEachIndexed { index, pile ->
-                pile(pile, layout.xOf(index), layout.yOf(index), layout.cardWidth) {
+                val (x, y) = places[index]
+                pile(pile, x, y, layout.cardWidth) {
                     feedback.tryMove(if (outcome(state) == null) tap(state, index) else null, play)
                 }
             }

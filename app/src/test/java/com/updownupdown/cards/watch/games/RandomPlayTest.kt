@@ -1,21 +1,29 @@
 package com.updownupdown.cards.watch.games
 
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.games.accordion.Accordion
 import com.updownupdown.cards.watch.games.acesup.AcesUp
 import com.updownupdown.cards.watch.games.baroness.Baroness
 import com.updownupdown.cards.watch.games.beehive.Beehive
 import com.updownupdown.cards.watch.games.clock.Clock
 import com.updownupdown.cards.watch.games.dominion.Dominion
+import com.updownupdown.cards.watch.games.ebbandflow.EbbAndFlow
 import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
 import com.updownupdown.cards.watch.games.fortune.Call
 import com.updownupdown.cards.watch.games.fortune.FortunesCall
+import com.updownupdown.cards.watch.games.fourseasons.FourSeasons
 import com.updownupdown.cards.watch.games.hanoi.TowerOfHanoi
+import com.updownupdown.cards.watch.games.jailbreak.Jailbreak
 import com.updownupdown.cards.watch.games.lightsout.LightsOut
 import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.memory.Memory
+import com.updownupdown.cards.watch.games.nestor.Nestor
 import com.updownupdown.cards.watch.games.rogue.RogueRun
 import com.updownupdown.cards.watch.games.seer.Seer
 import com.updownupdown.cards.watch.games.triplestack.TripleStack
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.random.Random
 
@@ -63,11 +71,49 @@ class RandomPlayTest {
         if (s.selected.size == 3) TripleStack.serve(s) ?: s.copy(selected = emptyList()) else TripleStack.toggle(s, r.nextInt(8))
     }
 
-    @Test fun dominion() = fuzz(Dominion) { s, r ->
-        when {
-            s.drawn != null -> Dominion.place(s, r.nextInt(12))
-            r.nextInt(5) == 0 -> Dominion.drawReserve(s)
-            else -> Dominion.conquer(s, r.nextInt(12), r.nextInt(12))
+    @Test fun ebbAndFlow() = fuzz(EbbAndFlow) { s, r ->
+        if (r.nextInt(4) == 0) EbbAndFlow.draw(s) else s.hand.randomOrNull(r)?.let { EbbAndFlow.play(s, it, r.nextInt(EbbAndFlow.PILES)) }
+    }
+
+    @Test fun fourSeasons() = fuzz(FourSeasons) { s, r ->
+        val source = r.nextInt(FourSeasons.WASTE + 1)
+        when (r.nextInt(4)) {
+            0 -> FourSeasons.draw(s)
+            1 -> FourSeasons.toFoundation(s, source)
+            else -> FourSeasons.toTableau(s, source, r.nextInt(FourSeasons.TABLEAU))
+        }
+    }
+
+    @Test fun nestor() = fuzz(Nestor) { s, r -> Nestor.pair(s, r.nextInt(Nestor.PLACES), r.nextInt(Nestor.PLACES)) }
+
+    @Test
+    fun nestorDealsCanBeWonAndRepeatNoRankInAColumn() {
+        repeat(50) { seed ->
+            val state = Nestor.newGame(Random(seed))
+            assertEquals(32, (state.columns.flatten() + state.reserve).toSet().size)
+            assertTrue(state.columns.all { column -> column.map { it.rank }.toSet().size == column.size })
+            assertTrue(Nestor.winnable(state))
+        }
+    }
+
+    @Test fun accordion() = fuzz(Accordion) { s, r ->
+        val from = r.nextInt(s.piles.size)
+        Accordion.move(s, from, from - Accordion.REACH.random(r))
+    }
+
+    @Test fun jailbreak() = fuzz(Jailbreak) { s, r ->
+        if (r.nextInt(4) == 0) Jailbreak.draw(s) else Jailbreak.remove(s, List(2 + r.nextInt(2)) { r.nextInt(Jailbreak.JOKER + 1) }.toSet())
+    }
+
+    @Test fun dominion() = fuzz(Dominion) { s, r -> Dominion.conquer(s, r.nextInt(Dominion.CELLS), r.nextInt(Dominion.CELLS)) }
+
+    @Test
+    fun dominionDealsThreeSuitsWithAMatchForEveryCard() {
+        repeat(50) { seed ->
+            val board = Dominion.newGame(Random(seed)).board
+            assertEquals(Dominion.CELLS, board.size)
+            assertTrue(board.map { it.single().suit }.toSet().size <= 3)
+            assertFalse(Dominion.isolated(board))
         }
     }
 

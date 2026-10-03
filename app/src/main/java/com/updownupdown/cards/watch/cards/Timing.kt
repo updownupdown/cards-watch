@@ -13,5 +13,7 @@ const val CARD_FLIP_MS = 240
  */
 const val CARD_DEAL_STAGGER_MS = 100
 const val CARD_DEAL_MAX_MS = 800
+/** How long a new deal waits, once the last deal's cards have slid away, before it's dealt. */
+const val CARD_CLEAR_PAUSE_MS = 200
 /** How long Memory shows a turned-up pair before turning it back or taking it away. */
-const val PAIR_SHOW_MS = 3000L
+const val PAIR_SHOW_MS = 2400L
