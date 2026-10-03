@@ -140,8 +140,15 @@ class TableBuilder(val width: Dp, val height: Dp) {
     }
 
     /** A place for several cards [cardWidth] wide, such as a spread: a line just inside its edge. */
-    fun zone(x: Dp, y: Dp, width: Dp, cardWidth: Dp) {
-        zones += Zone(x, y, width, cardWidth * CARD_ASPECT, cardWidth * CardStyle.CORNER)
+    fun zone(
+        x: Dp,
+        y: Dp,
+        width: Dp,
+        cardWidth: Dp,
+        height: Dp = cardWidth * CARD_ASPECT,
+        corner: Dp = cardWidth * CardStyle.CORNER,
+    ) {
+        zones += Zone(x, y, width, height, corner)
     }
 
     /** An empty place for a card, with a [mark] drawn on it (under any cards there), such as Jailbreak's Joker. */

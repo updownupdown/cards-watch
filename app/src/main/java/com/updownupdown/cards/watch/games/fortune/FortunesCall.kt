@@ -41,12 +41,15 @@ import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.GameButton
+import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalAmbient
 import com.updownupdown.cards.watch.ui.LocalBoardSize
-import kotlin.random.Random
+import com.updownupdown.cards.watch.ui.WearGamePreview
 import kotlinx.coroutines.delay
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 @Serializable
 enum class Call(val label: String, val points: Int) {
@@ -128,8 +131,10 @@ object FortunesCall : Game<FortuneState> {
     /** A card's height, × the board's, and the gap between the two cards. */
     private const val CARD_HEIGHT = 0.39f
     private val CARD_GAP = 12.dp
+
     /** The gap between a card and the buttons over and under it. */
     private val GAP = 15.dp
+
     /** The buttons' corners. */
     private val BUTTON_CORNER = 10.dp
 
@@ -143,19 +148,23 @@ object FortunesCall : Game<FortuneState> {
         val left = board / 2 - cardWidth - CARD_GAP / 2
         val right = board / 2 + CARD_GAP / 2
         val cardY = (board - cardHeight) / 2
+
         /** The buttons' height: what the board has left over the card and its two gaps, shared. */
         val button = (board - cardHeight - GAP * 2) / 2
+
         /** The lower buttons' top. */
         val footY = board - button
     }
 
     // The points and misses: two arcs on the screen's left, filling upwards, the points' the larger.
     private const val GAUGE_SWEEP = 46f
+
     /** How many degrees shorter the misses' arc is than the points'. */
     private const val MISSES_SHORTER = 20f
     private val GAUGE_WIDTH = 7.5.dp
     private val GAUGE_EDGE = 9.dp
     private val GAUGE_GAP = 8.5.dp
+
     /** The buttons' letters, × the usual button text. */
     private const val LETTER_SCALE = 1.2f
 
@@ -164,7 +173,11 @@ object FortunesCall : Game<FortuneState> {
         val style = MaterialTheme.typography.labelMedium
         BasicText(
             text = text,
-            style = style.copy(color = AppColors.ListButtonText, fontSize = style.fontSize * LETTER_SCALE, lineHeight = style.lineHeight * LETTER_SCALE),
+            style = style.copy(
+                color = AppColors.ListButtonText,
+                fontSize = style.fontSize * LETTER_SCALE,
+                lineHeight = style.lineHeight * LETTER_SCALE
+            ),
         )
     }
 
@@ -177,9 +190,27 @@ object FortunesCall : Game<FortuneState> {
             val tip = if (up) 0f else size.height
             val tail = size.height - tip
             val head = if (up) size.height * 0.45f else size.height * 0.55f
-            drawLine(ink, Offset(size.width / 2, tail), Offset(size.width / 2, tip), line.width, StrokeCap.Round)
-            drawLine(ink, Offset(0f, head), Offset(size.width / 2, tip), line.width, StrokeCap.Round)
-            drawLine(ink, Offset(size.width, head), Offset(size.width / 2, tip), line.width, StrokeCap.Round)
+            drawLine(
+                ink,
+                Offset(size.width / 2, tail),
+                Offset(size.width / 2, tip),
+                line.width,
+                StrokeCap.Round
+            )
+            drawLine(
+                ink,
+                Offset(0f, head),
+                Offset(size.width / 2, tip),
+                line.width,
+                StrokeCap.Round
+            )
+            drawLine(
+                ink,
+                Offset(size.width, head),
+                Offset(size.width / 2, tip),
+                line.width,
+                StrokeCap.Round
+            )
         }
     }
 
@@ -187,11 +218,24 @@ object FortunesCall : Game<FortuneState> {
     @Composable
     private fun Gauges(state: FortuneState, board: Dp) {
         val screen = RoundScreen(board, boardLift)
-        val points by animateFloatAsState((state.score / TARGET.toFloat()).coerceIn(0f, 1f), tween(CARD_MOVE_MS), label = "points")
-        val misses by animateFloatAsState((state.misses / MAX_MISSES.toFloat()).coerceIn(0f, 1f), tween(CARD_MOVE_MS), label = "misses")
+        val points by animateFloatAsState(
+            (state.score / TARGET.toFloat()).coerceIn(0f, 1f),
+            tween(CARD_MOVE_MS),
+            label = "points"
+        )
+        val misses by animateFloatAsState(
+            (state.misses / MAX_MISSES.toFloat()).coerceIn(0f, 1f),
+            tween(CARD_MOVE_MS),
+            label = "misses"
+        )
         val outer = screen.size / 2 - GAUGE_EDGE - GAUGE_WIDTH / 2
         val inner = outer - GAUGE_WIDTH - GAUGE_GAP
-        Canvas(Modifier.offset((board - screen.size) / 2, screen.middleY - screen.size / 2).wrapContentSize(Alignment.TopStart, unbounded = true).size(screen.size)) {
+        Canvas(
+            Modifier
+                .offset((board - screen.size) / 2, screen.middleY - screen.size / 2)
+                .wrapContentSize(Alignment.TopStart, unbounded = true)
+                .size(screen.size)
+        ) {
             listOf(
                 Triple(outer, GAUGE_SWEEP, points to AppColors.Good),
                 Triple(inner, GAUGE_SWEEP - MISSES_SHORTER, misses to AppColors.Bad),
@@ -203,7 +247,15 @@ object FortunesCall : Game<FortuneState> {
                 val line = Stroke(GAUGE_WIDTH.toPx(), cap = StrokeCap.Round)
                 drawArc(AppColors.Track, start, sweep, false, corner, box, style = line)
                 // From the bottom end, up the left side.
-                if (fill.first > 0f) drawArc(fill.second, start, sweep * fill.first, false, corner, box, style = line)
+                if (fill.first > 0f) drawArc(
+                    fill.second,
+                    start,
+                    sweep * fill.first,
+                    false,
+                    corner,
+                    box,
+                    style = line
+                )
             }
         }
     }
@@ -212,14 +264,19 @@ object FortunesCall : Game<FortuneState> {
     // card it was compared with leaves, the called card takes its place, and
     // after a pause the next card to call arrives.
     private const val SHOW_MS = 600L
-    private const val FOLLOW_MS = 100L
-    private const val NEXT_MS = 300L
+    private const val FOLLOW_MS = 50L
+    private const val NEXT_MS = 100L
 
     /** The steps after a call, in order; [Ready] is waiting for the next one. */
     private enum class Step { Shown, Left, Moved, Ready }
 
     @Composable
-    override fun Board(state: FortuneState, play: (FortuneState) -> Unit, feedback: Feedback, modifier: Modifier) {
+    override fun Board(
+        state: FortuneState,
+        play: (FortuneState) -> Unit,
+        feedback: Feedback,
+        modifier: Modifier
+    ) {
         val over = outcome(state) != null
         // The board as it was first shown is at rest; so is an undone one, which just runs back.
         val first = remember { state }
@@ -227,11 +284,11 @@ object FortunesCall : Game<FortuneState> {
         var step by remember(state) { mutableStateOf(if (state === first || state.previous == null || undoing) Step.Ready else Step.Shown) }
         LaunchedEffect(state) {
             if (step != Step.Ready) {
-                delay(CARD_FLIP_MS + SHOW_MS)
+                delay((CARD_FLIP_MS + SHOW_MS).milliseconds)
                 step = Step.Left
-                delay(FOLLOW_MS)
+                delay(FOLLOW_MS.milliseconds)
                 step = Step.Moved
-                delay(CARD_MOVE_MS + NEXT_MS)
+                delay((CARD_MOVE_MS + NEXT_MS).milliseconds)
                 step = Step.Ready
             }
         }
@@ -294,9 +351,22 @@ object FortunesCall : Game<FortuneState> {
                 state.lastCorrect == true -> CardOverlay.Good
                 else -> CardOverlay.Bad
             }
-            card(state.anchor, state.anchor, if (step < Step.Moved) left else right, y, cardWidth, overlay = called)
+            card(
+                state.anchor,
+                state.anchor,
+                if (step < Step.Moved) left else right,
+                y,
+                cardWidth,
+                overlay = called
+            )
             // The card to call, face down.
-            if (step == Step.Ready && !over) state.deck.firstOrNull()?.let { card(it, it, left, y, cardWidth, faceDown = true) }
+            if (step == Step.Ready && !over) state.deck.firstOrNull()
+                ?.let { card(it, it, left, y, cardWidth, faceDown = true) }
         }
     }
 }
+
+@WearGamePreview
+@Composable
+private fun FortunesCallPreview() = GamePreview(FortunesCall)
+

@@ -13,6 +13,8 @@ import com.updownupdown.cards.watch.cards.fullDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.ui.GamePreview
+import com.updownupdown.cards.watch.ui.WearGamePreview
 import kotlin.random.Random
 import kotlinx.coroutines.delay
 import kotlinx.serialization.KSerializer
@@ -140,3 +142,8 @@ object Memory : Game<MemoryState> {
         }
     }
 }
+
+@WearGamePreview
+@Composable
+private fun MemoryPreview() = GamePreview(Memory)
+

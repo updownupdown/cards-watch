@@ -45,8 +45,10 @@ import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.BottomActions
 import com.updownupdown.cards.watch.ui.GameButton
+import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalAsleep
 import com.updownupdown.cards.watch.ui.LocalBoardSize
+import com.updownupdown.cards.watch.ui.WearGamePreview
 import kotlin.random.Random
 import kotlinx.coroutines.delay
 import kotlinx.serialization.KSerializer
@@ -406,3 +408,8 @@ object Lycan : Game<LycanState> {
         }
     }
 }
+
+@WearGamePreview
+@Composable
+private fun LycanPreview() = GamePreview(Lycan)
+

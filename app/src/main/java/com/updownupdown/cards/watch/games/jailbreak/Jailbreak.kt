@@ -41,8 +41,10 @@ import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.ui.AppColors
+import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalAmbient
 import com.updownupdown.cards.watch.ui.LocalBoardSize
+import com.updownupdown.cards.watch.ui.WearGamePreview
 import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -254,3 +256,8 @@ object Jailbreak : Game<JailbreakState> {
         }
     }
 }
+
+@WearGamePreview
+@Composable
+private fun JailbreakPreview() = GamePreview(Jailbreak)
+

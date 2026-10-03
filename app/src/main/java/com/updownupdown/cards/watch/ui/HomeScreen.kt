@@ -1,10 +1,14 @@
 package com.updownupdown.cards.watch.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -35,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
+import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.Icon
@@ -49,6 +54,9 @@ import androidx.wear.compose.material3.lazy.transformedHeight
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.games.ALL_GAMES
+import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
+import com.updownupdown.cards.watch.games.lycan.Lycan
+import com.updownupdown.cards.watch.games.seer.Seer
 import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -241,3 +249,31 @@ private fun GameButton(
         transformation = transformation,
     )
 }
+
+@WearGamePreview
+@Composable
+private fun HomeScreenPreview() {
+    AppTheme {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .clip(CircleShape)
+                .background(Color.Black)
+        ) {
+            AppScaffold {
+                HomeScreen(
+                    recent = listOf(FifteenPuzzle, Seer),
+                    pinned = listOf(Lycan.id),
+                    onOpen = {},
+                    onPin = {},
+                    haptics = true,
+                    onHaptics = {}
+                )
+            }
+        }
+    }
+}
+
+
+
+

@@ -33,8 +33,10 @@ import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
+import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalBoardScroll
 import com.updownupdown.cards.watch.ui.LocalBoardSize
+import com.updownupdown.cards.watch.ui.WearGamePreview
 import kotlin.math.sqrt
 import kotlin.random.Random
 import kotlinx.serialization.KSerializer
@@ -190,3 +192,8 @@ object Accordion : Game<AccordionState> {
         }
     }
 }
+
+@WearGamePreview
+@Composable
+private fun AccordionPreview() = GamePreview(Accordion)
+

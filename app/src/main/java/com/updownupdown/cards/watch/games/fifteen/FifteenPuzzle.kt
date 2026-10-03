@@ -13,6 +13,8 @@ import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
+import com.updownupdown.cards.watch.ui.GamePreview
+import com.updownupdown.cards.watch.ui.WearGamePreview
 import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -119,3 +121,8 @@ object FifteenPuzzle : Game<FifteenState> {
         }
     }
 }
+
+@WearGamePreview
+@Composable
+private fun FifteenPuzzlePreview() = GamePreview(FifteenPuzzle)
+

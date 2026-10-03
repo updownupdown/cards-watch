@@ -2,44 +2,44 @@
     <color name="launcher_background">#FF262737</color>
 
     <!--
-        Each game's two colours, from its picture. The dark one covers the picture on the
+        Each game's two colors, from its picture. The dark one covers the picture on the
         game's home button; the pale one (the same hue, about as light as the logo's yellow)
-        colours its action button and its rules' headings.
+        colors its action button and its rules' headings.
     -->
     <color name="game_accordion">#4A3024</color>
     <color name="game_accordion_pale">#F0C0A3</color>
     <color name="game_aces_up">#3A3A2C</color>
     <color name="game_aces_up_pale">#DCDCAD</color>
-    <color name="game_baroness">#1F2647</color>
-    <color name="game_baroness_pale">#99A8F0</color>
+    <color name="game_baroness">#361F47</color>
+    <color name="game_baroness_pale">#C4A9ED</color>
     <color name="game_beehive">#49371D</color>
-    <color name="game_beehive_pale">#FFE396</color>
+    <color name="game_beehive_pale">#F8D295</color>
     <color name="game_clock">#4F3F17</color>
-    <color name="game_clock_pale">#F6DA92</color>
-    <color name="game_dominion">#3F3A2A</color>
-    <color name="game_dominion_pale">#DCD1AD</color>
+    <color name="game_clock_pale">#F6C492</color>
+    <color name="game_dominion">#2A3F3E</color>
+    <color name="game_dominion_pale">#ADCFDC</color>
     <color name="game_ebb_and_flow">#2A3840</color>
     <color name="game_ebb_and_flow_pale">#ADCEDC</color>
-    <color name="game_fifteen_puzzle">#5A3414</color>
-    <color name="game_fifteen_puzzle_pale">#F6C092</color>
+    <color name="game_fifteen_puzzle">#50215D</color>
+    <color name="game_fifteen_puzzle_pale">#E2AEEF</color>
     <color name="game_fortunes_call">#5A1C1C</color>
     <color name="game_fortunes_call_pale">#F69292</color>
     <color name="game_four_seasons">#33402C</color>
     <color name="game_four_seasons_pale">#C3DCAD</color>
-    <color name="game_jailbreak">#4D321E</color>
+    <color name="game_jailbreak">#432B14</color>
     <color name="game_jailbreak_pale">#E6AE82</color>
-    <color name="game_tower_of_hanoi">#25483F</color>
-    <color name="game_tower_of_hanoi_pale">#A1E8D6</color>
-    <color name="game_lights_out">#46303A</color>
-    <color name="game_lights_out_pale">#DCADC2</color>
+    <color name="game_tower_of_hanoi">#424825</color>
+    <color name="game_tower_of_hanoi_pale">#DFE8A1</color>
+    <color name="game_lights_out">#26231F</color>
+    <color name="game_lights_out_pale">#B6AFA7</color>
     <color name="game_lycan">#1C3F47</color>
     <color name="game_lycan_pale">#94E3F5</color>
-    <color name="game_nestor">#47341F</color>
-    <color name="game_nestor_pale">#EBC89D</color>
+    <color name="game_nestor">#33343A</color>
+    <color name="game_nestor_pale">#ADB4DC</color>
     <color name="game_memory">#40392A</color>
     <color name="game_memory_pale">#DCCDAD</color>
-    <color name="game_rogue_run">#33343A</color>
-    <color name="game_rogue_run_pale">#ADB4DC</color>
+    <color name="game_rogue_run">#47341F</color>
+    <color name="game_rogue_run_pale">#EBC89D</color>
     <color name="game_seer">#2A4038</color>
     <color name="game_seer_pale">#ADDCCB</color>
     <color name="game_triple_stack">#49261D</color>

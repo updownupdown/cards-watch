@@ -1,30 +1,32 @@
 package com.updownupdown.cards.watch.games.rogue
 
+import android.os.SystemClock
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import android.os.SystemClock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.min
@@ -32,14 +34,17 @@ import androidx.compose.ui.zIndex
 import androidx.wear.compose.material3.MaterialTheme
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.BoardText
+import com.updownupdown.cards.watch.cards.CARD_ASPECT
 import com.updownupdown.cards.watch.cards.Card
+import com.updownupdown.cards.watch.cards.CardColors
+import com.updownupdown.cards.watch.cards.CardIcon
+import com.updownupdown.cards.watch.cards.CardIcons
 import com.updownupdown.cards.watch.cards.CardLayout
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.cards.fullDeck
-import com.updownupdown.cards.watch.cards.pileEdge
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
@@ -48,11 +53,13 @@ import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.BottomActions
 import com.updownupdown.cards.watch.ui.GameButton
+import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalAmbient
 import com.updownupdown.cards.watch.ui.LocalBoardSize
-import kotlin.random.Random
+import com.updownupdown.cards.watch.ui.WearGamePreview
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlin.random.Random
 
 /**
  * Scoundrel, as the phone's Rogue Run plays it.
@@ -132,7 +139,13 @@ object RogueRun : Game<RogueState> {
 
     /** The best health after resolving three cards of [room], from full health. */
     private fun bestHealth(room: List<Card>): Int {
-        fun solve(cards: List<Card>, resolved: Int, health: Int, weapon: Card?, lastKill: Int?): Int {
+        fun solve(
+            cards: List<Card>,
+            resolved: Int,
+            health: Int,
+            weapon: Card?,
+            lastKill: Int?
+        ): Int {
             if (health <= 0) return Int.MIN_VALUE
             if (resolved == 3) return health
             var best = Int.MIN_VALUE
@@ -141,12 +154,25 @@ object RogueRun : Game<RogueState> {
                 best = maxOf(
                     best,
                     when (kind(card)) {
-                        Kind.Potion -> solve(rest, resolved + 1, minOf(MAX_HEALTH, health + value(card)), weapon, lastKill)
+                        Kind.Potion -> solve(
+                            rest,
+                            resolved + 1,
+                            minOf(MAX_HEALTH, health + value(card)),
+                            weapon,
+                            lastKill
+                        )
+
                         Kind.Weapon -> solve(rest, resolved + 1, health, card, null)
                         Kind.Monster -> maxOf(
                             solve(rest, resolved + 1, health - value(card), weapon, lastKill),
                             if (weapon != null && (lastKill == null || value(card) <= lastKill)) {
-                                solve(rest, resolved + 1, health - maxOf(0, value(card) - value(weapon)), weapon, value(card))
+                                solve(
+                                    rest,
+                                    resolved + 1,
+                                    health - maxOf(0, value(card) - value(weapon)),
+                                    weapon,
+                                    value(card)
+                                )
                             } else {
                                 Int.MIN_VALUE
                             },
@@ -170,7 +196,8 @@ object RogueRun : Game<RogueState> {
         val keep = left.firstOrNull()
         val needed = if (keep == null) ROOM else ROOM - 1
         val incoming = state.deck.take(needed).toMutableList()
-        val room = state.room.map { card -> card?.takeIf { it == keep } ?: incoming.removeFirstOrNull() }
+        val room =
+            state.room.map { card -> card?.takeIf { it == keep } ?: incoming.removeFirstOrNull() }
         return state.copy(
             deck = state.deck.drop(needed),
             room = room,
@@ -181,7 +208,8 @@ object RogueRun : Game<RogueState> {
 
     // ---- Actions ----
 
-    fun canRun(state: RogueState) = state.room.count { it != null } == ROOM && state.ranFrom != state.roomNumber
+    fun canRun(state: RogueState) =
+        state.room.count { it != null } == ROOM && state.ranFrom != state.roomNumber
 
     fun canUseWeapon(state: RogueState, monster: Card): Boolean {
         if (state.weapon == null) return false
@@ -204,21 +232,33 @@ object RogueRun : Game<RogueState> {
         )
     }
 
-    private fun resolve(state: RogueState, index: Int, change: RogueState.() -> RogueState) = advance(
-        state.change().copy(
-            room = state.room.mapIndexed { i, c -> if (i == index) null else c },
-            selected = null,
-        ),
-    )
+    private fun resolve(state: RogueState, index: Int, change: RogueState.() -> RogueState) =
+        advance(
+            state.change().copy(
+                room = state.room.mapIndexed { i, c -> if (i == index) null else c },
+                selected = null,
+            ),
+        )
 
     fun drink(state: RogueState, index: Int): RogueState? {
         val card = state.room[index]?.takeIf { kind(it) == Kind.Potion } ?: return null
-        return resolve(state, index) { copy(health = minOf(MAX_HEALTH, health + value(card)), lastWasPotion = value(card)) }
+        return resolve(state, index) {
+            copy(
+                health = minOf(MAX_HEALTH, health + value(card)),
+                lastWasPotion = value(card)
+            )
+        }
     }
 
     fun equip(state: RogueState, index: Int): RogueState? {
         val card = state.room[index]?.takeIf { kind(it) == Kind.Weapon } ?: return null
-        return resolve(state, index) { copy(weapon = card, weaponUsedOn = emptyList(), lastWasPotion = null) }
+        return resolve(state, index) {
+            copy(
+                weapon = card,
+                weaponUsedOn = emptyList(),
+                lastWasPotion = null
+            )
+        }
     }
 
     fun fight(state: RogueState, index: Int, withWeapon: Boolean): RogueState? {
@@ -243,13 +283,11 @@ object RogueRun : Game<RogueState> {
         previous.copy(selected = null) != next.copy(selected = null)
 
     // ---- End ----
-
-    private val totalRooms = 1 + (DECK.size - ROOM + ROOM - 2) / (ROOM - 1)
-
     override val scoreName = "Score"
 
     /** The health left, plus the last potion's value when it was drunk at full health. */
-    override fun score(state: RogueState) = state.health + if (state.health == MAX_HEALTH) state.lastWasPotion ?: 0 else 0
+    override fun score(state: RogueState) =
+        state.health + if (state.health == MAX_HEALTH) state.lastWasPotion ?: 0 else 0
 
     override fun outcome(state: RogueState): Outcome? = when {
         state.health <= 0 -> Outcome(false, "Slain in room ${state.roomNumber}")
@@ -260,63 +298,83 @@ object RogueRun : Game<RogueState> {
     override fun actions(state: RogueState): List<GameAction<RogueState>> {
         val index = state.selected
         val card = index?.let { state.room[it] }
-            ?: return listOf(GameAction("Run", enabled = canRun(state), color = AppColors.ButtonOrange) { run(it) ?: it })
+            ?: return listOf(
+                GameAction(
+                    "Run",
+                    enabled = canRun(state),
+                    color = AppColors.ButtonOrange
+                ) { run(it) ?: it })
         return when (kind(card)) {
             Kind.Potion -> listOf(
-                GameAction("Heal +${minOf(value(card), MAX_HEALTH - state.health)}", color = AppColors.ButtonGreen) { drink(it, index) ?: it },
+                GameAction(
+                    "Heal +${minOf(value(card), MAX_HEALTH - state.health)}",
+                    color = AppColors.ButtonGreen
+                ) { drink(it, index) ?: it },
             )
-            Kind.Weapon -> listOf(GameAction("Equip", color = AppColors.ButtonBlue) { equip(it, index) ?: it })
+
+            Kind.Weapon -> listOf(GameAction("Equip", color = AppColors.ButtonBlue) {
+                equip(
+                    it,
+                    index
+                ) ?: it
+            })
             // The weapon, when it can be used, has its own button on the board.
-            Kind.Monster -> listOf(GameAction("Fist −${value(card)}", color = AppColors.ButtonRed) { fight(it, index, false) ?: it })
+            Kind.Monster -> listOf(
+                GameAction(
+                    "Fist −${value(card)}",
+                    color = AppColors.ButtonRed
+                ) { fight(it, index, false) ?: it })
         }
     }
 
     @Composable
-    override fun Bottom(state: RogueState, play: (RogueState) -> Unit, feedback: Feedback, size: DpSize) {
+    override fun Bottom(
+        state: RogueState,
+        play: (RogueState) -> Unit,
+        feedback: Feedback,
+        size: DpSize
+    ) {
         BottomActions(actions(state), null, state, play, feedback, size)
     }
 
-    /** The health bar's row and the bar itself. */
+    /** The middle row's height. */
     private val HEALTH_ROW = 16.dp
+
+    /** Padding around zone outlines so cards fit inside. */
+    private val ZONE_PAD = 3.dp
+
     /** The weapon button's height. */
     private val WEAPON_BUTTON = 36.dp
-    private val HEALTH_BAR = 7.2.dp
-    /** The gaps between the three rows, × what would spread them over the whole board. */
-    private const val ROW_GAPS = 0.6f
 
     /**
-     * Top: the weapon, the pile of monsters it has killed, then the room
-     * number and stock. Middle: health. Bottom: the room's four cards.
+     * Top: weapon and killed monsters zone (snug fit to realistic card ratio).
+     * Middle: status text on one line.
+     * Bottom: the room's four cards.
      */
-    private class Rows(board: Dp, textWidth: Dp) {
+    private class Rows(board: Dp) {
         val layout = CardLayout(ROOM, 1, board, board, gap = 0.12f)
         val cardWidth = layout.cardWidth
-        val edge = pileEdge(cardWidth)
-        val pileHeight = layout.cardHeight + edge
-        private val gap = (board - pileHeight - HEALTH_ROW - layout.cardHeight) / 2 * ROW_GAPS
-        // Nearer the top than the foot, to stand clear of the buttons.
-        val topY = (board - pileHeight - HEALTH_ROW - layout.cardHeight - gap * 2) / 4
-        val healthY = topY + pileHeight + gap
+
+        // Snug ratio matching cards to remove empty padding at the bottom of the outlines
+        val cardHeight = cardWidth * 1.35f
+
+        private val totalContentHeight = cardHeight * 2 + HEALTH_ROW
+        private val remaining = board - totalContentHeight
+
+        // Push layout slightly up to leave maximum space at the bottom for the action button
+        val topY = max(0.dp, remaining * 0.2f)
+        private val gap = max(2.dp, remaining * 0.24f)
+
+        val healthY = topY + cardHeight + gap + ZONE_PAD
         val roomY = healthY + HEALTH_ROW + gap
-        /** The text's left edge, shared by the room, the deck and the health: [textWidth] from the board's right. */
-        val textX = max(layout.x(2), board - textWidth)
-        /** The killed monsters' zone: from beside the weapon to the text. */
-        val zoneX = layout.x(1)
-        val zoneWidth = textX - ZONE_GAP - zoneX
+
+        val zoneX = layout.x(1) + gap
+        val zoneWidth = (board - layout.x(0)) - zoneX
     }
 
     /** The space either side of the weapon button's label, and the black edge round it. */
     private val WEAPON_PAD = 9.dp
     private val WEAPON_EDGE = 2.dp
-
-    /** The least gap between a label and its figure. */
-    private val LABEL_GAP = 4.dp
-
-    /** The gap between the killed monsters' zone and the text beside it. */
-    private val ZONE_GAP = 6.dp
-
-    /** The space between the room and deck lines, × a line of text. */
-    private const val TEXT_SPACING = 0.3f
 
     /** How long a second tap has to follow the first, to be a double tap. */
     private const val DOUBLE_TAP_MS = 400L
@@ -353,51 +411,166 @@ object RogueRun : Game<RogueState> {
         }
     }
 
-    /** A label at the left and its figure at the right of the space given. */
     @Composable
-    private fun Figure(label: String, value: String) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            BoardText(label)
-            BoardText(value)
-        }
-    }
-
-    @Composable
-    override fun Board(state: RogueState, play: (RogueState) -> Unit, feedback: Feedback, modifier: Modifier) {
+    override fun Board(
+        state: RogueState,
+        play: (RogueState) -> Unit,
+        feedback: Feedback,
+        modifier: Modifier
+    ) {
         val board = LocalBoardSize.current
         val ambient = LocalAmbient.current
+        val context = LocalContext.current
+        val icons = remember(context) { CardIcons.get(context.assets) }
+        val iconColor = if (ambient) CardColors.Ambient.copy(alpha = 0.3f) else AppColors.SlotMark
+
+        // Determine screen boundaries so we can draw outside the square `board` bounds
+        val config = LocalConfiguration.current
+        val screenWidth = config.screenWidthDp.dp
+        val screenHeight = config.screenHeightDp.dp
+
         // When the last tap landed, for telling a double tap from a slow second one.
         val lastTap = remember { longArrayOf(0L, -1L) }
-        // The room the widest line of text needs: a label, a gap and two figures.
         val measurer = rememberTextMeasurer()
-        val textStyle = MaterialTheme.typography.labelSmall
         val density = LocalDensity.current
-        val textWidth = remember(textStyle, density) {
-            with(density) {
-                fun width(text: String) = measurer.measure(text, textStyle, maxLines = 1).size.width.toDp()
-                listOf("Rm", "Dk", "HP").maxOf { width(it) } + LABEL_GAP + width("00")
-            }
-        }
+
         // The weapon button's longest label, in the buttons' text.
         val buttonStyle = MaterialTheme.typography.labelMedium
         val buttonLabelWidth = remember(buttonStyle, density) {
-            with(density) { measurer.measure("Wpn −00", buttonStyle, maxLines = 1).size.width.toDp() }
+            with(density) {
+                measurer.measure(
+                    "Wpn −00",
+                    buttonStyle,
+                    maxLines = 1
+                ).size.width.toDp()
+            }
         }
+
         CardTable(
             modifier,
             overlay = {
-                val rows = Rows(board, textWidth)
-                val textX = rows.textX
+                val rows = Rows(board)
+
+                // Helper to draw a CardIcon centered and scaled within its Canvas
+                fun androidx.compose.ui.graphics.drawscope.DrawScope.drawIconPath(
+                    icon: CardIcon,
+                    scaleMultiplier: Float = 0.5f
+                ) {
+                    val baseScale = size.width / icon.viewBox
+                    val finalScale = baseScale * scaleMultiplier
+
+                    val iconWidth = icon.bounds.width * finalScale
+                    val iconHeight = icon.bounds.height * finalScale
+                    val translateX = (size.width - iconWidth) / 2f - (icon.bounds.left * finalScale)
+                    val translateY =
+                        (size.height - iconHeight) / 2f - (icon.bounds.top * finalScale)
+
+                    withTransform({
+                        translate(left = translateX, top = translateY)
+                        scale(finalScale, finalScale, pivot = Offset.Zero)
+                    }) {
+                        drawPath(path = icon.path, color = iconColor)
+                    }
+                }
+
+                // 90-degree arc health progress bar shifted fully to the left screen edge
+                val healthProgress = state.health / MAX_HEALTH.toFloat()
+                val healthColor = if (ambient) AppColors.TextMuted else healthColour(state.health)
+
+                // Offset back from the centered board to the top-left of the actual screen
+                val offsetX = -(screenWidth - board) / 2
+                val offsetY = -(screenHeight - board) / 2
+
+                Canvas(
+                    Modifier
+                        .offset(x = offsetX, y = offsetY)
+                        .size(screenWidth, screenHeight)
+                ) {
+                    val strokePx = 6.dp.toPx()
+                    val inset = strokePx / 2f + 12.dp.toPx()
+                    val arcSize = Size(size.width - inset / 2, size.height - inset / 2)
+                    val topLeft = Offset(inset, inset + size.height / 4)
+
+                    // Background track hugging left watch bezel (135° to 225°)
+                    drawArc(
+                        color = AppColors.DeepBlue,
+                        startAngle = 155f,
+                        sweepAngle = 50f,
+                        useCenter = false,
+                        topLeft = topLeft,
+                        size = arcSize,
+                        style = Stroke(width = strokePx, cap = StrokeCap.Round)
+                    )
+
+                    // Active progress arc
+                    if (healthProgress > 0f) {
+                        drawArc(
+                            color = healthColor,
+                            startAngle = 155f,
+                            sweepAngle = 50f * healthProgress,
+                            useCenter = false,
+                            topLeft = topLeft,
+                            size = arcSize,
+                            style = Stroke(width = strokePx, cap = StrokeCap.Round)
+                        )
+                    }
+                }
+
+                // Text labels distributed evenly across the middle row
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .offset(y = rows.healthY),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    BoardText("HP: ${state.health}")
+                    BoardText("Rm: ${state.roomNumber + state.roomsSkipped}")
+                    BoardText("Dk: ${state.deck.size}")
+                }
+
+                // Sword icon in middle of weapon pile (under cards)
+                val swordX = rows.layout.x(0)
+                val swordY = rows.topY
+                Canvas(
+                    Modifier
+                        .offset(x = swordX, y = swordY)
+                        .size(rows.cardWidth, rows.cardHeight)
+                        .zIndex(1f),
+                ) {
+                    drawIconPath(icons.sword, scaleMultiplier = 0.6f)
+                }
+
+                // Dragon icon in middle of monsters zone (under cards), same size as sword icon
+                val dragonX = rows.zoneX + (rows.zoneWidth - rows.cardWidth) / 2
+                val dragonY = rows.topY
+                Canvas(
+                    Modifier
+                        .offset(x = dragonX, y = dragonY)
+                        .size(rows.cardWidth, rows.cardHeight)
+                        .zIndex(1f),
+                ) {
+                    drawIconPath(icons.dragon, scaleMultiplier = 0.85f)
+                }
+
                 val picked = state.selected
                 val monster = picked?.let { state.room[it] }?.takeIf { kind(it) == Kind.Monster }
                 if (picked != null && monster != null && state.weapon != null && outcome(state) == null) {
-                    // Fighting with the weapon, in place of the room and deck while a monster is picked (off if it can't be used).
-                    // It may reach over the end of the killed monsters' zone: a black edge (and backing, for
-                    // when it's faded) sets it apart.
-                    // Never over the last monster killed, at the zone's left: its label shrinks to fit instead.
-                    val buttonWidth = min(max(board - textX, buttonLabelWidth + WEAPON_PAD * 2), board - rows.zoneX - rows.cardWidth - WEAPON_EDGE)
-                    // Over the cards, even those moving.
-                    Box(Modifier.offset(x = board - buttonWidth, y = rows.topY).size(buttonWidth, rows.pileHeight).zIndex(2000f), contentAlignment = Alignment.CenterEnd) {
+                    // Weapon button overlay when a monster is selected
+                    val buttonWidth = min(
+                        buttonLabelWidth + WEAPON_PAD * 2,
+                        board - rows.zoneX - rows.cardWidth + WEAPON_PAD
+                    )
+                    Box(
+                        Modifier
+                            .offset(
+                                x = board - rows.layout.x(0) - buttonWidth + WEAPON_PAD / 2,
+                                y = rows.topY
+                            )
+                            .size(buttonWidth, rows.cardHeight)
+                            .zIndex(2000f),
+                        contentAlignment = Alignment.CenterEnd
+                    ) {
                         GameButton(
                             label = "Wpn −${maxOf(0, value(monster) - value(state.weapon))}",
                             onClick = { feedback.tryMove(fight(state, picked, true), play) },
@@ -409,69 +582,98 @@ object RogueRun : Game<RogueState> {
                             border = BorderStroke(WEAPON_EDGE, Color.Black),
                         )
                     }
-                } else {
-                    val line = with(LocalDensity.current) { MaterialTheme.typography.labelSmall.lineHeight.toDp() }
-                    Column(
-                        Modifier.offset(x = textX, y = rows.topY).size(board - textX, rows.pileHeight),
-                        verticalArrangement = Arrangement.spacedBy(line * TEXT_SPACING, Alignment.CenterVertically),
-                    ) {
-                        Figure("Rm", "${state.roomNumber + state.roomsSkipped}")
-                        Figure("Dk", "${state.deck.size}")
-                    }
-                }
-                Row(Modifier.offset(y = rows.healthY).fillMaxWidth().height(HEALTH_ROW), verticalAlignment = Alignment.CenterVertically) {
-                    Box(Modifier.width(textX - ZONE_GAP).height(HEALTH_BAR).clip(CircleShape).background(AppColors.DeepBlue)) {
-                        Box(
-                            Modifier
-                                .fillMaxHeight()
-                                .fillMaxWidth(state.health / MAX_HEALTH.toFloat())
-                                .clip(CircleShape)
-                                .background(if (ambient) AppColors.TextMuted else healthColour(state.health)),
-                        )
-                    }
-                    Spacer(Modifier.width(ZONE_GAP))
-                    Figure("HP", "${state.health}")
                 }
             },
         ) {
-            val rows = Rows(width, textWidth)
+            val rows = Rows(width)
             val layout = rows.layout
             val weapon = state.weapon
-            // The weapon's place always shows, with the weapon on it.
-            slot(layout.x(0), rows.topY + rows.edge, rows.cardWidth)
-            if (weapon != null) card(weapon, weapon, layout.x(0), rows.topY + rows.edge, rows.cardWidth)
-            // The monsters it has killed lie in a zone beside it, as high as a card: the last at its
-            // left (clear of the weapon button), each earlier one further right, under it,
-            // spread so that three end at its right edge, and closer for more.
-            val zoneX = rows.zoneX
-            zone(zoneX, rows.topY + rows.edge, rows.zoneWidth, rows.cardWidth)
-            val used = state.weaponUsedOn
-            val step = (rows.zoneWidth - rows.cardWidth) / maxOf(2, used.size - 1)
-            used.forEachIndexed { i, monster ->
-                card(monster, monster, zoneX + step * (used.lastIndex - i), rows.topY + rows.edge, rows.cardWidth, z = i.toFloat(), under = i != used.lastIndex)
+
+            // Weapon placeholder pile outline & slot
+            val weaponX = layout.x(0)
+            val weaponY = rows.topY
+            zone(
+                weaponX - ZONE_PAD,
+                weaponY - ZONE_PAD,
+                rows.cardWidth + ZONE_PAD * 2,
+                rows.cardHeight + ZONE_PAD * 2,
+                rows.cardWidth * CARD_ASPECT + ZONE_PAD * 2,
+            )
+            slot(weaponX, weaponY, rows.cardWidth)
+
+            if (weapon != null) {
+                card(
+                    weapon,
+                    weapon,
+                    weaponX,
+                    weaponY,
+                    rows.cardWidth,
+                    false,
+                    10.toFloat()
+                )
             }
+
+            // Killed monsters zone outline stretching to right edge
+            val zoneX = rows.zoneX
+            val zoneWidth = rows.zoneWidth
+            val zoneY = rows.topY
+            zone(
+                zoneX - ZONE_PAD,
+                zoneY - ZONE_PAD,
+                zoneWidth + ZONE_PAD * 2,
+                rows.cardHeight + ZONE_PAD * 2,
+                rows.cardWidth * CARD_ASPECT + ZONE_PAD * 2,
+            )
+
+            // Monster cards in killed monsters zone (50% opacity except top card)
+            val used = state.weaponUsedOn
+            val step =
+                if (used.size > 1) (zoneWidth - rows.cardWidth) / maxOf(2, used.size - 1) else 0.dp
+            used.forEachIndexed { i, monsterCard ->
+                val isTop = i == used.lastIndex
+                val cardX = zoneX + step * (used.lastIndex - i)
+                card(
+                    monsterCard,
+                    monsterCard,
+                    cardX,
+                    zoneY,
+                    rows.cardWidth,
+                    z = i.toFloat() + 10,
+                    under = !isTop,
+                )
+            }
+
+            // Room cards
             state.room.forEachIndexed { i, card ->
                 val x = layout.x(i)
-                // Each place shows under its card, so it looks the same while cards come and go.
                 slot(x, rows.roomY, rows.cardWidth)
                 if (card != null) {
-                    card(card, card, x, rows.roomY, rows.cardWidth, selection = if (state.selected == i) selectionFor(card) else null, dot = threat(state, card))
+                    card(
+                        card,
+                        card,
+                        x,
+                        rows.roomY,
+                        rows.cardWidth,
+                        selection = if (state.selected == i) selectionFor(card) else null,
+                        dot = threat(state, card)
+                    )
                 }
                 tap(x, rows.roomY, rows.cardWidth, layout.cardHeight) {
-                    // A quick second tap on the picked card does the one thing it can (a monster the
-                    // weapon can fight has two); a slow one puts the card down.
                     val now = SystemClock.uptimeMillis()
                     val quick = lastTap[1] == i.toLong() && now - lastTap[0] <= DOUBLE_TAP_MS
                     lastTap[0] = now
                     lastTap[1] = i.toLong()
-                    val choice = card != null && kind(card) == Kind.Monster && canUseWeapon(state, card)
-                    val only = actions(state).singleOrNull()?.takeIf { state.selected == i && quick && !choice }
+                    val choice =
+                        card != null && kind(card) == Kind.Monster && canUseWeapon(state, card)
+                    val only = actions(state).singleOrNull()
+                        ?.takeIf { state.selected == i && quick && !choice }
                     when {
                         outcome(state) != null -> feedback.reject()
                         only != null -> {
                             feedback.move()
                             play(only.perform(state))
                         }
+
                         else -> feedback.tryMove(select(state, i), play)
                     }
                 }
@@ -479,3 +681,7 @@ object RogueRun : Game<RogueState> {
         }
     }
 }
+
+@WearGamePreview
+@Composable
+private fun RogueRunPreview() = GamePreview(RogueRun)

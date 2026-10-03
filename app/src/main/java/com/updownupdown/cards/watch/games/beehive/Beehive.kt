@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.min
 import com.updownupdown.cards.watch.R
-import kotlinx.coroutines.delay
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardLayout
 import com.updownupdown.cards.watch.cards.CardStyle
@@ -22,9 +21,12 @@ import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
-import kotlin.random.Random
+import com.updownupdown.cards.watch.ui.GamePreview
+import com.updownupdown.cards.watch.ui.WearGamePreview
+import kotlinx.coroutines.delay
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlin.random.Random
 
 /**
  * Piles list bottom to top. Only the beehive's top card is face up. The
@@ -45,9 +47,6 @@ object Beehive : Game<BeehiveState> {
     private const val SET = 4
 
     // Board cells on a 3×3 grid.
-    private const val BEEHIVE_CELL = 6
-    private const val WASTE_CELL = 8
-
     override val id = "beehive"
     override val thumbnail = R.drawable.thumb_beehive
     override val banner = R.drawable.banner_beehive
@@ -87,7 +86,8 @@ object Beehive : Game<BeehiveState> {
     }
 
     private fun destinationFor(state: BeehiveState, card: Card): Int? {
-        val matching = state.tableau.indexOfFirst { it.isNotEmpty() && it.size < SET && it.last().rank == card.rank }
+        val matching =
+            state.tableau.indexOfFirst { it.isNotEmpty() && it.size < SET && it.last().rank == card.rank }
         if (matching >= 0) return matching
         return state.tableau.indexOfFirst { it.isEmpty() }.takeIf { it >= 0 }
     }
@@ -144,7 +144,7 @@ object Beehive : Game<BeehiveState> {
 
     private fun hasMove(state: BeehiveState) =
         playBeehive(state) != null || playWaste(state) != null ||
-            state.tableau.indices.any { joinPile(state, it) != null }
+                state.tableau.indices.any { joinPile(state, it) != null }
 
     /** Whether drawing through the stock (recycling once) turns up a playable card. */
     private fun drawingHelps(state: BeehiveState): Boolean {
@@ -177,14 +177,19 @@ object Beehive : Game<BeehiveState> {
     private const val COLUMNS = 2
     private const val ROWS = 3
     private const val GAP = 0.12f
+
     /** How many of the waste's cards show. */
     private const val WASTE_SHOWN = 3
+
     /** How much of each waste card the next one covers, × a card's height. */
     private const val WASTE_OVERLAP = 0.35f
+
     /** How far the beehive and the waste sit in from the screen's edge, towards the grid, × a card's width. */
     private const val SIDE_PULL = 0.4f
+
     /** The cards' height, × the board's: short of its foot, to stand clear of the Draw button. */
     private const val BOARD_HEIGHT = 0.9f
+
     /** How long a recycle waits before it draws. */
     private const val RECYCLE_DRAW_MS = 300L
 
@@ -195,7 +200,14 @@ object Beehive : Game<BeehiveState> {
      * in from as far out as the round screen allows, and the same gap from it.
      */
     private class Places(board: Dp, high: Dp) {
-        private val grid = CardLayout(COLUMNS, ROWS, board, high * BOARD_HEIGHT, gap = GAP, extra = CardStyle.PILE_OFFSET)
+        private val grid = CardLayout(
+            COLUMNS,
+            ROWS,
+            board,
+            high * BOARD_HEIGHT,
+            gap = GAP,
+            extra = CardStyle.PILE_OFFSET
+        )
         val width = grid.cardWidth
         val height = grid.cardHeight
         private val gridWidth = grid.cellWidth * COLUMNS + grid.gap * (COLUMNS - 1)
@@ -225,13 +237,19 @@ object Beehive : Game<BeehiveState> {
     }
 
     @Composable
-    override fun Board(state: BeehiveState, play: (BeehiveState) -> Unit, feedback: Feedback, modifier: Modifier) {
+    override fun Board(
+        state: BeehiveState,
+        play: (BeehiveState) -> Unit,
+        feedback: Feedback,
+        modifier: Modifier
+    ) {
         val over = outcome(state) != null
 
         // A recycle then draws, after a short wait.
         var before by remember { mutableStateOf(state) }
         LaunchedEffect(state) {
-            val recycled = before.stock.isEmpty() && before.waste.isNotEmpty() && state.waste.isEmpty() && state.stock.isNotEmpty()
+            val recycled =
+                before.stock.isEmpty() && before.waste.isNotEmpty() && state.waste.isEmpty() && state.stock.isNotEmpty()
             before = state
             if (recycled && !over) {
                 delay(RECYCLE_DRAW_MS)
@@ -247,7 +265,12 @@ object Beehive : Game<BeehiveState> {
                     feedback.tryMove(if (over) null else joinPile(state, i), play)
                 }
             }
-            pile(state.beehive, places.beehiveX, places.beehiveY, cardWidth, faceDown = { it != state.beehive.lastIndex }) {
+            pile(
+                state.beehive,
+                places.beehiveX,
+                places.beehiveY,
+                cardWidth,
+                faceDown = { it != state.beehive.lastIndex }) {
                 feedback.tryMove(if (over) null else playBeehive(state), play)
             }
             // The waste's older cards stay under its first place, so cards glide in and out.
@@ -273,3 +296,8 @@ object Beehive : Game<BeehiveState> {
         }
     }
 }
+
+@WearGamePreview
+@Composable
+private fun BeehivePreview() = GamePreview(Beehive)
+

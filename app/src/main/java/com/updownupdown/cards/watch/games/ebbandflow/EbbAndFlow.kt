@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
@@ -18,6 +18,8 @@ import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.CARD_ASPECT
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardColors
+import com.updownupdown.cards.watch.cards.CardIcon
+import com.updownupdown.cards.watch.cards.CardIcons
 import com.updownupdown.cards.watch.cards.CardStyle
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.RoundScreen
@@ -30,11 +32,13 @@ import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.AppColors
+import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalAmbient
 import com.updownupdown.cards.watch.ui.LocalBoardSize
-import kotlin.random.Random
+import com.updownupdown.cards.watch.ui.WearGamePreview
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlin.random.Random
 
 /**
  * @param stock the cards still to draw.
@@ -80,11 +84,15 @@ object EbbAndFlow : Game<EbbAndFlowState> {
     /** Whether pile [index] climbs. */
     fun rising(index: Int) = index < PILES / 2
 
-    private fun sorted(hand: List<Card>) = hand.sortedWith(compareBy({ it.rank.value }, { it.suit }))
+    private fun sorted(hand: List<Card>) =
+        hand.sortedWith(compareBy({ it.rank.value }, { it.suit }))
 
     override fun newGame(random: Random): EbbAndFlowState {
         val deck = shuffledDeck(random)
-        return EbbAndFlowState(stock = deck.drop(HAND), hand = sorted(deck.take(HAND)), piles = List(PILES) { emptyList() })
+        return EbbAndFlowState(
+            stock = deck.drop(HAND),
+            hand = sorted(deck.take(HAND)),
+            piles = List(PILES) { emptyList() })
     }
 
     fun canPlay(card: Card, pile: List<Card>, rising: Boolean): Boolean {
@@ -117,30 +125,37 @@ object EbbAndFlow : Game<EbbAndFlowState> {
     fun draw(state: EbbAndFlowState): EbbAndFlowState? {
         if (!canDraw(state)) return null
         val count = minOf(HAND - state.hand.size, state.stock.size)
-        return state.copy(stock = state.stock.drop(count), hand = sorted(state.hand + state.stock.take(count)), played = 0)
+        return state.copy(
+            stock = state.stock.drop(count),
+            hand = sorted(state.hand + state.stock.take(count)),
+            played = 0
+        )
     }
 
     override fun outcome(state: EbbAndFlowState) = when {
         state.stock.isEmpty() && state.hand.isEmpty() -> Outcome(true, "Every card played!")
         state.hand.isNotEmpty() && !hasPlay(state) && !canDraw(state) ->
             Outcome(false, "Stuck with ${state.stock.size + state.hand.size} cards left")
+
         else -> null
     }
 
     override fun actions(state: EbbAndFlowState) = listOf(
-        GameAction<EbbAndFlowState>("Draw (${state.stock.size})", enabled = canDraw(state)) { draw(it) ?: it },
+        GameAction<EbbAndFlowState>("Draw (${state.stock.size})", enabled = canDraw(state)) {
+            draw(
+                it
+            ) ?: it
+        },
     )
 
     /** The gap between the piles and the hand, and between cards in each row, × the card's width. */
     private val ROW_GAP = 5.dp
     private const val PILE_GAP = 0.15f
+    private const val PILE_CENTER_GAP_EXTRA = 0.3f
     private const val HAND_GAP = 0.06f
+
     /** How far the piles sit up from their place over the hand, × the card's height. */
     private const val PILE_LIFT = 0.16f
-    /** The arrow in an empty pile: its height, its head's reach and its line, × the card's width. */
-    private const val ARROW_HEIGHT = 0.5f
-    private const val ARROW_HEAD = 0.2f
-    private const val ARROW_LINE = 0.07f
 
     /**
      * The piles in a row over the hand, one card size: the largest at which a
@@ -157,23 +172,36 @@ object EbbAndFlow : Game<EbbAndFlowState> {
 
         init {
             val screen = RoundScreen(board)
-            val pilesFit = board / (PILES * (1 + CardStyle.PILE_OFFSET) + (PILES - 1) * PILE_GAP)
+            // Calculate the total gap space including the extra center gap
+            val totalGapSpace = (PILES - 1) * PILE_GAP + PILE_CENTER_GAP_EXTRA
+            val pilesFit = board / (PILES * (1 + CardStyle.PILE_OFFSET) + totalGapSpace)
+
             fun top(width: Dp) = (board - width * CARD_ASPECT * 2 - pileEdge(width) - ROW_GAP) / 2
             fun handY(width: Dp) = top(width) + pileEdge(width) + width * CARD_ASPECT + ROW_GAP
+
             // The hand's room depends on its height, and so on the card's size: a few rounds settle it.
             var width = pilesFit
             repeat(4) {
                 val y = handY(width)
-                val room = screen.right(y, y + width * CARD_ASPECT) - screen.left(y, y + width * CARD_ASPECT)
+                val room = screen.right(y, y + width * CARD_ASPECT) - screen.left(
+                    y,
+                    y + width * CARD_ASPECT
+                )
                 width = min(pilesFit, room / (HAND + (HAND - 1) * HAND_GAP))
             }
             cardWidth = width
             pileY = top(width) - width * CARD_ASPECT * PILE_LIFT
             handY = handY(width)
-            pileLeft = middle - (pileEdge(width) * PILES + width * (PILES + (PILES - 1) * PILE_GAP)) / 2
+
+            // FIXED: Use totalGapSpace here so the entire row stays perfectly centered
+            pileLeft = middle - (pileEdge(width) * PILES + width * (PILES + totalGapSpace)) / 2
         }
 
-        fun pileX(index: Int) = pileLeft + (cardWidth + pileEdge(cardWidth) + cardWidth * PILE_GAP) * index
+        fun pileX(index: Int): Dp {
+            // Apply extra gap between 2nd and 3rd cards to split falling and rising
+            val extra = if (index >= 2) cardWidth * PILE_CENTER_GAP_EXTRA else 0.dp
+            return pileLeft + (cardWidth + pileEdge(cardWidth) + cardWidth * PILE_GAP) * index + extra
+        }
 
         /** Card [index] of [count], the hand centred. */
         fun handX(index: Int, count: Int): Dp {
@@ -183,30 +211,82 @@ object EbbAndFlow : Game<EbbAndFlowState> {
     }
 
     @Composable
-    override fun Board(state: EbbAndFlowState, play: (EbbAndFlowState) -> Unit, feedback: Feedback, modifier: Modifier) {
+    override fun Board(
+        state: EbbAndFlowState,
+        play: (EbbAndFlowState) -> Unit,
+        feedback: Feedback,
+        modifier: Modifier
+    ) {
         var selected by remember(state) { mutableStateOf<Card?>(null) }
         val playing = outcome(state) == null
         val layout = Layout(LocalBoardSize.current)
-        val arrowColour = if (LocalAmbient.current) CardColors.Ambient.copy(alpha = 0.3f) else AppColors.SlotMark
+        val arrowColour =
+            if (LocalAmbient.current) CardColors.Ambient.copy(alpha = 0.3f) else AppColors.SlotMark
+
+        // 1. Get your parsed CardIcons via the context's AssetManager
+        val context = androidx.compose.ui.platform.LocalContext.current
+        val icons = remember(context) { CardIcons.get(context.assets) }
 
         CardTable(
             modifier,
             overlay = {
-                // An empty pile shows which way it goes.
                 val cardWidth = layout.cardWidth
+                val cardHeight = layout.cardHeight
+
+                // Helper to draw a CardIcon centered and scaled within its Canvas
+                fun androidx.compose.ui.graphics.drawscope.DrawScope.drawIconPath(
+                    icon: CardIcon,
+                    scaleMultiplier: Float = 0.75f
+                ) {
+                    val baseScale = size.width / icon.viewBox
+                    val finalScale = baseScale * scaleMultiplier
+
+                    // Center the SVG path bounds inside the Canvas space
+                    val iconWidth = icon.bounds.width * finalScale
+                    val iconHeight = icon.bounds.height * finalScale
+                    val translateX = (size.width - iconWidth) / 2f - (icon.bounds.left * finalScale)
+                    val translateY =
+                        (size.height - iconHeight) / 2f - (icon.bounds.top * finalScale)
+
+                    withTransform({
+                        translate(left = translateX, top = translateY)
+                        scale(finalScale, finalScale, pivot = Offset.Zero)
+                    }) {
+                        drawPath(path = icon.path, color = arrowColour)
+                    }
+                }
+
+                // 1. Group arrows above the piles
+                listOf(0 to true, 2 to false).forEach { (startIndex, isRising) ->
+                    // Midpoint between start of first pile and end of second pile, minus half the canvas width
+                    val x1 = layout.pileX(startIndex)
+                    val x2 = layout.pileX(startIndex + 1)
+                    val groupCenterX = (x1 + x2) / 2
+                    val y = layout.pileY - cardHeight * 0.84f
+                    val icon = if (isRising) icons.arrowUp else icons.arrowDown
+
+                    Canvas(
+                        Modifier
+                            .offset(groupCenterX, y)
+                            .size(cardWidth, cardHeight)
+                    ) {
+                        drawIconPath(icon, scaleMultiplier = 0.75f)
+                    }
+                }
+
+                // 2. Empty pile indicators
                 state.piles.forEachIndexed { index, pile ->
                     if (pile.isNotEmpty()) return@forEachIndexed
-                    Canvas(Modifier.offset(layout.pileX(index), layout.pileY + pileEdge(cardWidth)).size(cardWidth, layout.cardHeight)) {
-                        val w = size.width
-                        val half = w * ARROW_HEIGHT / 2
-                        val head = w * ARROW_HEAD
-                        val line = w * ARROW_LINE
-                        // Drawn pointing up; turned over for a falling pile.
-                        val flip = if (rising(index)) 1f else -1f
-                        val tip = Offset(center.x, center.y - half * flip)
-                        drawLine(arrowColour, Offset(center.x, center.y + half * flip), tip, line, StrokeCap.Round)
-                        drawLine(arrowColour, tip, Offset(tip.x - head, tip.y + head * flip), line, StrokeCap.Round)
-                        drawLine(arrowColour, tip, Offset(tip.x + head, tip.y + head * flip), line, StrokeCap.Round)
+
+                    val icon = if (rising(index)) icons.arrowUp else icons.arrowDown
+                    val y = layout.pileY + pileEdge(cardWidth)
+
+                    Canvas(
+                        Modifier
+                            .offset(layout.pileX(index), y)
+                            .size(cardWidth, cardHeight)
+                    ) {
+                        drawIconPath(icon, scaleMultiplier = 0.75f)
                     }
                 }
             },
@@ -220,16 +300,35 @@ object EbbAndFlow : Game<EbbAndFlowState> {
                     y = layout.pileY,
                     cardWidth = cardWidth,
                 ) {
-                    feedback.tryMove(if (playing && picked != null) play(state, picked, index) else null, play)
+                    feedback.tryMove(
+                        if (playing && picked != null) play(
+                            state,
+                            picked,
+                            index
+                        ) else null, play
+                    )
                 }
             }
             state.hand.forEachIndexed { index, card ->
                 val x = layout.handX(index, state.hand.size)
-                card(card, card, x, layout.handY, cardWidth, selection = if (card == picked) Selection.Neutral else null)
+                card(
+                    card,
+                    card,
+                    x,
+                    layout.handY,
+                    cardWidth,
+                    selection = if (card == picked) Selection.Neutral else null
+                )
                 tap(x, layout.handY, cardWidth, layout.cardHeight) {
-                    if (playing) selected = if (card == picked) null else card else feedback.reject()
+                    if (playing) selected =
+                        if (card == picked) null else card else feedback.reject()
                 }
             }
         }
     }
 }
+
+@WearGamePreview
+@Composable
+private fun EbbAndFlowPreview() = GamePreview(EbbAndFlow)
+

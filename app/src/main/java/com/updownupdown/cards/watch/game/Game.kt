@@ -9,8 +9,8 @@ import androidx.compose.ui.unit.DpSize
 import com.updownupdown.cards.watch.ui.BOARD_FRACTION
 import com.updownupdown.cards.watch.ui.BOARD_LIFT
 import com.updownupdown.cards.watch.ui.BottomActions
-import kotlin.random.Random
 import kotlinx.serialization.KSerializer
+import kotlin.random.Random
 
 /**
  * A game: its rules as pure functions over an immutable state [S], and the
@@ -33,11 +33,11 @@ interface Game<S : Any> {
     @get:DrawableRes
     val banner: Int
 
-    /** A dark colour from that picture (in colors.xml), laid over it on the button so the title reads. */
+    /** A dark color from that picture (in colors.xml), laid over it on the button so the title reads. */
     @get:ColorRes
     val accent: Int
 
-    /** The same colour made pale, for the game's action button and its rules' headings. */
+    /** The same color made pale, for the game's action button and its rules' headings. */
     @get:ColorRes
     val accentPale: Int
 
@@ -64,7 +64,7 @@ interface Game<S : Any> {
 
     /**
      * What the game's score counts ("Score", "Moves"), or null when a win
-     * always scores the same and there's nothing to keep a best of.
+     * always scores the same and there's nothing to keep the best of.
      */
     val scoreName: String? get() = null
 
@@ -99,7 +99,7 @@ interface Game<S : Any> {
 
 data class Outcome(val won: Boolean, val message: String)
 
-/** @param color the button's colour, when it isn't the usual one. */
+/** @param color the button's color, when it isn't the usual one. */
 class GameAction<S>(
     val label: String,
     val enabled: Boolean = true,

@@ -11,15 +11,17 @@ import androidx.wear.compose.material3.ColorScheme
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Typography
 import com.updownupdown.cards.watch.R
+import com.updownupdown.cards.watch.ui.AppColors.CardFace
 
 /**
- * Every colour in the app. The launcher icon can't read these: its
+ * Every color in the app. The launcher icon can't read these: its
  * background is in res/values/colors.xml and its spade in
  * res/drawable/ic_launcher_foreground.xml.
  */
 object AppColors {
-    /** The theme colour: the Solitarius logo's yellow, also used for text accents. */
-    val PaleYellow = Color(0xFFFFCF87)
+    /** The theme color: the Solitarius logo's yellow, also used for text accents. */
+    val PaleYellow = Color(0xFFFFE27A)
+
     /** List buttons, card faces and the text on game buttons. */
     val DeepBlue = Color(0xFF262737)
     val DeepBlueBorder = Color(0xFF1F1F28)
@@ -27,29 +29,35 @@ object AppColors {
     /** Buttons on lists and menus. */
     val ListButton = DeepBlue
     val ListButtonText = Color.White
-    /** Buttons inside a game, where the game's own pale colour isn't to hand. */
+
+    /** Buttons inside a game, where the game's own pale color isn't to hand. */
     val GameButton = PaleYellow
     val GameButtonText = DeepBlue
-    // A disabled game button is its colour at 40%.
+    // A disabled game button is its color at 40%.
 
     val Icon = Color(0xFFE6E4EC)
     val Ambient = Color(0xFF8A8A8A)
+
     /** Status lines, counts and other quiet text. */
     val TextMuted = Color(0xFFC9C6D3)
 
     // Cards.
     val CardFace = DeepBlue
     val CardBack = Color(0xFF656573)
-    /** The Solitarius logo on a card's back, and the line around it. */
+
+    /** The Solitarius logo on a card's back, and the surrounding line. */
     val CardBackLogo = DeepBlue
     val CardBackBorder = DeepBlueBorder
+
     /**
      * Shades a card that isn't on top (under a pile's top card, or behind
      * the last of a spread): 40% black, which turns a [CardFace] into #171721.
      */
     val CardUnderShade = Color(0x00000000)
+
     /** An empty pile or space: darker than a card, but showing against the black screen. */
     val CardEmptySlot = Color(0xFF12121A)
+
     /** The thin dark edge around every card, so overlapping cards stand apart. */
     val CardEdge = Color(0xFF000000)
 
@@ -59,7 +67,7 @@ object AppColors {
     /** A mark in an empty slot, such as Ebb & Flow's arrows. */
     val SlotMark = Color(0xFF7C7C88)
 
-    // A colour for each suit.
+    // A color for each suit.
     val Hearts = Color(0xFFFF677B)
     val Spades = Color(0xFF9EE3FF)
     val Diamonds = Color(0xFFFFAA7C)
@@ -72,16 +80,17 @@ object AppColors {
     // (also 30%; a hint, such as a valid move, is [PaleYellow]).
     val Neutral = Color(0xFF7BD5FF)
     val Good = Color(0xFF78EBB1)
-    val Bad = Color(0xFFE0485C)
+    val Bad = Color(0xFFFF5269)
+    val Grey = Color(0xFF808080)
 
-    // Buttons whose colour says what they do (Rogue Run: heal, equip, weapon,
+    // Buttons whose color says what they do (Rogue Run: heal, equip, weapon,
     // fist, run; Lycan's captures), each light enough for the dark text on it.
-    val ButtonGreen = Color(0xFF8EF0C0)
-    val ButtonBlue = Color(0xFF9BDFFF)
-    val ButtonPurple = Color(0xFFC9B5FF)
-    val ButtonRed = Color(0xFFFF8A98)
-    val ButtonOrange = Color(0xFFFFB070)
-    val ButtonPink = Color(0xFFFFA6D5)
+    val ButtonGreen = Color(0xFF8AFCC2)
+    val ButtonBlue = Color(0xFF8CCDFF)
+    val ButtonPurple = Color(0xFFD68FFF)
+    val ButtonRed = Color(0xFFFF5C6E)
+    val ButtonOrange = Color(0xFFFF984D)
+    val ButtonPink = Color(0xFFFF78C0)
 
     // Text labels standing for red cards, black cards and either.
     val LabelRed = Color(0xFFEF5350)
@@ -92,8 +101,18 @@ object AppColors {
 /** The app's font, for all text. One variable font file, at the weights the app uses. */
 @OptIn(ExperimentalTextApi::class)
 val Outfit = FontFamily(
-    listOf(FontWeight.Light, FontWeight.Normal, FontWeight.Medium, FontWeight.SemiBold, FontWeight.Bold).map {
-        Font(R.font.outfit, it, variationSettings = FontVariation.Settings(FontVariation.weight(it.weight)))
+    listOf(
+        FontWeight.Light,
+        FontWeight.Normal,
+        FontWeight.Medium,
+        FontWeight.SemiBold,
+        FontWeight.Bold
+    ).map {
+        Font(
+            R.font.outfit,
+            it,
+            variationSettings = FontVariation.Settings(FontVariation.weight(it.weight))
+        )
     },
 )
 

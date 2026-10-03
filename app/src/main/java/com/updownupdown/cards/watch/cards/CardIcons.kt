@@ -21,8 +21,16 @@ class CardIcons private constructor(assets: AssetManager) {
     private val ranks = Rank.entries.associateWith { assets.icon("numbers/${it.label}.svg") }
     private val suits = Suit.entries.associateWith { assets.icon("suits/${it.name}.svg") }
     val back = assets.icon("Back.svg")
+
     /** Jailbreak's prisoner, in the empty middle. */
     val joker = assets.icon("Joker.svg")
+
+    val arrowUp = assets.icon("ArrowUp.svg")
+    val arrowDown = assets.icon("ArrowDown.svg")
+
+    /** Rogue Run's weapon and monster zone icons. */
+    val sword = assets.icon("Sword.svg")
+    val dragon = assets.icon("Dragon.svg")
 
     fun rank(rank: Rank) = ranks.getValue(rank)
     fun suit(suit: Suit) = suits.getValue(suit)
