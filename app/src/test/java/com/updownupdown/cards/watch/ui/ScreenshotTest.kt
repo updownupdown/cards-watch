@@ -13,6 +13,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipe
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.test.swipeUp
 import androidx.wear.compose.material3.AppScaffold
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -65,7 +69,7 @@ class ScreenshotTest {
     @get:Rule
     val compose = createComposeRule()
 
-    private fun capture(name: String, content: @Composable () -> Unit) {
+    private fun capture(name: String, before: () -> Unit = {}, content: @Composable () -> Unit) {
         compose.setContent {
             AppTheme {
                 // Round mask, as the screen would clip it.
@@ -76,6 +80,8 @@ class ScreenshotTest {
         }
         // Long enough for a result to come up after a winning move.
         compose.mainClock.advanceTimeBy(2_000)
+        before()
+        compose.mainClock.advanceTimeBy(1_000)
         compose.onRoot().captureRoboImage("build/outputs/roborazzi/$name.png")
     }
 
@@ -170,6 +176,57 @@ class ScreenshotTest {
 
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
+    fun homeSettings() = capture("home_settings") {
+        HomeScreen(
+            recent = listOf(FifteenPuzzle, Seer),
+            pinned = emptyList(),
+            onOpen = {},
+            onPin = {},
+            haptics = true,
+            onHaptics = {},
+            continueShown = 1,
+            stats = mapOf(Seer.id to GameStats(won = 3, lost = 2, bestStreak = 2), Lycan.id to GameStats(lost = 4)),
+            startAt = 26,
+        )
+    }
+
+    @Test
+    @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
+    fun homeStats() = capture("home_stats") {
+        HomeScreen(
+            recent = listOf(FifteenPuzzle, Seer),
+            pinned = emptyList(),
+            onOpen = {},
+            onPin = {},
+            haptics = true,
+            onHaptics = {},
+            continueShown = 1,
+            stats = mapOf(Seer.id to GameStats(won = 3, lost = 2, bestStreak = 2), Lycan.id to GameStats(lost = 4)),
+            startAt = 36,
+        )
+    }
+
+    @Test
+    fun rogueLost() = capture("rogue_lost") {
+        // One fist away from death.
+        val state = RogueState(
+            deck = RogueRun.DECK.take(12),
+            room = listOf(Card(Rank.King, Suit.Spades), Card(Rank.Five, Suit.Clubs), null, Card(Rank.Four, Suit.Hearts)),
+            health = 3,
+        )
+        val session = GameSession(RogueRun, SavedGame(RogueRun.saveVersion, state)) {}
+        LaunchedEffect(Unit) { session.play(RogueRun.fight(session.state, 0, false)!!) }
+        GameScreen(session, {}, stats = GameStats(won = 4, lost = 8, bestTimeMs = 70_000))
+    }
+
+    @Test
+    fun fourSuitsOff() = capture("dominion_two_colours") {
+        val session = GameSession(Dominion, SavedGame(Dominion.saveVersion, Dominion.newGame(Random(3)))) {}
+        GameScreen(session, {}, fourSuitColours = false)
+    }
+
+    @Test
+    @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
     fun rules() = capture("rules") {
         // Scrolled a screen down, to the top of the rules.
         val session = GameSession(FifteenPuzzle, SavedGame(1, FifteenPuzzle.newGame(Random(3)))) {}
@@ -187,6 +244,12 @@ class ScreenshotTest {
     fun rulesEnd() = capture("rules_end") {
         val session = GameSession(FifteenPuzzle, SavedGame(1, FifteenPuzzle.newGame(Random(3)))) {}
         GameScreen(session, {}, ScrollState(100_000), GameStats(won = 5, lost = 3, streak = 1, bestStreak = 3, bestScore = 64, bestTimeMs = 92_000))
+    }
+
+    @Test
+    fun ratings() = capture("ratings", before = { compose.onRoot().performTouchInput { swipe(center, center + Offset(0f, 330f), durationMillis = 3000) }; compose.onRoot().performTouchInput { swipe(center, center + Offset(0f, 330f), durationMillis = 3000) } }) {
+        val session = GameSession(FifteenPuzzle, SavedGame(1, FifteenPuzzle.newGame(Random(3)))) {}
+        GameScreen(session, {}, ScrollState(100_000), GameStats(won = 5, lost = 3))
     }
 
     @Test

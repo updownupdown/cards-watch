@@ -16,6 +16,7 @@ import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.cards.fullDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.WearGamePreview
@@ -44,6 +45,7 @@ object Dominion : Game<DominionState> {
     override val accent = R.color.game_dominion
     override val accentPale = R.color.game_dominion_pale
     override val title = "Dominion"
+    override val rating = Rating(difficulty = 65, complexity = 35, luck = 35)
     override val stateSerializer: KSerializer<DominionState> = DominionState.serializer()
     override val saveVersion = 2
 

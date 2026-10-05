@@ -10,6 +10,7 @@ import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
@@ -41,6 +42,7 @@ object LightsOut : Game<LightsOutState> {
     override val accent = R.color.game_lights_out
     override val accentPale = R.color.game_lights_out_pale
     override val title = "Lights Out"
+    override val rating = Rating(difficulty = 50, complexity = 10, luck = 0)
     override val stateSerializer: KSerializer<LightsOutState> = LightsOutState.serializer()
     override val saveVersion = 2
 

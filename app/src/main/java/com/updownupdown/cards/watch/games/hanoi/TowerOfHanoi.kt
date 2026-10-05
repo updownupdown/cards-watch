@@ -15,6 +15,7 @@ import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
@@ -51,6 +52,7 @@ object TowerOfHanoi : Game<HanoiState> {
     override val accent = R.color.game_tower_of_hanoi
     override val accentPale = R.color.game_tower_of_hanoi_pale
     override val title = "Tower of Hanoi"
+    override val rating = Rating(difficulty = 40, complexity = 15, luck = 0)
     override val stateSerializer: KSerializer<HanoiState> = HanoiState.serializer()
     override val saveVersion = 3
 

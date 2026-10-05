@@ -11,6 +11,7 @@ import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
@@ -39,6 +40,7 @@ object FifteenPuzzle : Game<FifteenState> {
     override val accent = R.color.game_fifteen_puzzle
     override val accentPale = R.color.game_fifteen_puzzle_pale
     override val title = "Fifteen Puzzle"
+    override val rating = Rating(difficulty = 30, complexity = 10, luck = 0)
     override val stateSerializer: KSerializer<FifteenState> = FifteenState.serializer()
 
     override val rules = listOf(

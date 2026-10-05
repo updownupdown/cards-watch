@@ -31,6 +31,7 @@ import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
@@ -63,6 +64,7 @@ object Accordion : Game<AccordionState> {
     override val accent = R.color.game_accordion
     override val accentPale = R.color.game_accordion_pale
     override val title = "Accordion"
+    override val rating = Rating(difficulty = 95, complexity = 15, luck = 20)
     override val stateSerializer: KSerializer<AccordionState> = AccordionState.serializer()
 
     // Nothing under the board, which scrolls: it sits in the middle, as wide as leaves

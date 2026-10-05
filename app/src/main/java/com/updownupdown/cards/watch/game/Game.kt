@@ -46,6 +46,17 @@ interface Game<S : Any> {
 
     val stateSerializer: KSerializer<S>
 
+    /** How hard, involved and chancy the game is, from the phone app, under the rules. */
+    val rating: Rating
+
+    /**
+     * Whether the game's cards are better told apart by suit than by colour,
+     * for the home screen's Suit Colours set to Auto: true where suits matter
+     * (Rogue Run), false where only red and black do (Jailbreak) or neither
+     * does (Lycan). When in doubt, true.
+     */
+    val fourSuitColours: Boolean get() = true
+
     /** The board's side, and how far it sits above the middle, × the screen's diameter. */
     val boardFraction: Float get() = BOARD_FRACTION
     val boardLift: Float get() = BOARD_LIFT
@@ -96,6 +107,9 @@ interface Game<S : Any> {
         BottomActions(actions(state), status(state), state, play, feedback, size)
     }
 }
+
+/** Each out of 100, as the phone app rates its games. */
+data class Rating(val difficulty: Int, val complexity: Int, val luck: Int)
 
 data class Outcome(val won: Boolean, val message: String)
 

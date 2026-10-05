@@ -28,6 +28,7 @@ import com.updownupdown.cards.watch.cards.pileEdge
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
@@ -69,6 +70,7 @@ object EbbAndFlow : Game<EbbAndFlowState> {
     override val accent = R.color.game_ebb_and_flow
     override val accentPale = R.color.game_ebb_and_flow_pale
     override val title = "Ebb & Flow"
+    override val rating = Rating(difficulty = 50, complexity = 30, luck = 40)
     override val stateSerializer: KSerializer<EbbAndFlowState> = EbbAndFlowState.serializer()
 
     override val rules = listOf(

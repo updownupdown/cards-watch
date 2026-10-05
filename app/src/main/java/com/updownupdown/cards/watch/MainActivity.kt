@@ -162,6 +162,11 @@ private fun App(saves: SaveStore, startRoute: String, requested: String?, onOpen
                 onPin = saves::togglePin,
                 haptics = saves.hapticsOn,
                 onHaptics = saves::setHaptics,
+                suitColours = saves.suitColours,
+                onSuitColours = saves::chooseSuitColours,
+                continueShown = saves.continueShown,
+                onContinueShown = saves::chooseContinueShown,
+                stats = saves.allStats(),
             )
         }
         composable("game/{id}") { entry ->
@@ -170,7 +175,12 @@ private fun App(saves: SaveStore, startRoute: String, requested: String?, onOpen
                 saves.lastGameId = game.id
                 onPlaying(game)
             }
-            GameScreen(saves.session(game), onHome = { nav.popBackStack(HOME, inclusive = false) }, stats = saves.stats(game))
+            GameScreen(
+                saves.session(game),
+                onHome = { nav.popBackStack(HOME, inclusive = false) },
+                stats = saves.stats(game),
+                fourSuitColours = saves.suitColours.fourIn(game),
+            )
         }
     }
     if (startRoute != HOME) {

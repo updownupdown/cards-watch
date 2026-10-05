@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +58,8 @@ private const val RULES_WIDTH = 0.9f
 private val PARAGRAPH_TOP = 10.dp
 /** The space under the Top button, so the round screen's foot cuts nothing off. */
 private val RULES_BOTTOM = 64.dp
+/** A rating's bar's thickness. */
+private val RATING_BAR = 4.dp
 /** The pale line between the rules and the stats. */
 private val STATS_LINE = 1.dp
 /** A stat's name and its number: the width each gets, and the gap between them. */
@@ -133,6 +137,12 @@ fun GameRules(
                 }
             }
 
+            Heading("Ratings", accent, edge)
+            val rating = game.rating
+            RatingMeter("Difficulty", rating.difficulty, accent, edge)
+            RatingMeter("Complexity", rating.complexity, accent, edge)
+            RatingMeter("Luck", rating.luck, accent, edge)
+
             Box(
                 Modifier
                     .padding(top = 18.dp, bottom = 6.dp)
@@ -171,6 +181,32 @@ private fun Heading(text: String, color: Color, edge: Modifier, align: TextAlign
         color = color,
         modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 2.dp).then(edge),
     )
+}
+
+/** A rating's name in small capitals over a thin bar filled to [value] out of 100, in [color]. */
+@Composable
+private fun RatingMeter(name: String, value: Int, color: Color, edge: Modifier) {
+    Column(Modifier.fillMaxWidth().padding(top = 8.dp).then(edge)) {
+        Row(Modifier.fillMaxWidth()) {
+            Text(
+                text = name.uppercase(),
+                style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.sp),
+                color = AppColors.TextMuted,
+                modifier = Modifier.weight(1f),
+            )
+            Text("$value", style = MaterialTheme.typography.labelSmall, color = AppColors.TextMuted)
+        }
+        Box(
+            Modifier
+                .padding(top = 3.dp)
+                .fillMaxWidth()
+                .height(RATING_BAR)
+                .clip(CircleShape)
+                .background(AppColors.Track),
+        ) {
+            Box(Modifier.fillMaxWidth(value.coerceIn(0, 100) / 100f).height(RATING_BAR).clip(CircleShape).background(color))
+        }
+    }
 }
 
 /** A stat in the middle of the screen: its name ending where its number starts. */

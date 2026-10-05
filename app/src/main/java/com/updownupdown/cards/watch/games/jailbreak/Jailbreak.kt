@@ -38,6 +38,7 @@ import com.updownupdown.cards.watch.cards.isRed
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.ui.AppColors
@@ -80,6 +81,8 @@ object Jailbreak : Game<JailbreakState> {
     override val accent = R.color.game_jailbreak
     override val accentPale = R.color.game_jailbreak_pale
     override val title = "Jailbreak"
+    override val rating = Rating(difficulty = 40, complexity = 25, luck = 50)
+    override val fourSuitColours = false
     override val stateSerializer: KSerializer<JailbreakState> = JailbreakState.serializer()
 
     override val rules = listOf(

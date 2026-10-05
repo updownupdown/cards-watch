@@ -47,6 +47,7 @@ import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.cards.fullDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
@@ -94,6 +95,7 @@ object RogueRun : Game<RogueState> {
     override val accent = R.color.game_rogue_run
     override val accentPale = R.color.game_rogue_run_pale
     override val title = "Rogue Run"
+    override val rating = Rating(difficulty = 70, complexity = 55, luck = 45)
     override val stateSerializer: KSerializer<RogueState> = RogueState.serializer()
 
     override val rules = listOf(
