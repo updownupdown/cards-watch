@@ -20,6 +20,8 @@ import com.updownupdown.cards.watch.games.lightsout.LightsOut
 import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.memory.Memory
 import com.updownupdown.cards.watch.games.nestor.Nestor
+import com.updownupdown.cards.watch.games.ozanam.OzanamsSquare
+import com.updownupdown.cards.watch.games.ozanam.Source
 import com.updownupdown.cards.watch.games.rogue.RogueRun
 import com.updownupdown.cards.watch.games.royalmarriage.RoyalMarriage
 import com.updownupdown.cards.watch.games.seer.Seer
@@ -181,5 +183,22 @@ class RandomPlayTest {
     @Test fun royalMarriage() = fuzz(RoyalMarriage) { s, r ->
         if (r.nextInt(4) == 0) RoyalMarriage.discard(s) ?: s.copy(selected = emptySet())
         else RoyalMarriage.toggle(s, r.nextInt(s.line.size))
+    }
+
+    @Test fun ozanamsSquare() = fuzz(OzanamsSquare, games = 10) { s, r ->
+        when (r.nextInt(3)) {
+            0 -> OzanamsSquare.unplace(s, r.nextInt(OzanamsSquare.CELLS))
+            1 -> OzanamsSquare.place(s, Source.Place(r.nextInt(OzanamsSquare.CELLS)), r.nextInt(OzanamsSquare.CELLS))
+            else -> s.tray.flatten().randomOrNull(r)?.let { OzanamsSquare.place(s, Source.Tray(it), r.nextInt(OzanamsSquare.CELLS)) }
+        }
+    }
+
+    @Test
+    fun ozanamsSquareHasOneSolution() {
+        repeat(10) { seed ->
+            val state = OzanamsSquare.newGame(Random(seed))
+            assertEquals(1, OzanamsSquare.solve(state.grid, 2).size)
+            assertTrue(state.given.count { it } >= 7)
+        }
     }
 }

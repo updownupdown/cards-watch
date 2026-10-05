@@ -47,6 +47,8 @@ import com.updownupdown.cards.watch.games.lightsout.LightsOut
 import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.memory.Memory
 import com.updownupdown.cards.watch.games.nestor.Nestor
+import com.updownupdown.cards.watch.games.ozanam.OzanamsSquare
+import com.updownupdown.cards.watch.games.ozanam.Source
 import com.updownupdown.cards.watch.games.rogue.RogueRun
 import com.updownupdown.cards.watch.games.royalmarriage.RoyalMarriage
 import com.updownupdown.cards.watch.games.rogue.RogueState
@@ -280,4 +282,6 @@ class ScreenshotTest {
     @Test fun irisGarden() = game(IrisGarden)
 
     @Test fun royalMarriage() = game(RoyalMarriage, RoyalMarriage.after({ RoyalMarriage.toggle(it, 2) }))
+
+    @Test fun ozanamsSquare() = game(OzanamsSquare, OzanamsSquare.after({ OzanamsSquare.place(it, Source.Tray(it.tray[0][0]), it.given.indexOf(false)) }))
 }
