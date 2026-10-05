@@ -10,7 +10,7 @@ screen) a little above the middle, the time above it, and a status line or
 action buttons in the crescent below. Nothing sits beside the board. Swiping
 right goes home (the system's back gesture). A short scroll down, by touch
 or the crown, brings up Reset (an icon, tapped twice; there's no undoing a reset) and Undo
-under the board, and the game's title and rules follow, then its stats and a
+under the board, and the game's title and rules follow, then its ratings (`Game.rating`, the phone's), its stats and a
 Top button, each line of text shrinking a little and fading as it passes the
 top and foot; the view snaps to the board or to
 those buttons (`GameScreen`), so a stray drag springs back. A finished game
@@ -21,9 +21,10 @@ own bottom button doesn't change when the game ends. Asleep (ambient), the board
 outlines with no buttons (`LocalAmbient`).
 In a game the screen stays on for 10 s after the last touch (`MainActivity`).
 
-The home screen has the last three games played under "Continue Playing",
-then every game, those pinned (by holding one) first, and a card fact
-(`ui/CardFacts.kt`) at the foot. The app opens straight into the last game
+The home screen has the last games played under "Continue Playing" (three,
+one or none: a setting), then every game, those pinned (by holding one)
+first, the settings (Haptics, Suit Colours, Show Continue Playing), stats
+across every game, and a card fact (`ui/CardFacts.kt`) at the foot. The app opens straight into the last game
 played. Each button is the
 game's wide picture (`banner`, cut to cover, never stretched) under 85% of the
 game's `accent` colour. The tile (`widget/GamesTileService`) offers the last
@@ -82,13 +83,17 @@ keeps the undo history; `SaveStore` saves each game after every move.
   draws ("Deal (27)"), or else as text worded "Stock: 27". Piles use `pile` (the top card up and to the
   right of the shaded card below, when there is one); overlapping columns
   use `fan`.
-- Each suit has its own colour, in every game (the owner tried red and black only, and went back).
+- Each suit has its own colour, unless the home screen's Suit Colours says
+  Two (red and white), or Auto and the game's suits don't matter
+  (`Game.fourSuitColours`, read through `LocalFourSuitColours`).
 - A game that needs more room than the square board, or has nothing under
   it, can change `boardFraction` and `boardLift` (Clock, Fifteen Puzzle, Nestor,
   Memory, Lights Out).
 - A board with more cards than it has room for (Accordion) scrolls them
   inside the board with `LocalBoardScroll`, so the crown turns the cards
-  before the screen.
+  before the screen. `ScrollingCards` is that grid, fades and all (Ten-Twenty-Thirty,
+  Iris Garden, Royal Marriage, Augury).
+- A progress arc on the screen's left edge is a `SideGauge` (Rogue Run, Augury).
 - A game whose wins differ gives a `scoreName` and `score`, for the stats'
   best score; every deal is timed while its screen is up (`GameSession`).
 - All text is in Outfit, the theme's font.

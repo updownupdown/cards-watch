@@ -99,6 +99,8 @@ fun PlayingCard(
     selection: Selection? = null,
     under: () -> Float = { 0f },
     dot: Color? = null,
+    /** Draws the Joker (Ouroboros's exit) in place of [card]'s rank and suit. */
+    joker: Boolean = false,
 ) {
     val icons = CardIcons.get(LocalContext.current.assets)
     val ambient = LocalAmbient.current
@@ -110,6 +112,11 @@ fun PlayingCard(
             val face = when {
                 card == null -> null
                 faceDown -> backFace(icons, ambient)
+                joker -> {
+                    val colour = if (ambient) CardColors.Ambient else AppColors.Joker
+                    val draw: DrawScope.() -> Unit = { drawCentredIcon(icons.joker, 0.8f, colour) }
+                    draw
+                }
                 else -> face(card, icons, ink)
             }
             if (ambient) {

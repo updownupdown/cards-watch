@@ -21,6 +21,7 @@ import com.updownupdown.cards.watch.games.lightsout.LightsOut
 import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.memory.Memory
 import com.updownupdown.cards.watch.games.nestor.Nestor
+import com.updownupdown.cards.watch.games.ouroboros.Ouroboros
 import com.updownupdown.cards.watch.games.ozanam.OzanamsSquare
 import com.updownupdown.cards.watch.games.ozanam.Source
 import com.updownupdown.cards.watch.games.rogue.RogueRun
@@ -217,6 +218,36 @@ class RandomPlayTest {
             }
             val seen = state.deck + state.hand + state.path.flatMap { listOf(it.card) + it.rejected }
             assertEquals(seen.size, seen.toSet().size)
+        }
+    }
+
+    @Test fun ouroboros() = fuzz(Ouroboros) { s, r ->
+        val top = Ouroboros.tops(s).random(r)
+        when (r.nextInt(4)) {
+            0 -> Ouroboros.lookAround(s)
+            1 -> Ouroboros.mark(s, top, r.nextInt(Ouroboros.PATHS))
+            2 -> Ouroboros.returnPath(s, r.nextInt(Ouroboros.PATHS))
+            else -> Ouroboros.explore(s, top)
+        }
+    }
+
+    @Test
+    fun ouroborosKeepsEveryCard() {
+        repeat(30) { seed ->
+            val random = Random(seed)
+            var state = Ouroboros.newGame(random)
+            repeat(300) {
+                if (Ouroboros.outcome(state) != null) return@repeat
+                val top = Ouroboros.tops(state).random(random)
+                state = when (random.nextInt(4)) {
+                    0 -> Ouroboros.lookAround(state)
+                    1 -> Ouroboros.mark(state, top, random.nextInt(Ouroboros.PATHS))
+                    2 -> Ouroboros.returnPath(state, random.nextInt(Ouroboros.PATHS))
+                    else -> Ouroboros.explore(state, top)
+                } ?: state
+                assertEquals(53, state.deck.size + state.paths.count { it != null } + state.aces + state.trinkets)
+                assertTrue(state.pos in state.deck.indices)
+            }
         }
     }
 }

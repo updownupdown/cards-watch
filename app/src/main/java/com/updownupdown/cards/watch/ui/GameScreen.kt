@@ -18,6 +18,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -46,6 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.wear.compose.foundation.requestFocusOnHierarchyActive
@@ -85,8 +89,8 @@ private const val ACTIONS_AT = 0.72f
 /** How long the reset button's hint shows. */
 private const val HINT_MS = 2500L
 /** The gap over and under the result's buttons, and the buttons' height. */
-private val RESULT_GAP = 12.dp
-private val RESULT_BUTTON = 44.dp
+private val RESULT_GAP = 10.dp
+private val RESULT_BUTTON = 40.dp
 /** The space between those buttons and the game's title, where the reset hint shows. */
 private val RULES_TOP = 30.dp
 /** How long after the last move the result comes up, so the move can be seen. */
@@ -319,9 +323,9 @@ private fun ResetButton(size: Dp, onTap: () -> Unit, onDoubleTap: () -> Unit) {
 
 /**
  * How the game ended, over the board: "You won!" or "You lost.", the game's
- * message, Home and Play Again, then the time (with the best, or that it's a
- * new best: [best] null), the score where there is one, and the wins and
- * losses ([record]). Green for a win, red for a loss. It stays until Home or
+ * message and the score where there is one, Home and Play Again, then the
+ * time (with the best, or that it's a new best: [best] null) and the wins
+ * and losses ([record]). Green for a win, red for a loss. It stays until Home or
  * Play Again is chosen.
  */
 @Composable
@@ -353,13 +357,16 @@ private fun ResultScreen(
                 color = colour,
                 textAlign = TextAlign.Center,
             )
-            Text(
+            // A long message (Augury's law) shrinks to fit in four lines.
+            val body = MaterialTheme.typography.bodyMedium
+            BasicText(
                 text = outcome.message,
-                style = MaterialTheme.typography.bodyMedium,
-                color = colour,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 30.dp).padding(top = 2.dp),
+                style = body.copy(color = colour, textAlign = TextAlign.Center),
+                maxLines = 4,
+                autoSize = TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = body.fontSize),
+                modifier = Modifier.padding(horizontal = 30.dp).padding(top = 2.dp).heightIn(max = 76.dp),
             )
+            score?.let { Text(it, style = detail, color = AppColors.TextMuted, modifier = Modifier.padding(top = 2.dp)) }
             Row(Modifier.padding(vertical = RESULT_GAP), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 GameButton(
                     label = "Home",
@@ -379,7 +386,6 @@ private fun ResultScreen(
                     color = if (best == null) colour else AppColors.TextMuted,
                 )
             }
-            score?.let { Text(it, style = detail, color = AppColors.TextMuted, modifier = Modifier.padding(top = 2.dp)) }
             Text(record, style = detail, color = AppColors.TextMuted, modifier = Modifier.padding(top = 2.dp))
         }
     }

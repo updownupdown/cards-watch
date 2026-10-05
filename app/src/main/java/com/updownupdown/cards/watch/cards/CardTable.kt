@@ -103,6 +103,8 @@ data class TableCard(
     val flipMs: Int = CARD_FLIP_MS,
     /** Whether a card dealt [from] a place turns over on its way; without, it arrives face up as it was. */
     val turnFrom: Boolean = true,
+    /** The Joker's face in place of [card]'s. */
+    val joker: Boolean = false,
 ) {
     val height: Dp get() = width * CARD_ASPECT
 }
@@ -140,8 +142,9 @@ class TableBuilder(val width: Dp, val height: Dp) {
         rotation: Float = 0f,
         dot: Color? = null,
         turnFrom: Boolean = true,
+        joker: Boolean = false,
     ) {
-        cards += TableCard(key, card, x, y, width, faceDown, z, overlay, selection, under, removal, alpha, from, fromRight, rotation, dot, turnFrom = turnFrom)
+        cards += TableCard(key, card, x, y, width, faceDown, z, overlay, selection, under, removal, alpha, from, fromRight, rotation, dot, turnFrom = turnFrom, joker = joker)
     }
 
     /** A place for several cards [cardWidth] wide, such as a spread: a line just inside its edge. */
@@ -501,6 +504,7 @@ private fun MovingCard(card: TableCard, leaving: Boolean, enter: Boolean, back: 
                 overlay = card.overlay,
                 selection = card.selection,
                 dot = card.dot,
+                joker = card.joker,
                 under = { shade.value },
                 modifier = Modifier.fillMaxSize(),
             )

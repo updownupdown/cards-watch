@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.click
 import androidx.compose.ui.test.swipe
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.swipeUp
@@ -48,6 +49,7 @@ import com.updownupdown.cards.watch.games.lightsout.LightsOut
 import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.memory.Memory
 import com.updownupdown.cards.watch.games.nestor.Nestor
+import com.updownupdown.cards.watch.games.ouroboros.Ouroboros
 import com.updownupdown.cards.watch.games.ozanam.OzanamsSquare
 import com.updownupdown.cards.watch.games.ozanam.Source
 import com.updownupdown.cards.watch.games.rogue.RogueRun
@@ -291,5 +293,18 @@ class ScreenshotTest {
     @Test fun auguryLong() = capture("augury_long") {
         val state = Augury.after(*Array(14) { { s: com.updownupdown.cards.watch.games.augury.AuguryState -> Augury.playCard(s, s.hand[0]) } })
         GameScreen(GameSession(Augury, SavedGame(Augury.saveVersion, state)) {}, {})
+    }
+
+    @Test fun ouroboros() = game(Ouroboros, Ouroboros.after({ Ouroboros.lookAround(it) }))
+
+    @Test
+    @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
+    fun ouroborosLarge() = capture("ouroboros_large") {
+        val state = Ouroboros.after({ Ouroboros.lookAround(it) }, { s -> Ouroboros.tops(s).firstOrNull { Ouroboros.usable(s, it) }?.let { Ouroboros.mark(s, it, 1) } })
+        GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, state)) {}, {})
+    }
+
+    @Test fun ouroborosPicked() = capture("ouroboros_picked", before = { compose.onRoot().performTouchInput { click(Offset(300f, 88f)) } }) {
+        GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, Ouroboros.after({ Ouroboros.lookAround(it) }))) {}, {})
     }
 }

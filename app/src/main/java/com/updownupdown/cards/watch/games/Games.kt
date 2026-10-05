@@ -20,6 +20,7 @@ import com.updownupdown.cards.watch.games.lightsout.LightsOut
 import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.memory.Memory
 import com.updownupdown.cards.watch.games.nestor.Nestor
+import com.updownupdown.cards.watch.games.ouroboros.Ouroboros
 import com.updownupdown.cards.watch.games.ozanam.OzanamsSquare
 import com.updownupdown.cards.watch.games.rogue.RogueRun
 import com.updownupdown.cards.watch.games.royalmarriage.RoyalMarriage
@@ -54,6 +55,7 @@ val ALL_GAMES: List<Game<*>> = listOf(
     RoyalMarriage,
     OzanamsSquare,
     Augury,
+    Ouroboros,
 )
 
 fun gameById(id: String?): Game<*>? = ALL_GAMES.firstOrNull { it.id == id }
