@@ -72,6 +72,26 @@ class SaveStore(private val context: Context, private val scope: CoroutineScope)
         prefs.edit().putBoolean(KEY_HAPTICS, on).apply()
     }
 
+    /** How cards colour their suits (the home screen's Suit Colours). */
+    var suitColours: SuitColours by mutableStateOf(
+        runCatching { SuitColours.valueOf(prefs.getString(KEY_SUIT_COLOURS, null) ?: "") }.getOrDefault(SuitColours.Four),
+    )
+        private set
+
+    fun chooseSuitColours(colours: SuitColours) {
+        suitColours = colours
+        prefs.edit().putString(KEY_SUIT_COLOURS, colours.name).apply()
+    }
+
+    /** How many games the home screen's Continue Playing shows (0 hides it). */
+    var continueShown: Int by mutableStateOf(prefs.getInt(KEY_CONTINUE, 3).takeIf { it in CONTINUE_CHOICES } ?: 3)
+        private set
+
+    fun chooseContinueShown(count: Int) {
+        continueShown = count
+        prefs.edit().putInt(KEY_CONTINUE, count).apply()
+    }
+
     /** Pins [game] to the top of the home list, or unpins it. */
     fun togglePin(game: Game<*>) {
         pinnedGameIds = if (game.id in pinnedGameIds) pinnedGameIds - game.id else pinnedGameIds + game.id
@@ -80,6 +100,9 @@ class SaveStore(private val context: Context, private val scope: CoroutineScope)
 
     /** How [game]'s deals have ended. Reads as state, so the screen follows it. */
     fun stats(game: Game<*>): GameStats = stats[game.id] ?: GameStats()
+
+    /** Every game's stats, by its id. Reads as state. */
+    fun allStats(): Map<String, GameStats> = ALL_GAMES.associate { it.id to stats(it) }
 
     private fun record(game: Game<*>, result: GameResult) {
         val now = stats(game).with(result, game.lowScoreWins)
@@ -134,6 +157,8 @@ class SaveStore(private val context: Context, private val scope: CoroutineScope)
         const val KEY_RECENT = "recentGames"
         const val KEY_PINNED = "pinnedGames"
         const val KEY_HAPTICS = "haptics"
+        const val KEY_SUIT_COLOURS = "suitColours"
+        const val KEY_CONTINUE = "continueShown"
         const val KEY_STATS = "stats:"
         const val KEY_WON = "won:"
         const val KEY_LOST = "lost:"

@@ -13,6 +13,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.click
+import androidx.compose.ui.test.swipe
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.test.swipeUp
 import androidx.wear.compose.material3.AppScaffold
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -25,25 +30,33 @@ import com.updownupdown.cards.watch.game.GameStats
 import com.updownupdown.cards.watch.game.SavedGame
 import com.updownupdown.cards.watch.games.accordion.Accordion
 import com.updownupdown.cards.watch.games.acesup.AcesUp
+import com.updownupdown.cards.watch.games.augury.Augury
 import com.updownupdown.cards.watch.games.baroness.Baroness
 import com.updownupdown.cards.watch.games.beehive.Beehive
 import com.updownupdown.cards.watch.games.clock.Clock
 import com.updownupdown.cards.watch.games.dominion.Dominion
 import com.updownupdown.cards.watch.games.ebbandflow.EbbAndFlow
+import com.updownupdown.cards.watch.games.elevens.Elevens
 import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
 import com.updownupdown.cards.watch.games.fifteen.FifteenState
 import com.updownupdown.cards.watch.games.fortune.Call
 import com.updownupdown.cards.watch.games.fortune.FortunesCall
 import com.updownupdown.cards.watch.games.fourseasons.FourSeasons
 import com.updownupdown.cards.watch.games.hanoi.TowerOfHanoi
+import com.updownupdown.cards.watch.games.irisgarden.IrisGarden
 import com.updownupdown.cards.watch.games.jailbreak.Jailbreak
 import com.updownupdown.cards.watch.games.lightsout.LightsOut
 import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.memory.Memory
 import com.updownupdown.cards.watch.games.nestor.Nestor
+import com.updownupdown.cards.watch.games.ouroboros.Ouroboros
+import com.updownupdown.cards.watch.games.ozanam.OzanamsSquare
+import com.updownupdown.cards.watch.games.ozanam.Source
 import com.updownupdown.cards.watch.games.rogue.RogueRun
+import com.updownupdown.cards.watch.games.royalmarriage.RoyalMarriage
 import com.updownupdown.cards.watch.games.rogue.RogueState
 import com.updownupdown.cards.watch.games.seer.Seer
+import com.updownupdown.cards.watch.games.tentwentythirty.TenTwentyThirty
 import com.updownupdown.cards.watch.games.triplestack.TripleStack
 import kotlin.random.Random
 import org.junit.Rule
@@ -65,7 +78,7 @@ class ScreenshotTest {
     @get:Rule
     val compose = createComposeRule()
 
-    private fun capture(name: String, content: @Composable () -> Unit) {
+    private fun capture(name: String, before: () -> Unit = {}, content: @Composable () -> Unit) {
         compose.setContent {
             AppTheme {
                 // Round mask, as the screen would clip it.
@@ -76,6 +89,8 @@ class ScreenshotTest {
         }
         // Long enough for a result to come up after a winning move.
         compose.mainClock.advanceTimeBy(2_000)
+        before()
+        compose.mainClock.advanceTimeBy(1_000)
         compose.onRoot().captureRoboImage("build/outputs/roborazzi/$name.png")
     }
 
@@ -170,6 +185,63 @@ class ScreenshotTest {
 
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
+    fun homeSettings() = capture("home_settings") {
+        HomeScreen(
+            recent = listOf(FifteenPuzzle, Seer),
+            pinned = emptyList(),
+            onOpen = {},
+            onPin = {},
+            haptics = true,
+            onHaptics = {},
+            continueShown = 1,
+            stats = mapOf(Seer.id to GameStats(won = 3, lost = 2, bestStreak = 2), Lycan.id to GameStats(lost = 4)),
+            startAt = 26,
+        )
+    }
+
+    @Test
+    @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
+    fun homeStats() = capture("home_stats") {
+        HomeScreen(
+            recent = listOf(FifteenPuzzle, Seer),
+            pinned = emptyList(),
+            onOpen = {},
+            onPin = {},
+            haptics = true,
+            onHaptics = {},
+            continueShown = 1,
+            stats = mapOf(Seer.id to GameStats(won = 3, lost = 2, bestStreak = 2), Lycan.id to GameStats(lost = 4)),
+            startAt = 36,
+        )
+    }
+
+    @Test
+    @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
+    fun rogueLarge() = capture("rogue_large") {
+        GameScreen(GameSession(RogueRun, SavedGame(RogueRun.saveVersion, RogueRun.newGame(Random(3)))) {}, {})
+    }
+
+    @Test
+    fun rogueLost() = capture("rogue_lost") {
+        // One fist away from death.
+        val state = RogueState(
+            deck = RogueRun.DECK.take(12),
+            room = listOf(Card(Rank.King, Suit.Spades), Card(Rank.Five, Suit.Clubs), null, Card(Rank.Four, Suit.Hearts)),
+            health = 3,
+        )
+        val session = GameSession(RogueRun, SavedGame(RogueRun.saveVersion, state)) {}
+        LaunchedEffect(Unit) { session.play(RogueRun.fight(session.state, 0, false)!!) }
+        GameScreen(session, {}, stats = GameStats(won = 4, lost = 8, bestTimeMs = 70_000))
+    }
+
+    @Test
+    fun fourSuitsOff() = capture("dominion_two_colours") {
+        val session = GameSession(Dominion, SavedGame(Dominion.saveVersion, Dominion.newGame(Random(3)))) {}
+        GameScreen(session, {}, fourSuitColours = false)
+    }
+
+    @Test
+    @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
     fun rules() = capture("rules") {
         // Scrolled a screen down, to the top of the rules.
         val session = GameSession(FifteenPuzzle, SavedGame(1, FifteenPuzzle.newGame(Random(3)))) {}
@@ -190,6 +262,12 @@ class ScreenshotTest {
     }
 
     @Test
+    fun ratings() = capture("ratings", before = { compose.onRoot().performTouchInput { swipe(center, center + Offset(0f, 330f), durationMillis = 3000) }; compose.onRoot().performTouchInput { swipe(center, center + Offset(0f, 330f), durationMillis = 3000) } }) {
+        val session = GameSession(FifteenPuzzle, SavedGame(1, FifteenPuzzle.newGame(Random(3)))) {}
+        GameScreen(session, {}, ScrollState(100_000), GameStats(won = 5, lost = 3))
+    }
+
+    @Test
     fun ambient() = capture("ambient") { AmbientScreen(null) }
 
     @Test
@@ -199,4 +277,34 @@ class ScreenshotTest {
     }
 
     @Test fun hanoiMoved() = game(TowerOfHanoi, TowerOfHanoi.after({ TowerOfHanoi.move(it, 0, 1) }, { TowerOfHanoi.move(it, 0, 2) }))
+
+    @Test fun elevens() = game(Elevens)
+
+    @Test fun tenTwentyThirty() = game(TenTwentyThirty, TenTwentyThirty.after(*Array(9) { { s: com.updownupdown.cards.watch.games.tentwentythirty.TenTwentyThirtyState -> TenTwentyThirty.draw(s) } }))
+
+    @Test fun irisGarden() = game(IrisGarden)
+
+    @Test fun royalMarriage() = game(RoyalMarriage, RoyalMarriage.after({ RoyalMarriage.toggle(it, 2) }))
+
+    @Test fun ozanamsSquare() = game(OzanamsSquare, OzanamsSquare.after({ OzanamsSquare.place(it, Source.Tray(it.tray[0][0]), it.given.indexOf(false)) }))
+
+    @Test fun augury() = game(Augury, Augury.after({ Augury.playCard(it, it.hand[0]) }, { Augury.playCard(it, it.hand[1]) }, { Augury.playCard(it, it.hand[2]) }))
+
+    @Test fun auguryLong() = capture("augury_long") {
+        val state = Augury.after(*Array(14) { { s: com.updownupdown.cards.watch.games.augury.AuguryState -> Augury.playCard(s, s.hand[0]) } })
+        GameScreen(GameSession(Augury, SavedGame(Augury.saveVersion, state)) {}, {})
+    }
+
+    @Test fun ouroboros() = game(Ouroboros, Ouroboros.after({ Ouroboros.lookAround(it) }))
+
+    @Test
+    @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
+    fun ouroborosLarge() = capture("ouroboros_large") {
+        val state = Ouroboros.after({ Ouroboros.lookAround(it) }, { s -> Ouroboros.tops(s).firstOrNull { Ouroboros.usable(s, it) }?.let { Ouroboros.mark(s, it, 1) } })
+        GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, state)) {}, {})
+    }
+
+    @Test fun ouroborosPicked() = capture("ouroboros_picked", before = { compose.onRoot().performTouchInput { click(Offset(300f, 88f)) } }) {
+        GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, Ouroboros.after({ Ouroboros.lookAround(it) }))) {}, {})
+    }
 }

@@ -18,6 +18,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -46,6 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.wear.compose.foundation.requestFocusOnHierarchyActive
@@ -58,6 +62,7 @@ import androidx.wear.compose.material3.Text
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.CARD_MOVE_MS
 import com.updownupdown.cards.watch.cards.LocalDeal
+import com.updownupdown.cards.watch.cards.LocalFourSuitColours
 import com.updownupdown.cards.watch.cards.LocalUndoing
 import com.updownupdown.cards.watch.game.GameSession
 import com.updownupdown.cards.watch.game.GameStats
@@ -83,9 +88,9 @@ private val ACTIONS_HEIGHT = 40.dp
 private const val ACTIONS_AT = 0.72f
 /** How long the reset button's hint shows. */
 private const val HINT_MS = 2500L
-/** The gap between the result's message, its buttons and the score, and the buttons' height. */
-private val RESULT_GAP = 16.dp
-private val RESULT_BUTTON = 44.dp
+/** The gap over and under the result's buttons, and the buttons' height. */
+private val RESULT_GAP = 10.dp
+private val RESULT_BUTTON = 40.dp
 /** The space between those buttons and the game's title, where the reset hint shows. */
 private val RULES_TOP = 30.dp
 /** How long after the last move the result comes up, so the move can be seen. */
@@ -121,9 +126,10 @@ fun <S : Any> GameScreen(
     onHome: () -> Unit,
     scroll: ScrollState = rememberScrollState(),
     stats: GameStats = GameStats(),
+    fourSuitColours: Boolean = true,
 ) {
     // The game's buttons and headings take its pale colour.
-    CompositionLocalProvider(LocalGameAccent provides colorResource(session.game.accentPale)) {
+    CompositionLocalProvider(LocalGameAccent provides colorResource(session.game.accentPale), LocalFourSuitColours provides fourSuitColours) {
         GameScreenContent(session, onHome, scroll, stats)
     }
 }
@@ -144,6 +150,9 @@ private fun <S : Any> GameScreenContent(session: GameSession<S>, onHome: () -> U
     LaunchedEffect(Unit) {
         if (cameBackOver) session.newGame()
     }
+    // The stats as they stood before this deal ended, to tell a new best time.
+    var statsBefore by remember { mutableStateOf(stats) }
+    if (outcome == null && statsBefore != stats) statsBefore = stats
     LaunchedEffect(outcome) {
         if (outcome == null) {
             showResult = false
@@ -237,12 +246,17 @@ private fun <S : Any> GameScreenContent(session: GameSession<S>, onHome: () -> U
                         }
                     }
                     if (outcome != null && showResult) {
+                        val time = session.timeMs
+                        val best = statsBefore.bestTimeMs
                         ResultScreen(
                             outcome = outcome,
-                            detail = listOfNotNull(
-                                session.score?.let { "${game.scoreName}: $it" },
-                                formatTime(session.timeMs),
-                            ).joinToString("  -  "),
+                            score = session.score?.let { "${game.scoreName}: $it" },
+                            time = formatTime(time),
+                            best = when {
+                                outcome.won && (best == null || time < best) -> null
+                                else -> best?.let(::formatTime) ?: "–"
+                            },
+                            record = "Won: ${stats.won}  •  Lost: ${stats.lost}",
                             onNewGame = { haptics.move(); session.newGame() },
                             onHome = { haptics.press(); onHome() },
                         )
@@ -308,11 +322,23 @@ private fun ResetButton(size: Dp, onTap: () -> Unit, onDoubleTap: () -> Unit) {
 }
 
 /**
- * How the game ended, over the board: the message, what to do next, and
- * [detail] (the score and time). It stays until one of the two is chosen.
+ * How the game ended, over the board: "You won!" or "You lost.", the game's
+ * message and the score where there is one, Home and Play Again, then the
+ * time (with the best, or that it's a new best: [best] null) and the wins
+ * and losses ([record]). Green for a win, red for a loss. It stays until Home or
+ * Play Again is chosen.
  */
 @Composable
-private fun ResultScreen(outcome: Outcome, detail: String, onNewGame: () -> Unit, onHome: () -> Unit) {
+private fun ResultScreen(
+    outcome: Outcome,
+    score: String?,
+    time: String,
+    best: String?,
+    record: String,
+    onNewGame: () -> Unit,
+    onHome: () -> Unit,
+) {
+    val colour = if (outcome.won) AppColors.Good else AppColors.Bad
     BoxWithConstraints(
         Modifier
             .fillMaxSize()
@@ -322,21 +348,45 @@ private fun ResultScreen(outcome: Outcome, detail: String, onNewGame: () -> Unit
             .clickable(interactionSource = null, indication = null, onClick = {}),
         contentAlignment = Alignment.Center,
     ) {
-        // Play Again has the longer name, so the larger share.
-        val row = maxWidth * 0.86f - 6.dp
-        Column(verticalArrangement = Arrangement.spacedBy(RESULT_GAP), horizontalAlignment = Alignment.CenterHorizontally) {
+        val detail = MaterialTheme.typography.labelMedium
+        val playWidth = maxWidth * 0.46f
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = outcome.message,
-                style = MaterialTheme.typography.titleSmall,
-                color = LocalGameAccent.current,
+                text = if (outcome.won) "You won!" else "You lost.",
+                style = MaterialTheme.typography.titleMedium,
+                color = colour,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 26.dp),
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                GameButton("Home", onHome, width = row * 0.4f, height = RESULT_BUTTON, color = AppColors.ListButton, textColor = AppColors.ListButtonText)
-                GameButton("Play Again", onNewGame, width = row * 0.6f, height = RESULT_BUTTON)
+            // A long message (Augury's law) shrinks to fit in four lines.
+            val body = MaterialTheme.typography.bodyMedium
+            BasicText(
+                text = outcome.message,
+                style = body.copy(color = colour, textAlign = TextAlign.Center),
+                maxLines = 4,
+                autoSize = TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = body.fontSize),
+                modifier = Modifier.padding(horizontal = 30.dp).padding(top = 2.dp).heightIn(max = 76.dp),
+            )
+            score?.let { Text(it, style = detail, color = AppColors.TextMuted, modifier = Modifier.padding(top = 2.dp)) }
+            Row(Modifier.padding(vertical = RESULT_GAP), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                GameButton(
+                    label = "Home",
+                    onClick = onHome,
+                    width = RESULT_BUTTON,
+                    height = RESULT_BUTTON,
+                    color = colour,
+                    icon = { Icon(painterResource(R.drawable.ic_home), contentDescription = null, tint = AppColors.GameButtonText, modifier = Modifier.size(RESULT_BUTTON * 0.5f)) },
+                )
+                GameButton("Play Again", onNewGame, width = playWidth, height = RESULT_BUTTON, color = colour)
             }
-            Text(detail, style = MaterialTheme.typography.labelMedium, color = AppColors.TextMuted)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(painterResource(R.drawable.ic_recent), contentDescription = "Time", tint = AppColors.TextMuted, modifier = Modifier.padding(end = 4.dp).size(14.dp))
+                Text(
+                    text = "$time  •  " + (if (best == null) "NEW BEST!" else "Best: $best"),
+                    style = detail,
+                    color = if (best == null) colour else AppColors.TextMuted,
+                )
+            }
+            Text(record, style = detail, color = AppColors.TextMuted, modifier = Modifier.padding(top = 2.dp))
         }
     }
 }

@@ -44,4 +44,18 @@
     <color name="game_seer_pale">#ADDCCB</color>
     <color name="game_triple_stack">#49261D</color>
     <color name="game_triple_stack_pale">#F4A894</color>
+    <color name="game_augury">#213F45</color>
+    <color name="game_augury_pale">#A5E2EE</color>
+    <color name="game_ouroboros">#362145</color>
+    <color name="game_ouroboros_pale">#D0A5EE</color>
+    <color name="game_iris_garden">#2C2145</color>
+    <color name="game_iris_garden_pale">#BBA5EE</color>
+    <color name="game_ten_twenty_thirty">#3F4521</color>
+    <color name="game_ten_twenty_thirty_pale">#E2EEA5</color>
+    <color name="game_elevens">#453821</color>
+    <color name="game_elevens_pale">#EED4A5</color>
+    <color name="game_royal_marriage">#453021</color>
+    <color name="game_royal_marriage_pale">#EEC3A5</color>
+    <color name="game_ozanams_square">#453921</color>
+    <color name="game_ozanams_square_pale">#EED5A5</color>
 </resources>

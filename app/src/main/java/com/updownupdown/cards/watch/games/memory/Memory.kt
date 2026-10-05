@@ -12,6 +12,7 @@ import com.updownupdown.cards.watch.cards.PAIR_SHOW_MS
 import com.updownupdown.cards.watch.cards.fullDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.WearGamePreview
@@ -46,6 +47,7 @@ object Memory : Game<MemoryState> {
     override val accent = R.color.game_memory
     override val accentPale = R.color.game_memory_pale
     override val title = "Memory"
+    override val rating = Rating(difficulty = 15, complexity = 5, luck = 10)
     override val stateSerializer: KSerializer<MemoryState> = MemoryState.serializer()
     override val saveVersion = 2
 

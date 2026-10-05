@@ -16,6 +16,7 @@ import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.ui.GamePreview
@@ -37,6 +38,8 @@ object Baroness : Game<BaronessState> {
     override val accent = R.color.game_baroness
     override val accentPale = R.color.game_baroness_pale
     override val title = "Baroness"
+    override val rating = Rating(difficulty = 50, complexity = 15, luck = 60)
+    override val fourSuitColours = false
     override val stateSerializer: KSerializer<BaronessState> = BaronessState.serializer()
 
     override val rules = listOf(

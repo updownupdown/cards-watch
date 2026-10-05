@@ -18,10 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -47,6 +44,7 @@ import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.cards.fullDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
@@ -54,6 +52,7 @@ import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.BottomActions
 import com.updownupdown.cards.watch.ui.GameButton
 import com.updownupdown.cards.watch.ui.GamePreview
+import com.updownupdown.cards.watch.ui.SideGauge
 import com.updownupdown.cards.watch.ui.LocalAmbient
 import com.updownupdown.cards.watch.ui.LocalBoardSize
 import com.updownupdown.cards.watch.ui.WearGamePreview
@@ -94,6 +93,7 @@ object RogueRun : Game<RogueState> {
     override val accent = R.color.game_rogue_run
     override val accentPale = R.color.game_rogue_run_pale
     override val title = "Rogue Run"
+    override val rating = Rating(difficulty = 70, complexity = 55, luck = 45)
     override val stateSerializer: KSerializer<RogueState> = RogueState.serializer()
 
     override val rules = listOf(
@@ -347,28 +347,25 @@ object RogueRun : Game<RogueState> {
     private val WEAPON_BUTTON = 36.dp
 
     /**
-     * Top: weapon and killed monsters zone (snug fit to realistic card ratio).
-     * Middle: status text on one line.
-     * Bottom: the room's four cards.
+     * Top: the weapon and the killed monsters' zone, each in an outline.
+     * Middle: the health, room and stock on one line. Bottom: the room's four
+     * cards. What's left of the board's height goes a fifth above and below
+     * and three tenths into each gap between the rows, so the rows sit in the
+     * middle whatever the screen.
      */
     private class Rows(board: Dp) {
         val layout = CardLayout(ROOM, 1, board, board, gap = 0.12f)
         val cardWidth = layout.cardWidth
+        val cardHeight = layout.cardHeight
 
-        // Snug ratio matching cards to remove empty padding at the bottom of the outlines
-        val cardHeight = cardWidth * 1.35f
+        private val remaining = max(0.dp, board - (cardHeight + ZONE_PAD * 2) - HEALTH_ROW - cardHeight)
+        private val gap = remaining * 0.3f
 
-        private val totalContentHeight = cardHeight * 2 + HEALTH_ROW
-        private val remaining = board - totalContentHeight
-
-        // Push layout slightly up to leave maximum space at the bottom for the action button
-        val topY = max(0.dp, remaining * 0.2f)
-        private val gap = max(2.dp, remaining * 0.24f)
-
-        val healthY = topY + cardHeight + gap + ZONE_PAD
+        val topY = ZONE_PAD + remaining * 0.2f
+        val healthY = topY + cardHeight + ZONE_PAD + gap
         val roomY = healthY + HEALTH_ROW + gap
 
-        val zoneX = layout.x(1) + gap
+        val zoneX = layout.x(1) + layout.gap
         val zoneWidth = (board - layout.x(0)) - zoneX
     }
 
@@ -424,11 +421,6 @@ object RogueRun : Game<RogueState> {
         val icons = remember(context) { CardIcons.get(context.assets) }
         val iconColor = if (ambient) CardColors.Ambient.copy(alpha = 0.3f) else AppColors.SlotMark
 
-        // Determine screen boundaries so we can draw outside the square `board` bounds
-        val config = LocalConfiguration.current
-        val screenWidth = config.screenWidthDp.dp
-        val screenHeight = config.screenHeightDp.dp
-
         // When the last tap landed, for telling a double tap from a slow second one.
         val lastTap = remember { longArrayOf(0L, -1L) }
         val measurer = rememberTextMeasurer()
@@ -473,48 +465,14 @@ object RogueRun : Game<RogueState> {
                     }
                 }
 
-                // 90-degree arc health progress bar shifted fully to the left screen edge
-                val healthProgress = state.health / MAX_HEALTH.toFloat()
-                val healthColor = if (ambient) AppColors.TextMuted else healthColour(state.health)
-
-                // Offset back from the centered board to the top-left of the actual screen
-                val offsetX = -(screenWidth - board) / 2
-                val offsetY = -(screenHeight - board) / 2
-
-                Canvas(
-                    Modifier
-                        .offset(x = offsetX, y = offsetY)
-                        .size(screenWidth, screenHeight)
-                ) {
-                    val strokePx = 6.dp.toPx()
-                    val inset = strokePx / 2f + 12.dp.toPx()
-                    val arcSize = Size(size.width - inset / 2, size.height - inset / 2)
-                    val topLeft = Offset(inset, inset + size.height / 4)
-
-                    // Background track hugging left watch bezel (135° to 225°)
-                    drawArc(
-                        color = AppColors.DeepBlue,
-                        startAngle = 155f,
-                        sweepAngle = 50f,
-                        useCenter = false,
-                        topLeft = topLeft,
-                        size = arcSize,
-                        style = Stroke(width = strokePx, cap = StrokeCap.Round)
-                    )
-
-                    // Active progress arc
-                    if (healthProgress > 0f) {
-                        drawArc(
-                            color = healthColor,
-                            startAngle = 155f,
-                            sweepAngle = 50f * healthProgress,
-                            useCenter = false,
-                            topLeft = topLeft,
-                            size = arcSize,
-                            style = Stroke(width = strokePx, cap = StrokeCap.Round)
-                        )
-                    }
-                }
+                // Health, on the screen's left edge.
+                SideGauge(
+                    fraction = state.health / MAX_HEALTH.toFloat(),
+                    color = healthColour(state.health),
+                    board = board,
+                    boardFraction = boardFraction,
+                    boardLift = boardLift,
+                )
 
                 // Text labels distributed evenly across the middle row
                 Row(
@@ -592,14 +550,14 @@ object RogueRun : Game<RogueState> {
             // Weapon placeholder pile outline & slot
             val weaponX = layout.x(0)
             val weaponY = rows.topY
+            // Only the outline and the sword on black, until a weapon is equipped.
             zone(
                 weaponX - ZONE_PAD,
                 weaponY - ZONE_PAD,
                 rows.cardWidth + ZONE_PAD * 2,
-                rows.cardHeight + ZONE_PAD * 2,
-                rows.cardWidth * CARD_ASPECT + ZONE_PAD * 2,
+                cardWidth = rows.cardWidth,
+                height = rows.cardHeight + ZONE_PAD * 2,
             )
-            slot(weaponX, weaponY, rows.cardWidth)
 
             if (weapon != null) {
                 card(
@@ -621,8 +579,8 @@ object RogueRun : Game<RogueState> {
                 zoneX - ZONE_PAD,
                 zoneY - ZONE_PAD,
                 zoneWidth + ZONE_PAD * 2,
-                rows.cardHeight + ZONE_PAD * 2,
-                rows.cardWidth * CARD_ASPECT + ZONE_PAD * 2,
+                cardWidth = rows.cardWidth,
+                height = rows.cardHeight + ZONE_PAD * 2,
             )
 
             // Monster cards in killed monsters zone (50% opacity except top card)

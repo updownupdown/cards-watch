@@ -2,6 +2,7 @@ package com.updownupdown.cards.watch.cards
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.CacheDrawScope
 import androidx.compose.ui.draw.drawWithCache
@@ -32,13 +33,21 @@ object CardColors {
     /** Everything on a card while the watch is asleep. */
     val Ambient get() = AppColors.Ambient
 
-    fun suit(suit: Suit) = when (suit) {
-        Suit.Hearts -> AppColors.Hearts
-        Suit.Diamonds -> AppColors.Diamonds
-        Suit.Clubs -> AppColors.Clubs
-        Suit.Spades -> AppColors.Spades
+    /** The suit's own colour, or with [fourColours] off, red or white as on a paper deck. */
+    fun suit(suit: Suit, fourColours: Boolean = true) = when {
+        !fourColours -> if (suit.isRed) AppColors.TwoColourRed else AppColors.TwoColourBlack
+        suit == Suit.Hearts -> AppColors.Hearts
+        suit == Suit.Diamonds -> AppColors.Diamonds
+        suit == Suit.Clubs -> AppColors.Clubs
+        else -> AppColors.Spades
     }
 }
+
+/**
+ * Whether cards show a colour for each suit (true) or only red and white:
+ * the home screen's Suit Colours, and for Auto, the game's [com.updownupdown.cards.watch.game.Game.fourSuitColours].
+ */
+val LocalFourSuitColours = compositionLocalOf { true }
 
 /** Status colours that tint a card's face (the rank and suit stay on top). */
 object CardOverlay {
@@ -47,6 +56,8 @@ object CardOverlay {
     val Hint = AppColors.PaleYellow.copy(alpha = 0.3f)
     /** A place the picked card can go. */
     val Target = AppColors.Neutral.copy(alpha = 0.3f)
+    /** A card that never moves (Royal Marriage's couple, Ozanam's Square's given cards). */
+    val Fixed = AppColors.Grey.copy(alpha = 0.3f)
 }
 
 /**
@@ -88,16 +99,24 @@ fun PlayingCard(
     selection: Selection? = null,
     under: () -> Float = { 0f },
     dot: Color? = null,
+    /** Draws the Joker (Ouroboros's exit) in place of [card]'s rank and suit. */
+    joker: Boolean = false,
 ) {
     val icons = CardIcons.get(LocalContext.current.assets)
     val ambient = LocalAmbient.current
+    val fourColours = LocalFourSuitColours.current
     Spacer(
         modifier.drawWithCache {
             val corner = CornerRadius(size.width * CardStyle.CORNER)
-            val ink = if (ambient || card == null) CardColors.Ambient else CardColors.suit(card.suit)
+            val ink = if (ambient || card == null) CardColors.Ambient else CardColors.suit(card.suit, fourColours)
             val face = when {
                 card == null -> null
                 faceDown -> backFace(icons, ambient)
+                joker -> {
+                    val colour = if (ambient) CardColors.Ambient else AppColors.Joker
+                    val draw: DrawScope.() -> Unit = { drawCentredIcon(icons.joker, 0.8f, colour) }
+                    draw
+                }
                 else -> face(card, icons, ink)
             }
             if (ambient) {

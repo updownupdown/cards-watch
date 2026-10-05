@@ -29,6 +29,7 @@ import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.AppColors
@@ -67,6 +68,8 @@ object Clock : Game<ClockState> {
     override val accent = R.color.game_clock
     override val accentPale = R.color.game_clock_pale
     override val title = "Clock Solitaire"
+    override val rating = Rating(difficulty = 90, complexity = 5, luck = 100)
+    override val fourSuitColours = false
     override val stateSerializer: KSerializer<ClockState> = ClockState.serializer()
 
     override val rules = listOf(

@@ -38,6 +38,7 @@ import com.updownupdown.cards.watch.cards.isRed
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.GameButton
@@ -83,6 +84,8 @@ object FortunesCall : Game<FortuneState> {
     override val accent = R.color.game_fortunes_call
     override val accentPale = R.color.game_fortunes_call_pale
     override val title = "Fortune's Call"
+    override val rating = Rating(difficulty = 55, complexity = 10, luck = 85)
+    override val fourSuitColours = false
     override val stateSerializer: KSerializer<FortuneState> = FortuneState.serializer()
 
     override val rules = listOf(

@@ -39,6 +39,7 @@ import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.cards.pileEdge
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
@@ -95,6 +96,8 @@ object Lycan : Game<LycanState> {
     override val accent = R.color.game_lycan
     override val accentPale = R.color.game_lycan_pale
     override val title = "Lycan"
+    override val rating = Rating(difficulty = 85, complexity = 60, luck = 40)
+    override val fourSuitColours = false
     override val stateSerializer: KSerializer<LycanState> = LycanState.serializer()
 
     override val rules = listOf(

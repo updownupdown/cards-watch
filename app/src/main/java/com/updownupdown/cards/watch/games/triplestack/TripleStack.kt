@@ -31,6 +31,7 @@ import com.updownupdown.cards.watch.cards.isRed
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.AppColors
@@ -66,6 +67,7 @@ object TripleStack : Game<TripleStackState> {
     override val accent = R.color.game_triple_stack
     override val accentPale = R.color.game_triple_stack_pale
     override val title = "Triple Stack"
+    override val rating = Rating(difficulty = 70, complexity = 20, luck = 40)
     override val stateSerializer: KSerializer<TripleStackState> = TripleStackState.serializer()
 
     override val rules = listOf(

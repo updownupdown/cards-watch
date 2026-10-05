@@ -19,6 +19,7 @@ import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
@@ -61,6 +62,7 @@ object FourSeasons : Game<FourSeasonsState> {
     override val accent = R.color.game_four_seasons
     override val accentPale = R.color.game_four_seasons_pale
     override val title = "Four Seasons"
+    override val rating = Rating(difficulty = 65, complexity = 25, luck = 55)
     override val stateSerializer: KSerializer<FourSeasonsState> = FourSeasonsState.serializer()
 
     override val rules = listOf(

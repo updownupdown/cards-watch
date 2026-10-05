@@ -36,6 +36,7 @@ import com.updownupdown.cards.watch.cards.fullDeck
 import com.updownupdown.cards.watch.cards.isRed
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
@@ -79,6 +80,8 @@ object Seer : Game<SeerState> {
     override val accent = R.color.game_seer
     override val accentPale = R.color.game_seer_pale
     override val title = "Seer"
+    override val rating = Rating(difficulty = 55, complexity = 35, luck = 65)
+    override val fourSuitColours = false
     override val stateSerializer: KSerializer<SeerState> = SeerState.serializer()
 
     override val rules = listOf(

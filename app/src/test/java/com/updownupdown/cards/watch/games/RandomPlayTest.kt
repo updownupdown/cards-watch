@@ -3,23 +3,31 @@ package com.updownupdown.cards.watch.games
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.games.accordion.Accordion
 import com.updownupdown.cards.watch.games.acesup.AcesUp
+import com.updownupdown.cards.watch.games.augury.Augury
 import com.updownupdown.cards.watch.games.baroness.Baroness
 import com.updownupdown.cards.watch.games.beehive.Beehive
 import com.updownupdown.cards.watch.games.clock.Clock
 import com.updownupdown.cards.watch.games.dominion.Dominion
 import com.updownupdown.cards.watch.games.ebbandflow.EbbAndFlow
+import com.updownupdown.cards.watch.games.elevens.Elevens
 import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
 import com.updownupdown.cards.watch.games.fortune.Call
 import com.updownupdown.cards.watch.games.fortune.FortunesCall
 import com.updownupdown.cards.watch.games.fourseasons.FourSeasons
 import com.updownupdown.cards.watch.games.hanoi.TowerOfHanoi
+import com.updownupdown.cards.watch.games.irisgarden.IrisGarden
 import com.updownupdown.cards.watch.games.jailbreak.Jailbreak
 import com.updownupdown.cards.watch.games.lightsout.LightsOut
 import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.memory.Memory
 import com.updownupdown.cards.watch.games.nestor.Nestor
+import com.updownupdown.cards.watch.games.ouroboros.Ouroboros
+import com.updownupdown.cards.watch.games.ozanam.OzanamsSquare
+import com.updownupdown.cards.watch.games.ozanam.Source
 import com.updownupdown.cards.watch.games.rogue.RogueRun
+import com.updownupdown.cards.watch.games.royalmarriage.RoyalMarriage
 import com.updownupdown.cards.watch.games.seer.Seer
+import com.updownupdown.cards.watch.games.tentwentythirty.TenTwentyThirty
 import com.updownupdown.cards.watch.games.triplestack.TripleStack
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -139,6 +147,107 @@ class RandomPlayTest {
             r.nextBoolean() && s.player.isNotEmpty() -> Lycan.togglePlayer(s, s.player.random(r).id)
             s.wolf.isNotEmpty() -> Lycan.toggleWolf(s, s.wolf.random(r).id)
             else -> null
+        }
+    }
+
+    @Test fun elevens() = fuzz(Elevens) { s, r -> Elevens.remove(s, List(2 + r.nextInt(2)) { r.nextInt(Elevens.SIZE) }) }
+
+    @Test
+    fun elevensDealsAllowFourMoves() {
+        repeat(30) { seed ->
+            var state = Elevens.newGame(Random(seed))
+            assertEquals(52, (state.grid.filterNotNull() + state.stock).toSet().size)
+            // Some line of play makes four moves; at least the first must exist.
+            assertTrue(Elevens.sets(state.grid).isNotEmpty())
+        }
+    }
+
+    @Test fun tenTwentyThirty() = fuzz(TenTwentyThirty) { s, r ->
+        if (r.nextInt(3) == 0) TenTwentyThirty.draw(s) else {
+            val first = r.nextInt(s.line.size.coerceAtLeast(1))
+            TenTwentyThirty.discard(s, first, first + 1 + r.nextInt(4))
+        }
+    }
+
+    @Test fun irisGarden() = fuzz(IrisGarden, games = 10) { s, r ->
+        IrisGarden.pairs(s.grid).randomOrNull(r)?.let { (a, b) -> IrisGarden.pair(s, a, b) }
+    }
+
+    @Test
+    fun irisGardenDealsCanBeCleared() {
+        repeat(10) { seed ->
+            val state = IrisGarden.newGame(Random(seed))
+            assertEquals(IrisGarden.CELLS, state.grid.filterNotNull().toSet().size)
+            assertTrue(state.grid.filterNotNull().groupBy { it.rank }.values.all { it.size == 4 })
+        }
+    }
+
+    @Test fun royalMarriage() = fuzz(RoyalMarriage) { s, r ->
+        if (r.nextInt(4) == 0) RoyalMarriage.discard(s) ?: s.copy(selected = emptySet())
+        else RoyalMarriage.toggle(s, r.nextInt(s.line.size))
+    }
+
+    @Test fun ozanamsSquare() = fuzz(OzanamsSquare, games = 10) { s, r ->
+        when (r.nextInt(3)) {
+            0 -> OzanamsSquare.unplace(s, r.nextInt(OzanamsSquare.CELLS))
+            1 -> OzanamsSquare.place(s, Source.Place(r.nextInt(OzanamsSquare.CELLS)), r.nextInt(OzanamsSquare.CELLS))
+            else -> s.tray.flatten().randomOrNull(r)?.let { OzanamsSquare.place(s, Source.Tray(it), r.nextInt(OzanamsSquare.CELLS)) }
+        }
+    }
+
+    @Test
+    fun ozanamsSquareHasOneSolution() {
+        repeat(10) { seed ->
+            val state = OzanamsSquare.newGame(Random(seed))
+            assertEquals(1, OzanamsSquare.solve(state.grid, 2).size)
+            assertTrue(state.given.count { it } >= 7)
+        }
+    }
+
+    @Test fun augury() = fuzz(Augury) { s, r ->
+        if (r.nextInt(5) == 0) Augury.noneFit(s) else s.hand.randomOrNull(r)?.let { Augury.playCard(s, it) }
+    }
+
+    @Test
+    fun auguryKeepsEveryCard() {
+        repeat(30) { seed ->
+            val random = Random(seed)
+            var state = Augury.newGame(random)
+            while (Augury.outcome(state) == null) {
+                state = (if (random.nextInt(4) == 0) Augury.noneFit(state) else Augury.playCard(state, state.hand.random(random)))!!
+            }
+            val seen = state.deck + state.hand + state.path.flatMap { listOf(it.card) + it.rejected }
+            assertEquals(seen.size, seen.toSet().size)
+        }
+    }
+
+    @Test fun ouroboros() = fuzz(Ouroboros) { s, r ->
+        val top = Ouroboros.tops(s).random(r)
+        when (r.nextInt(4)) {
+            0 -> Ouroboros.lookAround(s)
+            1 -> Ouroboros.mark(s, top, r.nextInt(Ouroboros.PATHS))
+            2 -> Ouroboros.returnPath(s, r.nextInt(Ouroboros.PATHS))
+            else -> Ouroboros.explore(s, top)
+        }
+    }
+
+    @Test
+    fun ouroborosKeepsEveryCard() {
+        repeat(30) { seed ->
+            val random = Random(seed)
+            var state = Ouroboros.newGame(random)
+            repeat(300) {
+                if (Ouroboros.outcome(state) != null) return@repeat
+                val top = Ouroboros.tops(state).random(random)
+                state = when (random.nextInt(4)) {
+                    0 -> Ouroboros.lookAround(state)
+                    1 -> Ouroboros.mark(state, top, random.nextInt(Ouroboros.PATHS))
+                    2 -> Ouroboros.returnPath(state, random.nextInt(Ouroboros.PATHS))
+                    else -> Ouroboros.explore(state, top)
+                } ?: state
+                assertEquals(53, state.deck.size + state.paths.count { it != null } + state.aces + state.trinkets)
+                assertTrue(state.pos in state.deck.indices)
+            }
         }
     }
 }

@@ -16,6 +16,7 @@ import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
@@ -52,6 +53,8 @@ object Nestor : Game<NestorState> {
     override val accent = R.color.game_nestor
     override val accentPale = R.color.game_nestor_pale
     override val title = "Nestor"
+    override val rating = Rating(difficulty = 70, complexity = 15, luck = 55)
+    override val fourSuitColours = false
     override val stateSerializer: KSerializer<NestorState> = NestorState.serializer()
 
     // Nothing under the board: it reaches the screen's foot, for larger cards.

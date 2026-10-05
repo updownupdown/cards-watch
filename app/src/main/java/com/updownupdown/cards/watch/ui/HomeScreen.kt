@@ -3,7 +3,10 @@ package com.updownupdown.cards.watch.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,12 +50,16 @@ import androidx.wear.compose.material3.LocalTextStyle
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.SurfaceTransformation
+import androidx.wear.compose.material3.RadioButton
 import androidx.wear.compose.material3.SwitchButton
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
 import com.updownupdown.cards.watch.R
+import com.updownupdown.cards.watch.data.CONTINUE_CHOICES
+import com.updownupdown.cards.watch.data.SuitColours
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.GameStats
 import com.updownupdown.cards.watch.games.ALL_GAMES
 import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
 import com.updownupdown.cards.watch.games.lycan.Lycan
@@ -65,8 +72,6 @@ import kotlin.random.Random
 private val LOGO_GAP = 28.5.dp
 /** The space over a section's heading (after the section before it). */
 private val SECTION_GAP = 12.dp
-/** How many games the Continue Playing section offers. */
-private const val RECENT_SHOWN = 3
 /** A game's title on its button, × the usual button text. */
 private const val TITLE_SCALE = 1.1f
 /** How much of a button's picture its accent colour covers. */
@@ -80,8 +85,13 @@ private const val FACT_ICON_SCALE = 1.3f
 private const val FACT_TEXT_SCALE = 1.34f
 /** The space over and under the card fact. */
 private val FACT_GAP = 30.dp
-/** The haptics switch's width, × the list's; it sits in the middle. */
-private const val HAPTICS_WIDTH = 0.8f
+/** A setting's switch or choice's width, × the list's; it sits in the middle. */
+private const val SETTING_WIDTH = 0.8f
+/** The space over each setting's heading after the first. */
+private val SETTING_GAP = 8.dp
+/** A stat's name's share of the width (its value has the rest), and the gap between them. */
+private const val STAT_NAME = 0.56f
+private val STAT_GAP = 8.dp
 /** The space after the last game. */
 private val LIST_END = 40.dp
 
@@ -118,8 +128,15 @@ fun HomeScreen(
     onPin: (Game<*>) -> Unit,
     haptics: Boolean,
     onHaptics: (Boolean) -> Unit,
+    suitColours: SuitColours = SuitColours.Four,
+    onSuitColours: (SuitColours) -> Unit = {},
+    continueShown: Int = 3,
+    onContinueShown: (Int) -> Unit = {},
+    stats: Map<String, GameStats> = emptyMap(),
+    /** The item the list starts at, for screenshots of its foot. */
+    startAt: Int = 0,
 ) {
-    val listState = rememberTransformingLazyColumnState()
+    val listState = rememberTransformingLazyColumnState(initialAnchorItemIndex = startAt)
     val spec = rememberTransformationSpec()
     val buzz = rememberHaptics()
     val systemAllows = systemHapticsOn(LocalContext.current)
@@ -132,9 +149,9 @@ fun HomeScreen(
                     Text("Solitarius", style = TextStyle(fontFamily = Outfit, fontWeight = FontWeight.Medium, fontSize = 18.sp, color = Color.White))
                 }
             }
-            if (recent.isNotEmpty()) {
+            if (recent.isNotEmpty() && continueShown > 0) {
                 item { SectionHeading("Continue Playing", transformed(spec)) }
-                items(recent.take(RECENT_SHOWN), key = { "recent:${it.id}" }) { game ->
+                items(recent.take(continueShown), key = { "recent:${it.id}" }) { game ->
                     GameButton(game, false, { onOpen(game) }, null, Modifier.fillMaxWidth().transformedHeight(this, spec), SurfaceTransformation(spec))
                 }
                 item { Spacer(Modifier.height(SECTION_GAP)) }
@@ -152,6 +169,33 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth().transformedHeight(this, spec),
                     transformation = SurfaceTransformation(spec),
                 )
+            }
+            item { Spacer(Modifier.height(SECTION_GAP)) }
+            item { SectionHeading("Settings", transformed(spec)) }
+            // Off when the watch's own settings have haptics off.
+            item {
+                SwitchButton(
+                    checked = haptics && systemAllows,
+                    onCheckedChange = onHaptics,
+                    enabled = systemAllows,
+                    label = { Text("Haptics") },
+                    secondaryLabel = if (systemAllows) null else ({ Text("Off in watch settings") }),
+                    modifier = Modifier.fillMaxWidth(SETTING_WIDTH).transformedHeight(this, spec),
+                    transformation = SurfaceTransformation(spec),
+                )
+            }
+            item { SectionHeading("Suit Colours", transformed(spec).padding(top = SETTING_GAP)) }
+            items(SuitColours.entries, key = { "suits:${it.name}" }) { choice ->
+                SettingChoice(choice.label, choice == suitColours, { onSuitColours(choice) }, Modifier.fillMaxWidth(SETTING_WIDTH).transformedHeight(this, spec), SurfaceTransformation(spec))
+            }
+            item { SectionHeading("Show Continue Playing", transformed(spec).padding(top = SETTING_GAP)) }
+            items(CONTINUE_CHOICES, key = { "continue:$it" }) { count ->
+                SettingChoice(if (count == 0) "None" else "$count", count == continueShown, { onContinueShown(count) }, Modifier.fillMaxWidth(SETTING_WIDTH).transformedHeight(this, spec), SurfaceTransformation(spec))
+            }
+            item { Spacer(Modifier.height(SECTION_GAP)) }
+            item { SectionHeading("Stats", transformed(spec)) }
+            items(overallStats(stats), key = { "stat:${it.first}" }) { (name, value) ->
+                OverallStat(name, value, transformed(spec))
             }
             // A card fact; tapping it brings another.
             item {
@@ -177,21 +221,56 @@ fun HomeScreen(
                     )
                 }
             }
-            // Off when the watch's own settings have haptics off.
-            item {
-                SwitchButton(
-                    checked = haptics && systemAllows,
-                    onCheckedChange = onHaptics,
-                    enabled = systemAllows,
-                    label = { Text("Haptics") },
-                    secondaryLabel = if (systemAllows) null else ({ Text("Off in watch settings") }),
-                    modifier = Modifier.fillMaxWidth(HAPTICS_WIDTH).transformedHeight(this, spec),
-                    transformation = SurfaceTransformation(spec),
-                )
-            }
             // Room to bring the foot of the list up clear of the round screen's.
             item { Spacer(Modifier.height(LIST_END)) }
         }
+    }
+}
+
+/** A choice among a setting's options, as a radio button. */
+@Composable
+private fun SettingChoice(label: String, selected: Boolean, onSelect: () -> Unit, modifier: Modifier, transformation: SurfaceTransformation) {
+    RadioButton(
+        selected = selected,
+        onSelect = onSelect,
+        label = { Text(label) },
+        modifier = modifier,
+        transformation = transformation,
+    )
+}
+
+/**
+ * Stats across every game: how many have been won at least once, wins,
+ * losses and the share won, deals finished, the longest streak and the game
+ * played most.
+ */
+internal fun overallStats(stats: Map<String, GameStats>): List<Pair<String, String>> {
+    val all = stats.values
+    val won = all.sumOf { it.won }
+    val lost = all.sumOf { it.lost }
+    val mostPlayed = stats.entries.filter { it.value.won + it.value.lost > 0 }.maxByOrNull { it.value.won + it.value.lost }
+    return listOfNotNull(
+        "Games Complete" to "${all.count { it.won > 0 }} / ${ALL_GAMES.size}",
+        "Games Won" to "$won",
+        "Games Lost" to "$lost",
+        "Win %" to if (won + lost == 0) "–" else "${(won * 100f / (won + lost)).roundToInt()}%",
+        "Games Played" to "${won + lost}",
+        "Longest Streak" to "${all.maxOfOrNull { it.bestStreak } ?: 0}",
+        mostPlayed?.let { entry -> ALL_GAMES.firstOrNull { it.id == entry.key }?.let { "Most Played" to it.title } },
+    )
+}
+
+/** A stat in the middle of the list: its name ending where its value starts. */
+@Composable
+private fun OverallStat(name: String, value: String, modifier: Modifier) {
+    val style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Light)
+    Row(
+        modifier.fillMaxWidth().padding(vertical = 3.dp),
+        horizontalArrangement = Arrangement.spacedBy(STAT_GAP, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(name, style = style, textAlign = TextAlign.End, maxLines = 2, modifier = Modifier.weight(STAT_NAME))
+        Text(value, style = style.copy(fontWeight = FontWeight.Bold), maxLines = 2, modifier = Modifier.weight(1 - STAT_NAME))
     }
 }
 

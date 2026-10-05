@@ -18,6 +18,7 @@ import com.updownupdown.cards.watch.cards.RoundScreen
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
@@ -53,6 +54,8 @@ object Beehive : Game<BeehiveState> {
     override val accent = R.color.game_beehive
     override val accentPale = R.color.game_beehive_pale
     override val title = "Beehive"
+    override val rating = Rating(difficulty = 25, complexity = 20, luck = 50)
+    override val fourSuitColours = false
     override val stateSerializer: KSerializer<BeehiveState> = BeehiveState.serializer()
 
     override val rules = listOf(

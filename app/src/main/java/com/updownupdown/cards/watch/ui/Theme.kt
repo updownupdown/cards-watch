@@ -73,6 +73,10 @@ object AppColors {
     val Diamonds = Color(0xFFFFAA7C)
     val Clubs = Color(0xFFA2E3A2)
 
+    /** The two suit colours, when cards show only red and black (as white). */
+    val TwoColourRed = Color(0xFFFF677B)
+    val TwoColourBlack = Color(0xFFFFFFFF)
+
     /** Jailbreak's Joker, in prison orange. */
     val Joker = Color(0xFFFF8A2A)
 

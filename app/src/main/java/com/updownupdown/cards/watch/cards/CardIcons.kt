@@ -1,7 +1,11 @@
 package com.updownupdown.cards.watch.cards
 
 import android.content.res.AssetManager
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.vector.PathParser
@@ -32,6 +36,9 @@ class CardIcons private constructor(assets: AssetManager) {
     val sword = assets.icon("Sword.svg")
     val dragon = assets.icon("Dragon.svg")
 
+    /** Ouroboros's mark on an empty marked path. */
+    val map = assets.icon("Map.svg")
+
     fun rank(rank: Rank) = ranks.getValue(rank)
     fun suit(suit: Suit) = suits.getValue(suit)
 
@@ -41,6 +48,18 @@ class CardIcons private constructor(assets: AssetManager) {
 
         fun get(assets: AssetManager): CardIcons =
             loaded ?: synchronized(this) { loaded ?: CardIcons(assets).also { loaded = it } }
+    }
+}
+
+/** Draws [icon] in the middle of the area, its square [fraction] of the area's width across. */
+fun DrawScope.drawCentredIcon(icon: CardIcon, fraction: Float, color: Color) {
+    val side = size.width * fraction
+    val scale = side / icon.viewBox
+    withTransform({
+        translate((size.width - side) / 2, (size.height - side) / 2)
+        scale(scale, scale, Offset.Zero)
+    }) {
+        drawPath(icon.path, color)
     }
 }
 
