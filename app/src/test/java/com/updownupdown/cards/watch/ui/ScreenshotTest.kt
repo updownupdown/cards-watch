@@ -207,6 +207,12 @@ class ScreenshotTest {
     }
 
     @Test
+    @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
+    fun rogueLarge() = capture("rogue_large") {
+        GameScreen(GameSession(RogueRun, SavedGame(RogueRun.saveVersion, RogueRun.newGame(Random(3)))) {}, {})
+    }
+
+    @Test
     fun rogueLost() = capture("rogue_lost") {
         // One fist away from death.
         val state = RogueState(
