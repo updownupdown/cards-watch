@@ -3,6 +3,7 @@ package com.updownupdown.cards.watch.games
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.games.accordion.Accordion
 import com.updownupdown.cards.watch.games.acesup.AcesUp
+import com.updownupdown.cards.watch.games.augury.Augury
 import com.updownupdown.cards.watch.games.baroness.Baroness
 import com.updownupdown.cards.watch.games.beehive.Beehive
 import com.updownupdown.cards.watch.games.clock.Clock
@@ -52,6 +53,7 @@ val ALL_GAMES: List<Game<*>> = listOf(
     IrisGarden,
     RoyalMarriage,
     OzanamsSquare,
+    Augury,
 )
 
 fun gameById(id: String?): Game<*>? = ALL_GAMES.firstOrNull { it.id == id }

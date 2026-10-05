@@ -29,6 +29,7 @@ import com.updownupdown.cards.watch.game.GameStats
 import com.updownupdown.cards.watch.game.SavedGame
 import com.updownupdown.cards.watch.games.accordion.Accordion
 import com.updownupdown.cards.watch.games.acesup.AcesUp
+import com.updownupdown.cards.watch.games.augury.Augury
 import com.updownupdown.cards.watch.games.baroness.Baroness
 import com.updownupdown.cards.watch.games.beehive.Beehive
 import com.updownupdown.cards.watch.games.clock.Clock
@@ -284,4 +285,11 @@ class ScreenshotTest {
     @Test fun royalMarriage() = game(RoyalMarriage, RoyalMarriage.after({ RoyalMarriage.toggle(it, 2) }))
 
     @Test fun ozanamsSquare() = game(OzanamsSquare, OzanamsSquare.after({ OzanamsSquare.place(it, Source.Tray(it.tray[0][0]), it.given.indexOf(false)) }))
+
+    @Test fun augury() = game(Augury, Augury.after({ Augury.playCard(it, it.hand[0]) }, { Augury.playCard(it, it.hand[1]) }, { Augury.playCard(it, it.hand[2]) }))
+
+    @Test fun auguryLong() = capture("augury_long") {
+        val state = Augury.after(*Array(14) { { s: com.updownupdown.cards.watch.games.augury.AuguryState -> Augury.playCard(s, s.hand[0]) } })
+        GameScreen(GameSession(Augury, SavedGame(Augury.saveVersion, state)) {}, {})
+    }
 }

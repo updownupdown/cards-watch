@@ -3,6 +3,7 @@ package com.updownupdown.cards.watch.games
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.games.accordion.Accordion
 import com.updownupdown.cards.watch.games.acesup.AcesUp
+import com.updownupdown.cards.watch.games.augury.Augury
 import com.updownupdown.cards.watch.games.baroness.Baroness
 import com.updownupdown.cards.watch.games.beehive.Beehive
 import com.updownupdown.cards.watch.games.clock.Clock
@@ -199,6 +200,23 @@ class RandomPlayTest {
             val state = OzanamsSquare.newGame(Random(seed))
             assertEquals(1, OzanamsSquare.solve(state.grid, 2).size)
             assertTrue(state.given.count { it } >= 7)
+        }
+    }
+
+    @Test fun augury() = fuzz(Augury) { s, r ->
+        if (r.nextInt(5) == 0) Augury.noneFit(s) else s.hand.randomOrNull(r)?.let { Augury.playCard(s, it) }
+    }
+
+    @Test
+    fun auguryKeepsEveryCard() {
+        repeat(30) { seed ->
+            val random = Random(seed)
+            var state = Augury.newGame(random)
+            while (Augury.outcome(state) == null) {
+                state = (if (random.nextInt(4) == 0) Augury.noneFit(state) else Augury.playCard(state, state.hand.random(random)))!!
+            }
+            val seen = state.deck + state.hand + state.path.flatMap { listOf(it.card) + it.rejected }
+            assertEquals(seen.size, seen.toSet().size)
         }
     }
 }

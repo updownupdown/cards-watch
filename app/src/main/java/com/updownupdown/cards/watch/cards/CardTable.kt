@@ -69,6 +69,8 @@ enum class Removal {
     Discard,
     /** Stays still for a move's length (while a card lands on it), then disappears. */
     Vanish,
+    /** Disappears at once: another table takes it on from here (Augury's hand to its path). */
+    Gone,
 }
 
 /** A card placed on the table. Cards are matched between frames by [key]. */
@@ -99,6 +101,8 @@ data class TableCard(
     val dot: Color? = null,
     /** How long the card takes to turn over in place. */
     val flipMs: Int = CARD_FLIP_MS,
+    /** Whether a card dealt [from] a place turns over on its way; without, it arrives face up as it was. */
+    val turnFrom: Boolean = true,
 ) {
     val height: Dp get() = width * CARD_ASPECT
 }
@@ -135,8 +139,9 @@ class TableBuilder(val width: Dp, val height: Dp) {
         fromRight: Boolean = false,
         rotation: Float = 0f,
         dot: Color? = null,
+        turnFrom: Boolean = true,
     ) {
-        cards += TableCard(key, card, x, y, width, faceDown, z, overlay, selection, under, removal, alpha, from, fromRight, rotation, dot)
+        cards += TableCard(key, card, x, y, width, faceDown, z, overlay, selection, under, removal, alpha, from, fromRight, rotation, dot, turnFrom = turnFrom)
     }
 
     /** A place for several cards [cardWidth] wide, such as a spread: a line just inside its edge. */
@@ -413,7 +418,7 @@ private fun MovingCard(card: TableCard, leaving: Boolean, enter: Boolean, back: 
             !enter -> Offset(targetX, targetY)
             origin != null -> origin
             // Undone: back from the right, or back in place if it had vanished there.
-            back -> if (card.removal == Removal.Vanish) Offset(targetX, targetY) else Offset(targetX + screen, targetY)
+            back -> if (card.removal == Removal.Vanish || card.removal == Removal.Gone) Offset(targetX, targetY) else Offset(targetX + screen, targetY)
             card.fromRight -> Offset(targetX + screen, targetY)
             else -> Offset(targetX - screen, targetY)
         }
@@ -421,7 +426,7 @@ private fun MovingCard(card: TableCard, leaving: Boolean, enter: Boolean, back: 
     val x = remember { Animatable(start.x) }
     val y = remember { Animatable(start.y) }
     // A dealt card arrives turning over, and turns back as it's taken away.
-    val dealt = origin != null
+    val dealt = origin != null && card.turnFrom
     val flip = remember { Animatable(if (card.faceDown || enter && dealt) 180f else 0f) }
     // Its turn in a deal, kept from when it arrived.
     val turn = remember { IntArray(1) { if (enter) wait else 0 } }
@@ -431,6 +436,7 @@ private fun MovingCard(card: TableCard, leaving: Boolean, enter: Boolean, back: 
         if (leaving) {
             when {
                 cleared -> x.animateTo(x.value + screen, spec)
+                card.removal == Removal.Gone && !back -> Unit
                 origin != null -> coroutineScope {
                     launch { x.animateTo(origin.x, spec) }
                     launch { y.animateTo(origin.y, spec) }
