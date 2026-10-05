@@ -56,6 +56,8 @@ object CardOverlay {
     val Hint = AppColors.PaleYellow.copy(alpha = 0.3f)
     /** A place the picked card can go. */
     val Target = AppColors.Neutral.copy(alpha = 0.3f)
+    /** A card that never moves (Royal Marriage's couple, Ozanam's Square's given cards). */
+    val Fixed = AppColors.Grey.copy(alpha = 0.3f)
 }
 
 /**

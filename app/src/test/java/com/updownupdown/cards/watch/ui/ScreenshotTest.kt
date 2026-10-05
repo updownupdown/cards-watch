@@ -34,20 +34,24 @@ import com.updownupdown.cards.watch.games.beehive.Beehive
 import com.updownupdown.cards.watch.games.clock.Clock
 import com.updownupdown.cards.watch.games.dominion.Dominion
 import com.updownupdown.cards.watch.games.ebbandflow.EbbAndFlow
+import com.updownupdown.cards.watch.games.elevens.Elevens
 import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
 import com.updownupdown.cards.watch.games.fifteen.FifteenState
 import com.updownupdown.cards.watch.games.fortune.Call
 import com.updownupdown.cards.watch.games.fortune.FortunesCall
 import com.updownupdown.cards.watch.games.fourseasons.FourSeasons
 import com.updownupdown.cards.watch.games.hanoi.TowerOfHanoi
+import com.updownupdown.cards.watch.games.irisgarden.IrisGarden
 import com.updownupdown.cards.watch.games.jailbreak.Jailbreak
 import com.updownupdown.cards.watch.games.lightsout.LightsOut
 import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.memory.Memory
 import com.updownupdown.cards.watch.games.nestor.Nestor
 import com.updownupdown.cards.watch.games.rogue.RogueRun
+import com.updownupdown.cards.watch.games.royalmarriage.RoyalMarriage
 import com.updownupdown.cards.watch.games.rogue.RogueState
 import com.updownupdown.cards.watch.games.seer.Seer
+import com.updownupdown.cards.watch.games.tentwentythirty.TenTwentyThirty
 import com.updownupdown.cards.watch.games.triplestack.TripleStack
 import kotlin.random.Random
 import org.junit.Rule
@@ -268,4 +272,12 @@ class ScreenshotTest {
     }
 
     @Test fun hanoiMoved() = game(TowerOfHanoi, TowerOfHanoi.after({ TowerOfHanoi.move(it, 0, 1) }, { TowerOfHanoi.move(it, 0, 2) }))
+
+    @Test fun elevens() = game(Elevens)
+
+    @Test fun tenTwentyThirty() = game(TenTwentyThirty, TenTwentyThirty.after(*Array(9) { { s: com.updownupdown.cards.watch.games.tentwentythirty.TenTwentyThirtyState -> TenTwentyThirty.draw(s) } }))
+
+    @Test fun irisGarden() = game(IrisGarden)
+
+    @Test fun royalMarriage() = game(RoyalMarriage, RoyalMarriage.after({ RoyalMarriage.toggle(it, 2) }))
 }

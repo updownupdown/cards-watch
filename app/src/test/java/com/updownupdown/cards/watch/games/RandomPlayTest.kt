@@ -8,18 +8,22 @@ import com.updownupdown.cards.watch.games.beehive.Beehive
 import com.updownupdown.cards.watch.games.clock.Clock
 import com.updownupdown.cards.watch.games.dominion.Dominion
 import com.updownupdown.cards.watch.games.ebbandflow.EbbAndFlow
+import com.updownupdown.cards.watch.games.elevens.Elevens
 import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
 import com.updownupdown.cards.watch.games.fortune.Call
 import com.updownupdown.cards.watch.games.fortune.FortunesCall
 import com.updownupdown.cards.watch.games.fourseasons.FourSeasons
 import com.updownupdown.cards.watch.games.hanoi.TowerOfHanoi
+import com.updownupdown.cards.watch.games.irisgarden.IrisGarden
 import com.updownupdown.cards.watch.games.jailbreak.Jailbreak
 import com.updownupdown.cards.watch.games.lightsout.LightsOut
 import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.memory.Memory
 import com.updownupdown.cards.watch.games.nestor.Nestor
 import com.updownupdown.cards.watch.games.rogue.RogueRun
+import com.updownupdown.cards.watch.games.royalmarriage.RoyalMarriage
 import com.updownupdown.cards.watch.games.seer.Seer
+import com.updownupdown.cards.watch.games.tentwentythirty.TenTwentyThirty
 import com.updownupdown.cards.watch.games.triplestack.TripleStack
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -140,5 +144,42 @@ class RandomPlayTest {
             s.wolf.isNotEmpty() -> Lycan.toggleWolf(s, s.wolf.random(r).id)
             else -> null
         }
+    }
+
+    @Test fun elevens() = fuzz(Elevens) { s, r -> Elevens.remove(s, List(2 + r.nextInt(2)) { r.nextInt(Elevens.SIZE) }) }
+
+    @Test
+    fun elevensDealsAllowFourMoves() {
+        repeat(30) { seed ->
+            var state = Elevens.newGame(Random(seed))
+            assertEquals(52, (state.grid.filterNotNull() + state.stock).toSet().size)
+            // Some line of play makes four moves; at least the first must exist.
+            assertTrue(Elevens.sets(state.grid).isNotEmpty())
+        }
+    }
+
+    @Test fun tenTwentyThirty() = fuzz(TenTwentyThirty) { s, r ->
+        if (r.nextInt(3) == 0) TenTwentyThirty.draw(s) else {
+            val first = r.nextInt(s.line.size.coerceAtLeast(1))
+            TenTwentyThirty.discard(s, first, first + 1 + r.nextInt(4))
+        }
+    }
+
+    @Test fun irisGarden() = fuzz(IrisGarden, games = 10) { s, r ->
+        IrisGarden.pairs(s.grid).randomOrNull(r)?.let { (a, b) -> IrisGarden.pair(s, a, b) }
+    }
+
+    @Test
+    fun irisGardenDealsCanBeCleared() {
+        repeat(10) { seed ->
+            val state = IrisGarden.newGame(Random(seed))
+            assertEquals(IrisGarden.CELLS, state.grid.filterNotNull().toSet().size)
+            assertTrue(state.grid.filterNotNull().groupBy { it.rank }.values.all { it.size == 4 })
+        }
+    }
+
+    @Test fun royalMarriage() = fuzz(RoyalMarriage) { s, r ->
+        if (r.nextInt(4) == 0) RoyalMarriage.discard(s) ?: s.copy(selected = emptySet())
+        else RoyalMarriage.toggle(s, r.nextInt(s.line.size))
     }
 }
