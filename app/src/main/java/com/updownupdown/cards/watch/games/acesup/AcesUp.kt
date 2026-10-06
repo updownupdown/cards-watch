@@ -9,6 +9,7 @@ import com.updownupdown.cards.watch.cards.CardStyle
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.shuffledDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Rating
@@ -31,6 +32,7 @@ object AcesUp : Game<AcesUpState> {
     override val id = "aces-up"
     override val thumbnail = R.drawable.thumb_aces_up
     override val banner = R.drawable.banner_aces_up
+    override val credit = ArtCredit("Playing Card: Ace of Spades", "Unknown artist", null, "Art Institute of Chicago")
     override val accent = R.color.game_aces_up
     override val accentPale = R.color.game_aces_up_pale
     override val title = "Aces Up"

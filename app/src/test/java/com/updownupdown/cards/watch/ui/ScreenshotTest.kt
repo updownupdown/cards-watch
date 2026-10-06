@@ -177,40 +177,42 @@ class ScreenshotTest {
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
     fun home() = capture("home") {
-        HomeScreen(recent = listOf(FifteenPuzzle, Nestor), pinned = listOf(Lycan.id), onOpen = {}, onPin = {}, haptics = true, onHaptics = {})
+        HomeScreen(recent = listOf(FifteenPuzzle, Nestor), pinned = listOf(Lycan.id), onOpen = {}, onPin = {})
     }
 
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
-    fun homeSettings() = capture("home_settings") {
-        HomeScreen(
-            recent = listOf(FifteenPuzzle, Nestor),
-            pinned = emptyList(),
-            onOpen = {},
-            onPin = {},
-            haptics = true,
-            onHaptics = {},
-            continueShown = 1,
-            stats = mapOf(Nestor.id to GameStats(won = 3, lost = 2, bestStreak = 2), Lycan.id to GameStats(lost = 4)),
-            startAt = 31,
-        )
+    fun homeFoot() = capture("home_foot") {
+        HomeScreen(recent = listOf(FifteenPuzzle, Nestor), pinned = emptyList(), onOpen = {}, onPin = {}, continueShown = 1, startAt = 30)
     }
 
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
-    fun homeStats() = capture("home_stats") {
-        HomeScreen(
-            recent = listOf(FifteenPuzzle, Nestor),
-            pinned = emptyList(),
-            onOpen = {},
-            onPin = {},
-            haptics = true,
-            onHaptics = {},
-            continueShown = 1,
-            stats = mapOf(Nestor.id to GameStats(won = 3, lost = 2, bestStreak = 2), Lycan.id to GameStats(lost = 4)),
-            startAt = 42,
-        )
+    fun settings() = capture("settings") {
+        SettingsScreen(haptics = true, onHaptics = {}, continueShown = 1)
     }
+
+    private val someStats = mapOf(
+        Nestor.id to GameStats(won = 7, lost = 3, bestStreak = 4),
+        Lycan.id to GameStats(won = 1, lost = 4, bestStreak = 1),
+        RogueRun.id to GameStats(won = 2, lost = 2, bestStreak = 2),
+        Clock.id to GameStats(lost = 3),
+    )
+
+    @Test
+    @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
+    fun stats() = capture("stats") { StatsScreen(someStats, onOpen = {}) }
+
+    @Test
+    fun statsSmall() = capture("stats_small") { StatsScreen(someStats, onOpen = {}) }
+
+    @Test
+    fun statsScrolled() = capture("stats_scrolled", before = { compose.onRoot().performTouchInput { swipeUp() } }) {
+        StatsScreen(someStats, onOpen = {})
+    }
+
+    @Test
+    fun statsEmpty() = capture("stats_empty") { StatsScreen(emptyMap(), onOpen = {}) }
 
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
@@ -300,12 +302,12 @@ class ScreenshotTest {
         GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, state)) {}, {})
     }
 
-    @Test fun ouroborosPicked() = capture("ouroboros_picked", before = { compose.onRoot().performTouchInput { click(Offset(168f, 345f)) } }) {
+    @Test fun ouroborosPicked() = capture("ouroboros_picked", before = { compose.onRoot().performTouchInput { click(Offset(216f, 345f)) } }) {
         GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, Ouroboros.after({ Ouroboros.lookAround(it) }))) {}, {})
     }
 
     // The second card, a number: its target comes in from the loop.
-    @Test fun ouroborosTarget() = capture("ouroboros_target", before = { compose.onRoot().performTouchInput { click(Offset(216f, 345f)) } }) {
+    @Test fun ouroborosTarget() = capture("ouroboros_target", before = { compose.onRoot().performTouchInput { click(Offset(168f, 345f)) } }) {
         GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, Ouroboros.after({ Ouroboros.lookAround(it) }))) {}, {})
     }
 

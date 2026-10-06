@@ -31,6 +31,7 @@ import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.cards.drawCentredIcon
 import com.updownupdown.cards.watch.cards.fullDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
@@ -86,6 +87,7 @@ object Ouroboros : Game<OuroborosState> {
     override val id = "ouroboros"
     override val thumbnail = R.drawable.thumb_ouroboros
     override val banner = R.drawable.banner_ouroboros
+    override val credit = ArtCredit("Alchemical Serpent (Ouroboros)", "Unknown medieval illuminator", "1478", "Wikimedia Commons")
     override val accent = R.color.game_ouroboros
     override val accentPale = R.color.game_ouroboros_pale
     override val title = "Ouroboros"
@@ -229,8 +231,13 @@ object Ouroboros : Game<OuroborosState> {
 
     override fun status(state: OuroborosState): String? = null
 
-    /** The loop's gap, at the top for the time, in degrees. */
-    private const val GAP = 72f
+    /**
+     * Where the loop starts and ends, in degrees clockwise from the right: the
+     * top two either side of the bottom (6 o'clock), the last card at 4
+     * o'clock, so the loop's one gap is at 5 o'clock, between them.
+     */
+    private const val BOTTOM = 90f
+    private const val LAST = 30f + 360f
 
     /** A card's width, × the screen's. */
     private const val CARD = 0.115f
@@ -257,23 +264,24 @@ object Ouroboros : Game<OuroborosState> {
 
     /**
      * Each card's angle round the loop, in degrees clockwise from the right,
-     * by its place from the top card ([k] 0). The top card sits just left of
-     * the bottom and the next just right of it, both upright; the rest run on
-     * anticlockwise, up the right, across the gap at the top and down the
-     * left, the last coming back round beside the top card.
+     * by its place from the top card ([k] 0). The top card sits just right of
+     * the bottom and the next just left of it, both upright; the rest run on
+     * clockwise, up the left, across the top and down the right, the last at
+     * [LAST]. As the loop shortens it closes up behind the top card, so the
+     * gap only ever grows, at 5 o'clock.
      *
      * @param step a card's width in degrees at the loop's radius.
      */
     private fun loopAngles(count: Int, step: Float): FloatArray {
-        val room = 360f - GAP
-        // The space after each card, as a fixed part and a share of what the rest leave.
-        val fixed = FloatArray(count)
-        val share = FloatArray(count)
-        for (i in 0 until count) {
+        val first = BOTTOM - FIRST_STEP * step / 2
+        val room = LAST - first
+        // The space after each card but the last, as a fixed part and a share of what the rest leave.
+        val spaces = (count - 1).coerceAtLeast(0)
+        val fixed = FloatArray(spaces)
+        val share = FloatArray(spaces)
+        for (i in 0 until spaces) {
             when {
                 i == 0 -> fixed[i] = FIRST_STEP * step
-                // Back round to the top card.
-                i == count - 1 -> fixed[i] = NEAR_STEP * step
                 i <= NEAR -> fixed[i] = NEAR_STEP * step
                 i <= NEAR + CLOSING -> {
                     val t = (i - NEAR) / CLOSING.toFloat()
@@ -288,24 +296,19 @@ object Ouroboros : Game<OuroborosState> {
         val rest = if (shares > 0f) (room - fixed.sum()) / shares else 0f
         val gaps = if (shares == 0f || rest > NEAR_STEP * step) {
             // Few cards: all but the top two evenly apart, no more than the most.
-            FloatArray(count) {
+            FloatArray(spaces) {
                 if (it == 0) FIRST_STEP * step else minOf(
                     MOST_STEP * step,
-                    (room - FIRST_STEP * step) / (count - 1).coerceAtLeast(1)
+                    (room - FIRST_STEP * step) / (spaces - 1).coerceAtLeast(1)
                 )
             }
         } else {
-            FloatArray(count) { fixed[it] + share[it] * rest }
+            FloatArray(spaces) { fixed[it] + share[it] * rest }
         }
-        val first = 90f + gaps[0] / 2
-        // From the top card anticlockwise as far as the gap; past that, back from it clockwise.
-        val ahead = first + 90f - GAP / 2
-        val total = gaps.sum()
-        var along = 0f
+        var angle = first
         return FloatArray(count) { k ->
-            val angle = if (along <= ahead) first - along else first + (total - along)
-            along += gaps[k]
-            angle
+            if (k > 0) angle += gaps[k - 1]
+            angle % 360f
         }
     }
 

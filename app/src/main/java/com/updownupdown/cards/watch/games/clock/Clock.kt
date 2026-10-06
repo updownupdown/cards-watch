@@ -27,6 +27,7 @@ import com.updownupdown.cards.watch.cards.LocalUndoing
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.shuffledDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Rating
@@ -65,6 +66,7 @@ object Clock : Game<ClockState> {
     override val id = "clock"
     override val thumbnail = R.drawable.thumb_clock
     override val banner = R.drawable.banner_clock
+    override val credit = ArtCredit("Boy Holding Hourglass and Chinese Fan", "Unknown artist", "1780s", "Art Institute of Chicago")
     override val accent = R.color.game_clock
     override val accentPale = R.color.game_clock_pale
     override val title = "Clock Solitaire"

@@ -14,6 +14,7 @@ import com.updownupdown.cards.watch.cards.Removal
 import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.cards.fullDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Rating
@@ -42,6 +43,7 @@ object Dominion : Game<DominionState> {
     override val id = "dominion"
     override val thumbnail = R.drawable.thumb_dominion
     override val banner = R.drawable.banner_dominion
+    override val credit = ArtCredit("Procession of a Daimyo", "Hishikawa Moronobu", "ca. 1681–84", "Art Institute of Chicago")
     override val accent = R.color.game_dominion
     override val accentPale = R.color.game_dominion_pale
     override val title = "Dominion"

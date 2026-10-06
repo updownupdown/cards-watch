@@ -13,6 +13,7 @@ import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.shuffledDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
@@ -40,6 +41,7 @@ object Elevens : Game<ElevensState> {
     override val id = "elevens"
     override val thumbnail = R.drawable.thumb_elevens
     override val banner = R.drawable.banner_elevens
+    override val credit = ArtCredit("Allegory of Arithmetic", "Laurent de La Hyre", "1650", "The Walters Art Museum")
     override val accent = R.color.game_elevens
     override val accentPale = R.color.game_elevens_pale
     override val title = "Elevens"

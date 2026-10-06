@@ -31,6 +31,7 @@ import com.updownupdown.cards.watch.cards.ScrollingCards
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.cards.isRed
 import com.updownupdown.cards.watch.cards.shuffledDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
@@ -115,6 +116,7 @@ object Augury : Game<AuguryState> {
     override val id = "augury"
     override val thumbnail = R.drawable.thumb_augury
     override val banner = R.drawable.banner_augury
+    override val credit = ArtCredit("The Oracle", "Camillo Miola", "1880", "J. Paul Getty Museum")
     override val accent = R.color.game_augury
     override val accentPale = R.color.game_augury_pale
     override val title = "Augury"

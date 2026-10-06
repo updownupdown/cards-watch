@@ -14,6 +14,7 @@ import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.shuffledDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Rating
@@ -35,6 +36,7 @@ object Baroness : Game<BaronessState> {
     override val id = "baroness"
     override val thumbnail = R.drawable.thumb_baroness
     override val banner = R.drawable.banner_baroness
+    override val credit = ArtCredit("Portrait of the Baroness of Bernus", "Philipp Veit", "1838", "Wikimedia Commons")
     override val accent = R.color.game_baroness
     override val accentPale = R.color.game_baroness_pale
     override val title = "Baroness"

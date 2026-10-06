@@ -16,8 +16,8 @@
     <color name="game_beehive_pale">#F8D295</color>
     <color name="game_clock">#4F3F17</color>
     <color name="game_clock_pale">#F6C492</color>
-    <color name="game_dominion">#2A3F3E</color>
-    <color name="game_dominion_pale">#ADCFDC</color>
+    <color name="game_dominion">#4A1F3A</color>
+    <color name="game_dominion_pale">#EFA7D2</color>
     <color name="game_ebb_and_flow">#2A3840</color>
     <color name="game_ebb_and_flow_pale">#ADCEDC</color>
     <color name="game_fifteen_puzzle">#50215D</color>
@@ -34,12 +34,12 @@
     <color name="game_lights_out_pale">#B6AFA7</color>
     <color name="game_lycan">#1C3F47</color>
     <color name="game_lycan_pale">#94E3F5</color>
-    <color name="game_nestor">#33343A</color>
-    <color name="game_nestor_pale">#ADB4DC</color>
+    <color name="game_nestor">#263D24</color>
+    <color name="game_nestor_pale">#B5E3A8</color>
     <color name="game_memory">#40392A</color>
     <color name="game_memory_pale">#DCCDAD</color>
-    <color name="game_rogue_run">#47341F</color>
-    <color name="game_rogue_run_pale">#EBC89D</color>
+    <color name="game_rogue_run">#4A2024</color>
+    <color name="game_rogue_run_pale">#F2A5AC</color>
     <color name="game_triple_stack">#49261D</color>
     <color name="game_triple_stack_pale">#F4A894</color>
     <color name="game_augury">#213F45</color>
@@ -52,6 +52,6 @@
     <color name="game_elevens_pale">#EED4A5</color>
     <color name="game_royal_marriage">#453021</color>
     <color name="game_royal_marriage_pale">#EEC3A5</color>
-    <color name="game_ozanams_square">#453921</color>
-    <color name="game_ozanams_square_pale">#EED5A5</color>
+    <color name="game_ozanams_square">#1E3B3C</color>
+    <color name="game_ozanams_square_pale">#A2E3E5</color>
 </resources>

@@ -26,6 +26,7 @@ import com.updownupdown.cards.watch.cards.RoundScreen
 import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.pileEdge
 import com.updownupdown.cards.watch.cards.shuffledDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Rating
@@ -67,6 +68,7 @@ object EbbAndFlow : Game<EbbAndFlowState> {
     override val id = "ebb-and-flow"
     override val thumbnail = R.drawable.thumb_ebb_and_flow
     override val banner = R.drawable.banner_ebb_and_flow
+    override val credit = ArtCredit("Beach at Low Tide (Mouth of the River)", "Hilaire Germain Edgar Degas", "1869", "Art Institute of Chicago")
     override val accent = R.color.game_ebb_and_flow
     override val accentPale = R.color.game_ebb_and_flow_pale
     override val title = "Ebb & Flow"

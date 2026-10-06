@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
@@ -23,6 +25,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
@@ -68,6 +71,12 @@ val LocalBoardSize = staticCompositionLocalOf { 0.dp }
 /** The colour of the buttons of the game on screen: its pale accent. */
 val LocalGameAccent = staticCompositionLocalOf { AppColors.GameButton }
 
+/** The depth the time takes at the screen's top; a board reaching into it has the time over it. */
+private val TIME_ROOM = 20.dp
+
+/** How far down the fade under the time reaches, over such a board. */
+private val TIME_FADE = 40.dp
+
 /**
  * Every game's screen: a square board in the middle, with the time above it
  * and [bottom] (a status or buttons) in the crescent below. [bottom] gets the width that fits inside
@@ -87,10 +96,23 @@ fun GameLayout(
         // The depth of the space between the board and the screen's edge.
         val band = (diameter - boardSize) / 2
 
-        if (showTime) TimeText()
-
         // Above the rest, so a card can sit over the bottom buttons (a drawn card).
         val lift = diameter * boardLift
+        // A board reaching up into the time's room (Ouroboros) has the time over its cards, on a fade to black.
+        val underTime = band - lift < TIME_ROOM
+        if (showTime) {
+            Box(Modifier.fillMaxSize().zIndex(if (underTime) 2f else 0f)) {
+                if (underTime) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(TIME_FADE)
+                            .background(Brush.verticalGradient(0.5f to Color.Black, 1f to Color.Transparent))
+                    )
+                }
+                TimeText()
+            }
+        }
         CompositionLocalProvider(LocalBoardSize provides boardSize) {
             Box(Modifier.align(Alignment.Center).offset(y = -lift).size(boardSize).zIndex(1f), content = board)
         }

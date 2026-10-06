@@ -44,6 +44,7 @@ import com.updownupdown.cards.watch.cards.RoundScreen
 import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.cards.fullDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
@@ -92,6 +93,7 @@ object RogueRun : Game<RogueState> {
     override val id = "rogue-run"
     override val thumbnail = R.drawable.thumb_rogue_run
     override val banner = R.drawable.banner_rogue_run
+    override val credit = ArtCredit("The Round Tower, from \"Carceri d'invenzione\" (Imaginary Prisons)", "Giovanni Battista Piranesi", "ca. 1749–50", "The Metropolitan Museum of Art")
     override val accent = R.color.game_rogue_run
     override val accentPale = R.color.game_rogue_run_pale
     override val title = "Rogue Run"
