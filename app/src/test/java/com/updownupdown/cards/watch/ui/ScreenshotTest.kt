@@ -183,7 +183,7 @@ class ScreenshotTest {
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
     fun homeFoot() = capture("home_foot") {
-        HomeScreen(recent = listOf(FifteenPuzzle, Nestor), pinned = emptyList(), onOpen = {}, onPin = {}, continueShown = 1, startAt = 30)
+        HomeScreen(recent = listOf(FifteenPuzzle, Nestor), pinned = emptyList(), onOpen = {}, onPin = {}, continueShown = 1, startAt = 29)
     }
 
     @Test
@@ -261,7 +261,10 @@ class ScreenshotTest {
     }
 
     @Test
-    fun ratings() = capture("ratings", before = { compose.onRoot().performTouchInput { swipe(center, center + Offset(0f, 330f), durationMillis = 3000) }; compose.onRoot().performTouchInput { swipe(center, center + Offset(0f, 330f), durationMillis = 3000) } }) {
+    fun ratings() = capture("ratings", before = {
+        // Up from the foot, past the artwork.
+        repeat(5) { compose.onRoot().performTouchInput { swipe(center, center + Offset(0f, 330f), durationMillis = 3000) } }
+    }) {
         val session = GameSession(FifteenPuzzle, SavedGame(1, FifteenPuzzle.newGame(Random(3)))) {}
         GameScreen(session, {}, ScrollState(100_000), GameStats(won = 5, lost = 3))
     }

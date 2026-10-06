@@ -19,7 +19,9 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScope
 import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.FilledIconButton
 import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.lazy.TransformationSpec
@@ -50,16 +52,31 @@ fun ListButton(
     )
 }
 
+/** A button on a list with only an [icon], round; [label] is what it says to a screen reader. */
+@Composable
+fun IconListButton(@DrawableRes icon: Int, label: String, modifier: Modifier = Modifier, onClick: () -> Unit) {
+    FilledIconButton(
+        onClick = onClick,
+        colors = IconButtonDefaults.filledIconButtonColors(containerColor = AppColors.ListButton, contentColor = AppColors.ListButtonText),
+        modifier = modifier,
+    ) {
+        Icon(painterResource(icon), contentDescription = label, modifier = Modifier.size(24.dp))
+    }
+}
+
 /** The space after a list's last item, to bring its foot up clear of the round screen's. */
 internal val LIST_END = 40.dp
 
 /** The space between a section's heading and what follows, on top of the list's own. */
 private val HEADING_GAP = 5.dp
 
+/** The space under a screen's title. */
+private val TITLE_GAP = 20.dp
+
 /** A screen's title at the top of its list: its icon over its name. */
 @Composable
 internal fun ScreenTitle(@DrawableRes icon: Int, title: String, modifier: Modifier) {
-    Column(modifier.fillMaxWidth().padding(bottom = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier.fillMaxWidth().padding(bottom = TITLE_GAP), horizontalAlignment = Alignment.CenterHorizontally) {
         Icon(painterResource(icon), contentDescription = null, tint = AppColors.PaleYellow, modifier = Modifier.size(30.dp))
         Text(title, style = MaterialTheme.typography.titleMedium, color = Color.White)
     }

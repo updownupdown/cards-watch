@@ -87,6 +87,7 @@ object Ouroboros : Game<OuroborosState> {
     override val id = "ouroboros"
     override val thumbnail = R.drawable.thumb_ouroboros
     override val banner = R.drawable.banner_ouroboros
+    override val art = R.drawable.art_ouroboros
     override val credit = ArtCredit("Alchemical Serpent (Ouroboros)", "Unknown medieval illuminator", "1478", "Wikimedia Commons", "https://commons.wikimedia.org/wiki/File:Serpiente_alquimica.jpg")
     override val accent = R.color.game_ouroboros
     override val accentPale = R.color.game_ouroboros_pale

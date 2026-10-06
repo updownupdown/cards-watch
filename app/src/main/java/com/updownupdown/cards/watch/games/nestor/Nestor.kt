@@ -51,6 +51,7 @@ object Nestor : Game<NestorState> {
     override val id = "nestor"
     override val thumbnail = R.drawable.thumb_nestor
     override val banner = R.drawable.banner_nestor
+    override val art = R.drawable.art_nestor
     override val credit = ArtCredit("The Triumph of Time over Fame", "South Netherlandish", "ca. 1500–1530", "The Metropolitan Museum of Art", "https://www.metmuseum.org/art/collection/search/467828")
     override val accent = R.color.game_nestor
     override val accentPale = R.color.game_nestor_pale

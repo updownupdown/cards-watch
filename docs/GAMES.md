@@ -72,21 +72,26 @@ Stalker and Twelve Trials, which were once on the maybe list.
   Four (`Game.fourSuitColours`).
 - **Continue Playing** shows the last 1 or 3 games, or Hide (a setting).
 - **Stats and Settings** (owner, 2026-10-06) each have their own screen,
-  from buttons under the games on the home screen, to declutter it. The
-  settings' headings have more room over them than the list's.
+  from buttons under the games on the home screen, to declutter it: icons
+  only, side by side, with twice the room over them (owner, 2026-10-06). A
+  Top button ends the home list. The settings' headings have more room over
+  them than the list's; both screens' titles have more room under them.
 - **Stats** across every game: games completed (won at least once) out of
-  all, large, over a bar; Won (green), Lost (red) and Win % side by side over
+  all ("6/24", all in yellow), large, over a bar; Won (green), Lost (red) and Win % side by side over
   a bar split between wins and losses; Played and Best Streak side by side;
-  the game played most as its home button (tapping it opens it); then each
-  game played, most first, its title in its pale colour, its wins and losses
-  and win %, over a thin bar of its win % in that colour.
+  the game played most as its home button (tapping it opens it); then under
+  All Games each game played, by title (owner, 2026-10-06), its title in its pale colour, its wins and losses
+  and win %, over a thin bar of its win % in that colour. The list's items
+  and its groups have twice Wear's room between them, so they stay apart as
+  they scroll.
 - **Game colours** (owner, 2026-10-06): Dominion (plum), Ozanam's Square
   (teal) and Rogue Run (crimson) changed so they stand apart from the games
   beside them on the home screen; Nestor (green) changed with its picture.
 - **Pictures and credits** follow the phone's (2026-10-06): each game's
-  picture is at the top of its rules, over its title, and its credit at the
-  foot, under its stats, with View on Phone to open the picture's page on
-  the phone. `scripts/game-art.py` cuts the pictures from the phone's.
+  whole picture, uncut, is at the foot of its rules under Artwork, with its
+  credit, under its stats (owner, 2026-10-06: not over the title), then View
+  on Phone to open the picture's page on the phone. `scripts/game-art.py`
+  makes the pictures from the phone's.
 - **Stats by game** (2026-10-06): each line opens its game, and shows its
   fastest win and best score ("Fastest 2:34 · Moves 41") under its bar.
 - **Home colours checked** (2026-10-06): neighbours at least ΔE 15 apart.
@@ -99,8 +104,10 @@ Stalker and Twelve Trials, which were once on the maybe list.
   when there's more than fits.
 - **Ratings** (difficulty, complexity, luck) are the phone's: each name in
   small capitals beside its bar, with no number, the bars all one width and
-  lined up. Headings in the rules have twice the room over them they had;
-  the stats under the rules sit under the chart icon, in the game's colour.
+  lined up, in a pale grey box with more room over and under it (owner,
+  2026-10-06). Headings in the rules have twice the room over them they had.
+  The stats under the rules have a Stats heading, each stat its own box, two
+  to a row: its number over its name.
 - **Opening** (owner, 2026-10-05): the logo (the spade over "Solitarius")
   shows first, then the last game played, or home if there's none.
 - **Asleep**, a game's board shows only while it's in view; on the home
