@@ -130,8 +130,10 @@ on a watch by the `baselineprofile` module: `./gradlew
 :app:generateBaselineProfile` with a watch connected. It walks the home list
 and the first game there, making a few real moves in it.
 
-Without a watch, run the Baseline profile workflow (GitHub Actions, by hand):
-it measures on a Wear OS emulator and opens a pull request with the profile.
+It needs a real watch: Wear OS emulators can't measure it (2026-10-06). The
+x86_64 Wear OS images for API 33 and 34 refuse the recompile the measurement
+starts with ("Unable to reset compilation"), there are none for API 30 or 36,
+and on a phone emulator the app won't start without Wear OS's library.
 
 Judge speed on the `fast` build variant, never on debug. Cards draw through
 `drawWithCache` and share one set of icon paths (`CardIcons`): keep per-frame
