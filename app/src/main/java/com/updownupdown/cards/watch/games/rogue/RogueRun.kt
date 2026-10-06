@@ -7,16 +7,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
@@ -29,9 +31,8 @@ import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.zIndex
 import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
 import com.updownupdown.cards.watch.R
-import com.updownupdown.cards.watch.cards.BoardText
-import com.updownupdown.cards.watch.cards.CARD_ASPECT
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardColors
 import com.updownupdown.cards.watch.cards.CardIcon
@@ -39,22 +40,23 @@ import com.updownupdown.cards.watch.cards.CardIcons
 import com.updownupdown.cards.watch.cards.CardLayout
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
+import com.updownupdown.cards.watch.cards.RoundScreen
 import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.cards.fullDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.BottomActions
 import com.updownupdown.cards.watch.ui.GameButton
 import com.updownupdown.cards.watch.ui.GamePreview
-import com.updownupdown.cards.watch.ui.SideGauge
 import com.updownupdown.cards.watch.ui.LocalAmbient
 import com.updownupdown.cards.watch.ui.LocalBoardSize
+import com.updownupdown.cards.watch.ui.SideGauge
 import com.updownupdown.cards.watch.ui.WearGamePreview
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -337,14 +339,17 @@ object RogueRun : Game<RogueState> {
         BottomActions(actions(state), null, state, play, feedback, size)
     }
 
-    /** The middle row's height. */
-    private val HEALTH_ROW = 16.dp
+    /** The middle row's height: room for the health, larger than the room and stock beside it. */
+    private val HEALTH_ROW = 20.dp
 
     /** Padding around zone outlines so cards fit inside. */
     private val ZONE_PAD = 3.dp
 
     /** The weapon button's height. */
     private val WEAPON_BUTTON = 36.dp
+
+    /** How far apart the killed monsters lie, at most, × a card's width. */
+    private const val KILLED_STEP = 0.3f
 
     /**
      * Top: the weapon and the killed monsters' zone, each in an outline.
@@ -358,7 +363,8 @@ object RogueRun : Game<RogueState> {
         val cardWidth = layout.cardWidth
         val cardHeight = layout.cardHeight
 
-        private val remaining = max(0.dp, board - (cardHeight + ZONE_PAD * 2) - HEALTH_ROW - cardHeight)
+        private val remaining =
+            max(0.dp, board - (cardHeight + ZONE_PAD * 2) - HEALTH_ROW - cardHeight)
         private val gap = remaining * 0.3f
 
         val topY = ZONE_PAD + remaining * 0.2f
@@ -372,6 +378,22 @@ object RogueRun : Game<RogueState> {
     /** The space either side of the weapon button's label, and the black edge round it. */
     private val WEAPON_PAD = 9.dp
     private val WEAPON_EDGE = 2.dp
+
+    /** The space between the health, the room number and the stock's count, and from the stock's to the screen's edge. */
+    private val STATS_GAP = 7.dp
+    private val ROW_MARGIN = 4.dp
+
+    /** The room number or the stock's count, beside the health: smaller, and on one line. */
+    @Composable
+    private fun SmallStat(text: String) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            softWrap = false,
+        )
+    }
 
     /** How long a second tap has to follow the first, to be a double tap. */
     private const val DOUBLE_TAP_MS = 400L
@@ -474,17 +496,34 @@ object RogueRun : Game<RogueState> {
                     boardLift = boardLift,
                 )
 
-                // Text labels distributed evenly across the middle row
+                // The middle row: the health at the left, over the cards' left edge, and the room and
+                // stock at the right, past the board as far as the round screen leaves room.
+                val rowEnd = RoundScreen(board, boardLift).right(
+                    rows.healthY,
+                    rows.healthY + HEALTH_ROW
+                ) - ROW_MARGIN
                 Row(
                     Modifier
-                        .fillMaxWidth()
-                        .offset(y = rows.healthY),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                        .offset(x = rows.layout.x(0), y = rows.healthY)
+                        .wrapContentWidth(Alignment.Start, unbounded = true)
+                        .width(rowEnd - rows.layout.x(0)),
+                    horizontalArrangement = Arrangement.spacedBy(STATS_GAP),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    BoardText("HP: ${state.health}")
-                    BoardText("Rm: ${state.roomNumber + state.roomsSkipped}")
-                    BoardText("Dk: ${state.deck.size}")
+                    // Health matters most, so it's larger, in what the others leave (smaller only if it must be).
+                    val health = MaterialTheme.typography.labelLarge
+                    BasicText(
+                        text = "HP: ${state.health}",
+                        style = health.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                        maxLines = 1,
+                        autoSize = TextAutoSize.StepBased(
+                            minFontSize = MaterialTheme.typography.labelMedium.fontSize,
+                            maxFontSize = health.fontSize
+                        ),
+                        modifier = Modifier.weight(1f),
+                    )
+                    SmallStat("Rm: ${state.roomNumber + state.roomsSkipped}")
+                    SmallStat("Dk: ${state.deck.size}")
                 }
 
                 // Sword icon in middle of weapon pile (under cards)
@@ -514,20 +553,20 @@ object RogueRun : Game<RogueState> {
                 val picked = state.selected
                 val monster = picked?.let { state.room[it] }?.takeIf { kind(it) == Kind.Monster }
                 if (picked != null && monster != null && state.weapon != null && outcome(state) == null) {
-                    // Weapon button overlay when a monster is selected
+                    // The weapon button, at the zone's left: over the earlier monsters, never the last, at its right.
                     val buttonWidth = min(
                         buttonLabelWidth + WEAPON_PAD * 2,
-                        board - rows.zoneX - rows.cardWidth + WEAPON_PAD
+                        rows.zoneWidth - rows.cardWidth + WEAPON_PAD
                     )
                     Box(
                         Modifier
                             .offset(
-                                x = board - rows.layout.x(0) - buttonWidth + WEAPON_PAD / 2,
+                                x = rows.zoneX - WEAPON_PAD / 2,
                                 y = rows.topY
                             )
                             .size(buttonWidth, rows.cardHeight)
                             .zIndex(2000f),
-                        contentAlignment = Alignment.CenterEnd
+                        contentAlignment = Alignment.CenterStart
                     ) {
                         GameButton(
                             label = "Wpn −${maxOf(0, value(monster) - value(state.weapon))}",
@@ -583,13 +622,18 @@ object RogueRun : Game<RogueState> {
                 height = rows.cardHeight + ZONE_PAD * 2,
             )
 
-            // Monster cards in killed monsters zone (50% opacity except top card)
+            // The monsters the weapon has killed: the last at the zone's right, so the weapon
+            // button leaves it showing; each earlier one a little further left, under it.
             val used = state.weaponUsedOn
-            val step =
-                if (used.size > 1) (zoneWidth - rows.cardWidth) / maxOf(2, used.size - 1) else 0.dp
+            val step = if (used.size > 1) {
+                min(rows.cardWidth * KILLED_STEP, (zoneWidth - rows.cardWidth) / (used.size - 1))
+            } else {
+                0.dp
+            }
+            val lastX = zoneX + zoneWidth - rows.cardWidth
             used.forEachIndexed { i, monsterCard ->
                 val isTop = i == used.lastIndex
-                val cardX = zoneX + step * (used.lastIndex - i)
+                val cardX = lastX - step * (used.lastIndex - i)
                 card(
                     monsterCard,
                     monsterCard,

@@ -89,6 +89,7 @@ enum class Selection(val color: Color) {
  * @param under how far (0 to 1) the card is shaded as the one under a pile's
  *   top card. Read while drawing, so it can animate.
  * @param dot the colour of a warning dot in the top right corner of a face-up card.
+ * @param face the colour of a face-up card's face, in place of the usual one.
  */
 @Composable
 fun PlayingCard(
@@ -101,6 +102,7 @@ fun PlayingCard(
     dot: Color? = null,
     /** Draws the Joker (Ouroboros's exit) in place of [card]'s rank and suit. */
     joker: Boolean = false,
+    face: Color? = null,
 ) {
     val icons = CardIcons.get(LocalContext.current.assets)
     val ambient = LocalAmbient.current
@@ -109,7 +111,7 @@ fun PlayingCard(
         modifier.drawWithCache {
             val corner = CornerRadius(size.width * CardStyle.CORNER)
             val ink = if (ambient || card == null) CardColors.Ambient else CardColors.suit(card.suit, fourColours)
-            val face = when {
+            val marks = when {
                 card == null -> null
                 faceDown -> backFace(icons, ambient)
                 joker -> {
@@ -125,7 +127,7 @@ fun PlayingCard(
                 return@drawWithCache onDrawBehind {
                     if (card != null) drawRoundRect(Color.Black, cornerRadius = corner)
                     drawRoundRect(CardColors.Ambient.copy(alpha = if (card == null) 0.3f else 0.7f), cornerRadius = corner, style = line)
-                    face?.invoke(this)
+                    marks?.invoke(this)
                 }
             }
             val edge = CardStyle.EDGE_DP * density
@@ -133,7 +135,7 @@ fun PlayingCard(
             val fill = when {
                 card == null -> CardColors.EmptySlot
                 faceDown -> CardColors.Back
-                else -> CardColors.Face
+                else -> face ?: CardColors.Face
             }
             onDrawBehind {
                 // A dark edge just outside the card.
@@ -149,7 +151,7 @@ fun PlayingCard(
                 drawRoundRect(fill, cornerRadius = corner)
                 overlay?.let { drawRoundRect(it, cornerRadius = corner) }
                 if (card != null) selection?.let { drawRoundRect(it.color.copy(alpha = 0.3f), cornerRadius = corner) }
-                face?.invoke(this)
+                marks?.invoke(this)
                 val shade = if (card != null) under() else 0f
                 if (shade > 0f) {
                     drawRoundRect(CardColors.Under.copy(alpha = CardColors.Under.alpha * shade), cornerRadius = corner)

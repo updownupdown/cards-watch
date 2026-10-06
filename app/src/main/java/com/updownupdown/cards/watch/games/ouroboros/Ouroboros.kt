@@ -1,6 +1,9 @@
 package com.updownupdown.cards.watch.games.ouroboros
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
@@ -9,11 +12,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
 import com.updownupdown.cards.watch.R
-import com.updownupdown.cards.watch.cards.BoardText
 import com.updownupdown.cards.watch.cards.CARD_ASPECT
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardColors
@@ -29,16 +36,19 @@ import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.tryMove
+import com.updownupdown.cards.watch.games.ouroboros.Ouroboros.MOST_STEP
 import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalAmbient
 import com.updownupdown.cards.watch.ui.LocalBoardSize
 import com.updownupdown.cards.watch.ui.WearGamePreview
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
+import kotlin.random.Random
 
 /** A card of the loop: [card] null for the Joker (the exit). */
 @Serializable
@@ -94,17 +104,17 @@ object Ouroboros : Game<OuroborosState> {
         "## Objective",
         "- Loot all four **jewels** (Aces) and escape alive by stepping onto the **exit** (Joker).",
         "- Landing on a **trap** (J, Q, K) while it is face up means instant death.",
-        "- Collect **trinkets** (2 to 10) for extra points. \"A: 3 • T: 2\" counts what you have.",
+        "- Collect **trinkets** (2 to 10) for extra points.",
         "## The Loop",
-        "The dungeon is a loop of cards round the screen, starting at the top right. You explore by counting forward from its **top card**.",
+        "The dungeon is a loop of cards around the screen. Its **top card** is at the bottom. You explore by counting forward from the top card.",
         "- Landing on a **face down** card is always safe and does nothing.",
         "- Landing on a **face up** card triggers it: a jewel or trinket is collected; a trap kills you; the exit lets you out once you hold all four jewels.",
         "- Card suits have no meaning.",
         "## Actions",
         "- **Look around:** tap the top card while it's face down to turn it and the next one up.",
         "- **Pick:** tap either of the top two cards, face up, to pick it.",
-        "- **Explore:** with a number card picked, the card it would land on is marked purple. Tap it to go there.",
-        "- **Mark a path:** with a number card picked, tap an empty path (the map) to set it aside there. Up to three.",
+        "- **Explore:** with a number card picked, you can explore down the dungeon by a number of cards equal to its value. Tap the purple card to go there.",
+        "- **Mark a path:** with a number card picked, tap an empty path (one of the three maps) to set it aside there.",
         "- **Return to a path:** tap a marked path to put its card back on top of the loop, picked.",
         "## Tips",
         "- **Mark paths whenever you can!** If the top two cards aren't number cards and you have no marked path, you are lost.",
@@ -148,7 +158,8 @@ object Ouroboros : Game<OuroborosState> {
         state.ending == null && index in tops(state) && state.deck[index].let { it.faceUp && it.isNumber }
 
     /** Where exploring with the card at [index] lands. */
-    fun target(state: OuroborosState, index: Int) = (state.pos + state.deck[index].value) % state.deck.size
+    fun target(state: OuroborosState, index: Int) =
+        (state.pos + state.deck[index].value) % state.deck.size
 
     fun explore(state: OuroborosState, index: Int): OuroborosState? {
         if (!usable(state, index)) return null
@@ -202,97 +213,245 @@ object Ouroboros : Game<OuroborosState> {
     }
 
     override fun outcome(state: OuroborosState) = when {
-        state.ending == Ending.Escaped -> Outcome(true, "You got all four jewels and found the exit!")
+        state.ending == Ending.Escaped -> Outcome(
+            true,
+            "You got all four jewels and found the exit!"
+        )
+
         state.ending == Ending.Trap -> Outcome(false, "You landed on a trap!")
-        stuck(state) -> Outcome(false, if (state.aces + state.trinkets > 0) "Lost in the dungeon, with your loot." else "Lost in the dungeon, with no way out!")
+        stuck(state) -> Outcome(
+            false,
+            if (state.aces + state.trinkets > 0) "Lost in the dungeon, with your loot." else "Lost in the dungeon, with no way out!"
+        )
+
         else -> null
     }
 
     override fun status(state: OuroborosState): String? = null
 
-    /** The loop's gap, at the top for the time, in degrees, and each card's share of the rest. */
-    private const val GAP = 84f
-    /** How far the top card and the next sit back into the gap, so the two stand clear of each other and the rest, in degrees. */
-    private const val FIRST_BACK = 12f
-    private const val SECOND_BACK = 0f
+    /** The loop's gap, at the top for the time, in degrees. */
+    private const val GAP = 72f
+
     /** A card's width, × the screen's. */
     private const val CARD = 0.115f
-    /** How far the picked card and its target come in from the loop, × a card's height: the target further, to stand apart. */
+
+    /**
+     * The space from one card of the loop to the next, × a card's width: the
+     * top two apart, so their taps don't meet; the next ten, then ten closing
+     * up to what's left for the rest, which share it. None is more than
+     * [MOST_STEP], so cards always overlap a little (but the top two).
+     */
+    private const val FIRST_STEP = 1.1f
+    private const val NEAR_STEP = 0.5f
+    private const val NEAR = 10
+    private const val CLOSING = 10
+    private const val MOST_STEP = 0.85f
+
+    /** How far the picked card and its target come in from the loop, × a card's height: the target nearly clear of it. */
     private const val PULL = 0.22f
-    private const val TARGET_PULL = 0.6f
+    private const val TARGET_PULL = 0.95f
+
+    /** The gap between the loop and the marked paths, and between the paths, × a card's width. */
+    private const val PATHS_IN = 0.35f
+    private const val PATHS_GAP = 0.35f
+
+    /**
+     * Each card's angle round the loop, in degrees clockwise from the right,
+     * by its place from the top card ([k] 0). The top card sits just left of
+     * the bottom and the next just right of it, both upright; the rest run on
+     * anticlockwise, up the right, across the gap at the top and down the
+     * left, the last coming back round beside the top card.
+     *
+     * @param step a card's width in degrees at the loop's radius.
+     */
+    private fun loopAngles(count: Int, step: Float): FloatArray {
+        val room = 360f - GAP
+        // The space after each card, as a fixed part and a share of what the rest leave.
+        val fixed = FloatArray(count)
+        val share = FloatArray(count)
+        for (i in 0 until count) {
+            when {
+                i == 0 -> fixed[i] = FIRST_STEP * step
+                // Back round to the top card.
+                i == count - 1 -> fixed[i] = NEAR_STEP * step
+                i <= NEAR -> fixed[i] = NEAR_STEP * step
+                i <= NEAR + CLOSING -> {
+                    val t = (i - NEAR) / CLOSING.toFloat()
+                    fixed[i] = NEAR_STEP * step * (1 - t)
+                    share[i] = t
+                }
+
+                else -> share[i] = 1f
+            }
+        }
+        val shares = share.sum()
+        val rest = if (shares > 0f) (room - fixed.sum()) / shares else 0f
+        val gaps = if (shares == 0f || rest > NEAR_STEP * step) {
+            // Few cards: all but the top two evenly apart, no more than the most.
+            FloatArray(count) {
+                if (it == 0) FIRST_STEP * step else minOf(
+                    MOST_STEP * step,
+                    (room - FIRST_STEP * step) / (count - 1).coerceAtLeast(1)
+                )
+            }
+        } else {
+            FloatArray(count) { fixed[it] + share[it] * rest }
+        }
+        val first = 90f + gaps[0] / 2
+        // From the top card anticlockwise as far as the gap; past that, back from it clockwise.
+        val ahead = first + 90f - GAP / 2
+        val total = gaps.sum()
+        var along = 0f
+        return FloatArray(count) { k ->
+            val angle = if (along <= ahead) first - along else first + (total - along)
+            along += gaps[k]
+            angle
+        }
+    }
 
     @Composable
-    override fun Board(state: OuroborosState, play: (OuroborosState) -> Unit, feedback: Feedback, modifier: Modifier) {
+    override fun Board(
+        state: OuroborosState,
+        play: (OuroborosState) -> Unit,
+        feedback: Feedback,
+        modifier: Modifier
+    ) {
         // The card picked, kept by identity so it stays picked as the loop shifts.
         var picked by remember { mutableStateOf<LoopCard?>(null) }
         val playing = outcome(state) == null
-        val pickedIndex = picked?.let { card -> tops(state).firstOrNull { state.deck[it] == card } }?.takeIf { playing }
+        val pickedIndex = picked?.let { card -> tops(state).firstOrNull { state.deck[it] == card } }
+            ?.takeIf { playing }
         val targetIndex = pickedIndex?.takeIf { usable(state, it) }?.let { target(state, it) }
         val context = LocalContext.current
         val icons = remember(context) { CardIcons.get(context.assets) }
-        val markColour = if (LocalAmbient.current) CardColors.Ambient.copy(alpha = 0.3f) else AppColors.SlotMark
+        val markColour =
+            if (LocalAmbient.current) CardColors.Ambient.copy(alpha = 0.3f) else AppColors.SlotMark
         val board = LocalBoardSize.current
+        val cardWidth = board * CARD
+        val cardHeight = cardWidth * CARD_ASPECT
+        val middle = board / 2
+        val radius = board / 2 - cardHeight / 2 - 3.dp
+        // The marked paths in an arch under the loop's inner edge, the middle one highest, each the same way in from it.
+        val pathsLeft = middle - (cardWidth * PATHS + cardWidth * PATHS_GAP * (PATHS - 1)) / 2
+        val inner = radius - cardHeight / 2 - cardWidth * PATHS_IN
+        val pathXs = List(PATHS) { pathsLeft + (cardWidth + cardWidth * PATHS_GAP) * it }
+        val pathYs = pathXs.map { x ->
+            // Its corner furthest out on the circle [inner] round the middle.
+            val out = maxOf(abs((x - middle).value), abs((x + cardWidth - middle).value))
+            middle - sqrt(inner.value * inner.value - out * out).dp
+        }
+        val countsY = pathYs.max() + cardHeight + 6.dp
 
         Box(modifier) {
+            // What's been collected, side by side under the paths, and under any card brought in over them.
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .offset(y = countsY),
+                horizontalArrangement = Arrangement.spacedBy(
+                    COUNTS_GAP,
+                    Alignment.CenterHorizontally
+                ),
+            ) {
+                Count("Jewels", state.aces)
+                Count("Trinkets", state.trinkets)
+            }
             CardTable(Modifier.size(board)) {
-                val cardWidth = board * CARD
-                val cardHeight = cardWidth * CARD_ASPECT
-                val middle = board / 2
-                val radius = board / 2 - cardHeight / 2 - 3.dp
                 val count = state.deck.size
-                val step = (360f - GAP) / count
+                val angles =
+                    loopAngles(count, Math.toDegrees((cardWidth / radius).toDouble()).toFloat())
+                val centre = DpOffset(middle, middle)
 
-                state.deck.forEachIndexed { index, card ->
-                    // How far round from the top card, which starts just past the gap.
+                fun place(index: Int): Pair<Float, Dp> {
                     val k = (index - state.pos + count) % count
-                    val angle = 270f + GAP / 2 + k * step - when (k) {
-                        0 -> FIRST_BACK
-                        1 -> SECOND_BACK
-                        else -> 0f
-                    }
                     val r = radius - cardHeight * when (index) {
                         targetIndex -> TARGET_PULL
                         pickedIndex -> PULL
                         else -> 0f
                     }
+                    return angles[k] to r
+                }
+
+                state.deck.forEachIndexed { index, card ->
+                    val k = (index - state.pos + count) % count
+                    val (angle, r) = place(index)
                     val rad = Math.toRadians(angle.toDouble())
-                    val x = middle + r * cos(rad).toFloat() - cardWidth / 2
-                    val y = middle + r * sin(rad).toFloat() - cardHeight / 2
                     card(
                         key = card.card ?: "joker",
                         card = card.card ?: Card(Rank.Ace, Suit.Spades),
-                        x = x,
-                        y = y,
+                        x = middle + r * cos(rad).toFloat() - cardWidth / 2,
+                        y = middle + r * sin(rad).toFloat() - cardHeight / 2,
                         width = cardWidth,
                         faceDown = !card.faceUp,
-                        // The top card over the next, and so on round; the picked card over all, then its target.
-                        z = when (index) {
-                            pickedIndex -> count + 2f
-                            targetIndex -> count + 1f
-                            else -> (count - k).toFloat()
-                        },
+                        // The top card over the next, and so on round, even as the picked card and its target come in.
+                        z = (count - k).toFloat(),
                         selection = when (index) {
                             pickedIndex -> if (card.isNumber) Selection.Neutral else Selection.Invalid
                             targetIndex -> Selection.Purple
                             else -> null
                         },
-                        // Tops facing out, so the top cards, at the upper right, read upright.
-                        rotation = angle + 90f,
+                        // Tops facing in, so the top cards, at the bottom, read upright.
+                        rotation = angle - 90f,
                         joker = card.isJoker,
+                        orbit = centre,
+                        lift = false,
                     )
                 }
-                // The target and the top two cards take taps: the top card last, so it wins where they overlap.
-                fun cardTap(index: Int, onTap: () -> Unit) {
-                    val k = (index - state.pos + count) % count
-                    val angle = 270f + GAP / 2 + k * step - if (k == 0) FIRST_BACK else if (k == 1) SECOND_BACK else 0f
-                    val r = radius - cardHeight * when (index) {
-                        targetIndex -> TARGET_PULL
-                        pickedIndex -> PULL
-                        else -> 0f
+
+                // The marked paths.
+                state.paths.forEachIndexed { path, card ->
+                    val x = pathXs[path]
+                    val y = pathYs[path]
+                    slot(x, y, cardWidth, mark = { drawCentredIcon(icons.map, 0.7f, markColour) })
+                    if (card != null) {
+                        card(
+                            card.card ?: "joker",
+                            card.card ?: Card(Rank.Ace, Suit.Spades),
+                            x,
+                            y,
+                            cardWidth,
+                            joker = card.isJoker
+                        )
                     }
+                    tap(x, y, cardWidth, cardHeight) {
+                        val from = pickedIndex
+                        when {
+                            !playing -> feedback.reject()
+                            card != null -> {
+                                feedback.tryMove(returnPath(state, path), play)
+                                picked = card
+                            }
+
+                            from != null && usable(state, from) -> {
+                                feedback.tryMove(mark(state, from, path), play)
+                                picked = null
+                            }
+
+                            else -> feedback.reject()
+                        }
+                    }
+                }
+
+                // The target over the paths it may cover, and the top two over that: the top card last, so it wins where they meet.
+                fun cardTap(index: Int, onTap: () -> Unit) {
+                    val (angle, r) = place(index)
                     val rad = Math.toRadians(angle.toDouble())
-                    val side = cardHeight * 0.9f
-                    tap(middle + r * cos(rad).toFloat() - side / 2, middle + r * sin(rad).toFloat() - side / 2, side, side, onTap)
+                    val turn = Math.toRadians((angle - 90f).toDouble())
+                    // The turned card's bounds, but upright for the top two, which lie nearly so, so theirs don't meet.
+                    val (w, h) = if (index in tops(state)) {
+                        cardWidth to cardHeight
+                    } else {
+                        val c = abs(cos(turn)).toFloat()
+                        val s = abs(sin(turn)).toFloat()
+                        (cardWidth * c + cardHeight * s) to (cardWidth * s + cardHeight * c)
+                    }
+                    tap(
+                        middle + r * cos(rad).toFloat() - w / 2,
+                        middle + r * sin(rad).toFloat() - h / 2,
+                        w,
+                        h,
+                        onTap
+                    )
                 }
                 targetIndex?.let { target ->
                     cardTap(target) {
@@ -300,7 +459,6 @@ object Ouroboros : Game<OuroborosState> {
                         picked = null
                     }
                 }
-
                 tops(state).reversed().forEach { index ->
                     cardTap(index) {
                         val card = state.deck[index]
@@ -312,43 +470,34 @@ object Ouroboros : Game<OuroborosState> {
                             } else {
                                 feedback.reject()
                             }
+
                             index == pickedIndex -> picked = null
                             else -> picked = card
                         }
                     }
                 }
-                // The marked paths, in a row across the middle, a little low.
-                val gap = cardWidth * 0.35f
-                val pathsY = middle - cardHeight / 2 + cardHeight * 0.3f
-                val left = middle - (cardWidth * PATHS + gap * (PATHS - 1)) / 2
-                state.paths.forEachIndexed { path, card ->
-                    val x = left + (cardWidth + gap) * path
-                    slot(x, pathsY, cardWidth, mark = { drawCentredIcon(icons.map, 0.7f, markColour) })
-                    if (card != null) {
-                        card(card.card ?: "joker", card.card ?: Card(Rank.Ace, Suit.Spades), x, pathsY, cardWidth, joker = card.isJoker)
-                    }
-                    tap(x, pathsY, cardWidth, cardHeight) {
-                        val from = pickedIndex
-                        when {
-                            !playing -> feedback.reject()
-                            card != null -> {
-                                feedback.tryMove(returnPath(state, path), play)
-                                picked = card
-                            }
-                            from != null && usable(state, from) -> {
-                                feedback.tryMove(mark(state, from, path), play)
-                                picked = null
-                            }
-                            else -> feedback.reject()
-                        }
-                    }
-                }
             }
-            // What's been collected, over the paths.
-            val cardHeight = board * CARD * CARD_ASPECT
-            BoardText(
-                text = "A: ${state.aces}  •  T: ${state.trinkets}",
-                modifier = Modifier.fillMaxWidth().offset(y = board / 2 - cardHeight / 2 + cardHeight * 0.3f - 22.dp),
+        }
+    }
+
+    /** The space between the jewels' count and the trinkets'. */
+    private val COUNTS_GAP = 14.dp
+
+    /** A count's name, small and pale, over its number. */
+    @Composable
+    private fun Count(name: String, value: Int) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                name,
+                style = MaterialTheme.typography.bodyExtraSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1
+            )
+            Text(
+                "$value",
+                style = MaterialTheme.typography.numeralExtraSmall,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1
             )
         }
     }

@@ -21,6 +21,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -38,7 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.zIndex
 import com.updownupdown.cards.watch.ui.LocalAmbient
+import kotlin.math.PI
+import kotlin.math.atan2
+import kotlin.math.cos
 import kotlin.math.roundToInt
+import kotlin.math.sin
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -105,6 +110,15 @@ data class TableCard(
     val turnFrom: Boolean = true,
     /** The Joker's face in place of [card]'s. */
     val joker: Boolean = false,
+    /** The colour of the card's face, in place of the usual one. */
+    val face: Color? = null,
+    /**
+     * The middle of a ring the card lies on (Ouroboros's loop): moving on
+     * the table, it goes round this, the short way, rather than straight.
+     */
+    val orbit: DpOffset? = null,
+    /** Whether the card passes over the others while it moves; without, it keeps its [z]. */
+    val lift: Boolean = true,
 ) {
     val height: Dp get() = width * CARD_ASPECT
 }
@@ -143,8 +157,14 @@ class TableBuilder(val width: Dp, val height: Dp) {
         dot: Color? = null,
         turnFrom: Boolean = true,
         joker: Boolean = false,
+        face: Color? = null,
+        orbit: DpOffset? = null,
+        lift: Boolean = true,
     ) {
-        cards += TableCard(key, card, x, y, width, faceDown, z, overlay, selection, under, removal, alpha, from, fromRight, rotation, dot, turnFrom = turnFrom, joker = joker)
+        cards += TableCard(
+            key, card, x, y, width, faceDown, z, overlay, selection, under, removal, alpha, from, fromRight, rotation, dot,
+            turnFrom = turnFrom, joker = joker, face = face, orbit = orbit, lift = lift,
+        )
     }
 
     /** A place for several cards [cardWidth] wide, such as a spread: a line just inside its edge. */
@@ -405,6 +425,39 @@ fun CardTable(
 }
 
 /**
+ * A card's way round a ring centred on [centre], from [from] to [to] (its
+ * top left corners; [halfSize] finds its middle): the short way round, its
+ * distance from the middle changing evenly as it goes.
+ */
+private class RingPath(from: Offset, to: Offset, private val centre: Offset, private val halfSize: Offset) {
+    private val startAngle: Float
+    private val turn: Float
+    private val startRadius: Float
+    private val endRadius: Float
+
+    init {
+        val a = from + halfSize - centre
+        val b = to + halfSize - centre
+        startAngle = atan2(a.y, a.x)
+        val end = atan2(b.y, b.x)
+        turn = ((end - startAngle) % TAU + TAU * 1.5f) % TAU - TAU / 2
+        startRadius = a.getDistance()
+        endRadius = b.getDistance()
+    }
+
+    /** Where the card's top left corner is, [t] of the way along. */
+    fun at(t: Float): Offset {
+        val angle = startAngle + turn * t
+        val radius = startRadius + (endRadius - startRadius) * t
+        return centre + Offset(cos(angle) * radius, sin(angle) * radius) - halfSize
+    }
+
+    private companion object {
+        const val TAU = (2 * PI).toFloat()
+    }
+}
+
+/**
  * @param enter whether the card arrives with a move (not when the table is first shown).
  * @param back whether this change is an undo, so the card moves the other way.
  * @param cleared whether the card leaves for a new deal: off to the right, whatever it is.
@@ -428,6 +481,13 @@ private fun MovingCard(card: TableCard, leaving: Boolean, enter: Boolean, back: 
     }
     val x = remember { Animatable(start.x) }
     val y = remember { Animatable(start.y) }
+    // Going round its ring: the way there, and how far along it the card is.
+    val round = remember { Animatable(0f) }
+    var path by remember { mutableStateOf<RingPath?>(null) }
+    val halfSize = with(density) { Offset(card.width.toPx() / 2, card.height.toPx() / 2) }
+    fun shown(): Offset = path?.at(round.value) ?: Offset(x.value, y.value)
+    // Settled on the table (not on its way in from off it), so a move may go round the ring.
+    val settled = remember { BooleanArray(1) { !enter } }
     // A dealt card arrives turning over, and turns back as it's taken away.
     val dealt = origin != null && card.turnFrom
     val flip = remember { Animatable(if (card.faceDown || enter && dealt) 180f else 0f) }
@@ -436,6 +496,13 @@ private fun MovingCard(card: TableCard, leaving: Boolean, enter: Boolean, back: 
     val spec = tween<Float>(CARD_MOVE_MS, easing = FastOutSlowInEasing)
 
     LaunchedEffect(targetX, targetY, leaving) {
+        // Carry on from where it shows, if it was part way round its ring.
+        path?.let { ring ->
+            val at = ring.at(round.value)
+            path = null
+            x.snapTo(at.x)
+            y.snapTo(at.y)
+        }
         if (leaving) {
             when {
                 cleared -> x.animateTo(x.value + screen, spec)
@@ -454,11 +521,25 @@ private fun MovingCard(card: TableCard, leaving: Boolean, enter: Boolean, back: 
             if (turn[0] > 0) delay(turn[0].toLong())
             val arriving = turn[0] >= 0 && dealt && flip.value != 0f && !card.faceDown
             turn[0] = -1
+            val centre = card.orbit?.let { with(density) { Offset(it.x.toPx(), it.y.toPx()) } }
+            val target = Offset(targetX, targetY)
             coroutineScope {
-                launch { x.animateTo(targetX, spec) }
-                launch { y.animateTo(targetY, spec) }
+                if (centre != null && settled[0] && Offset(x.value, y.value) != target) {
+                    launch {
+                        path = RingPath(Offset(x.value, y.value), target, centre, halfSize)
+                        round.snapTo(0f)
+                        round.animateTo(1f, spec)
+                        x.snapTo(targetX)
+                        y.snapTo(targetY)
+                        path = null
+                    }
+                } else {
+                    launch { x.animateTo(targetX, spec) }
+                    launch { y.animateTo(targetY, spec) }
+                }
                 if (arriving) launch { flip.animateTo(0f, spec) }
             }
+            settled[0] = true
         }
     }
     LaunchedEffect(card.faceDown) {
@@ -475,15 +556,15 @@ private fun MovingCard(card: TableCard, leaving: Boolean, enter: Boolean, back: 
         val by = ((card.rotation - turned.value) % 360 + 540) % 360 - 180
         if (by != 0f) turned.animateTo(turned.value + by, spec)
     }
-    val moving = x.isRunning || y.isRunning
+    val moving = x.isRunning || y.isRunning || round.isRunning
     val sliding = leaving && (card.removal == Removal.Discard || back || dealt || cleared)
     Box(
         Modifier
-            .offset { IntOffset(x.value.roundToInt(), y.value.roundToInt()) }
+            .offset { shown().let { IntOffset(it.x.roundToInt(), it.y.roundToInt()) } }
             .size(card.width, card.height)
             .testTag(cardTag(card.key))
-            // A card on the move (or leaving) passes over the others.
-            .zIndex(if (sliding || moving) card.z + 1000f else if (leaving) card.z - 0.25f else card.z)
+            // A card on the move (or leaving) passes over the others, unless it keeps its place among them.
+            .zIndex(if (sliding || moving && card.lift) card.z + 1000f else if (leaving) card.z - 0.25f else card.z)
             .graphicsLayer {
                 rotationZ = turned.value
                 alpha = card.alpha
@@ -505,6 +586,7 @@ private fun MovingCard(card: TableCard, leaving: Boolean, enter: Boolean, back: 
                 selection = card.selection,
                 dot = card.dot,
                 joker = card.joker,
+                face = card.face,
                 under = { shade.value },
                 modifier = Modifier.fillMaxSize(),
             )

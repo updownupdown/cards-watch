@@ -19,8 +19,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.text.BasicText
-import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -49,7 +47,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.wear.compose.foundation.requestFocusOnHierarchyActive
@@ -88,6 +85,8 @@ private val ACTIONS_HEIGHT = 40.dp
 private const val ACTIONS_AT = 0.72f
 /** How long the reset button's hint shows. */
 private const val HINT_MS = 2500L
+/** The space kept clear at the result's top and foot, where the round screen narrows. */
+private val RESULT_EDGE = 30.dp
 /** The gap over and under the result's buttons, and the buttons' height. */
 private val RESULT_GAP = 10.dp
 private val RESULT_BUTTON = 40.dp
@@ -127,15 +126,22 @@ fun <S : Any> GameScreen(
     scroll: ScrollState = rememberScrollState(),
     stats: GameStats = GameStats(),
     fourSuitColours: Boolean = true,
+    onBoardShown: (Boolean) -> Unit = {},
 ) {
     // The game's buttons and headings take its pale colour.
     CompositionLocalProvider(LocalGameAccent provides colorResource(session.game.accentPale), LocalFourSuitColours provides fourSuitColours) {
-        GameScreenContent(session, onHome, scroll, stats)
+        GameScreenContent(session, onHome, scroll, stats, onBoardShown)
     }
 }
 
 @Composable
-private fun <S : Any> GameScreenContent(session: GameSession<S>, onHome: () -> Unit, scroll: ScrollState, stats: GameStats) {
+private fun <S : Any> GameScreenContent(
+    session: GameSession<S>,
+    onHome: () -> Unit,
+    scroll: ScrollState,
+    stats: GameStats,
+    onBoardShown: (Boolean) -> Unit,
+) {
     val haptics = rememberHaptics()
     val game = session.game
     val state = session.state
@@ -162,6 +168,11 @@ private fun <S : Any> GameScreenContent(session: GameSession<S>, onHome: () -> U
             showResult = true
         }
         wasOver = outcome != null
+    }
+
+    // Whether the board is what's in view, for the sleep screen: not scrolled away, nor under the result.
+    LaunchedEffect(scroll) {
+        snapshotFlow { scroll.value == 0 && !showResult }.collect(onBoardShown)
     }
 
     // The deal's clock runs while its screen is up.
@@ -322,11 +333,12 @@ private fun ResetButton(size: Dp, onTap: () -> Unit, onDoubleTap: () -> Unit) {
 }
 
 /**
- * How the game ended, over the board: "You won!" or "You lost.", the game's
- * message and the score where there is one, Home and Play Again, then the
- * time (with the best, or that it's a new best: [best] null) and the wins
- * and losses ([record]). Green for a win, red for a loss. It stays until Home or
- * Play Again is chosen.
+ * How the game ended, over the board: the game's message and the score
+ * where there is one, Home and Play Again, then the time (with the best, or
+ * that it's a new best: [best] null) and the wins and losses ([record]).
+ * Green for a win, red for a loss. It scrolls, by touch or the crown, when
+ * there's more than the screen holds, and stays until Home or Play Again is
+ * chosen.
  */
 @Composable
 private fun ResultScreen(
@@ -350,21 +362,26 @@ private fun ResultScreen(
     ) {
         val detail = MaterialTheme.typography.labelMedium
         val playWidth = maxWidth * 0.46f
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        val scroll = rememberScrollState()
+        val focus = remember { FocusRequester() }
+        // Room at the top and foot, so what scrolls there clears the round screen.
+        Column(
+            Modifier
+                .fillMaxSize()
+                .rotaryScrollable(RotaryScrollableDefaults.behavior(scroll), focus)
+                .verticalScroll(scroll)
+                .heightIn(min = maxHeight)
+                .padding(vertical = RESULT_EDGE),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            LaunchedEffect(Unit) { focus.requestFocus() }
             Text(
-                text = if (outcome.won) "You won!" else "You lost.",
-                style = MaterialTheme.typography.titleMedium,
+                text = outcome.message,
+                style = MaterialTheme.typography.bodyMedium,
                 color = colour,
                 textAlign = TextAlign.Center,
-            )
-            // A long message (Augury's law) shrinks to fit in four lines.
-            val body = MaterialTheme.typography.bodyMedium
-            BasicText(
-                text = outcome.message,
-                style = body.copy(color = colour, textAlign = TextAlign.Center),
-                maxLines = 4,
-                autoSize = TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = body.fontSize),
-                modifier = Modifier.padding(horizontal = 30.dp).padding(top = 2.dp).heightIn(max = 76.dp),
+                modifier = Modifier.padding(horizontal = 30.dp),
             )
             score?.let { Text(it, style = detail, color = AppColors.TextMuted, modifier = Modifier.padding(top = 2.dp)) }
             Row(Modifier.padding(vertical = RESULT_GAP), horizontalArrangement = Arrangement.spacedBy(6.dp)) {

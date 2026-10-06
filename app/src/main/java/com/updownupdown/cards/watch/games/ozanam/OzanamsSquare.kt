@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import com.updownupdown.cards.watch.R
@@ -25,9 +26,9 @@ import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.WearGamePreview
-import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import kotlin.random.Random
 
 /**
  * @param grid the square, row by row; null where a place is empty.
@@ -38,7 +39,9 @@ import kotlinx.serialization.Serializable
 data class OzanamState(val grid: List<Card?>, val given: List<Boolean>, val moves: Int = 0) {
     /** The cards still to place, a pile for each suit, Ace to Jack. */
     val tray: List<List<Card>>
-        get() = OzanamsSquare.SUITS.map { suit -> OzanamsSquare.RANKS.map { Card(it, suit) }.filter { it !in grid } }
+        get() = OzanamsSquare.SUITS.map { suit ->
+            OzanamsSquare.RANKS.map { Card(it, suit) }.filter { it !in grid }
+        }
 }
 
 /** Where a card is picked from: a place on the square, or a suit's pile in the tray. */
@@ -82,26 +85,33 @@ object OzanamsSquare : Game<OzanamState> {
         "Fill the square so that each **row, column and long diagonal** holds **one card of each rank and one of each suit**.",
         "## Gameplay",
         "- The cards to place lie in a pile for each suit, at the right. Tap a pile to pick its top card; tap it again for the next card of that suit.",
-        "- Then tap an empty space to place it. Cards dealt into place (shaded) can't be moved.",
+        "- Then tap an empty space to place it. Cards dealt into place (shown in black) can't be moved.",
         "- Cards you place can be moved to another space, swapped, or sent back by tapping their pile.",
         "- A card that repeats a rank or suit in one of its lines is marked in red.",
         "- Every deal has **exactly one** solution.",
-        "## History",
-        "Jacques Ozanam set this puzzle with playing cards in his *Récréations mathématiques et physiques* (1725). Leonhard Euler later studied squares like it, which he called Graeco-Latin squares.",
     )
 
     /** Rows, columns and the two long diagonals. */
     private val LINES: List<List<Int>> =
         List(SIZE) { r -> List(SIZE) { c -> r * SIZE + c } } +
-            List(SIZE) { c -> List(SIZE) { r -> r * SIZE + c } } +
-            listOf(List(SIZE) { it * SIZE + it }, List(SIZE) { it * SIZE + SIZE - 1 - it })
+                List(SIZE) { c -> List(SIZE) { r -> r * SIZE + c } } +
+                listOf(List(SIZE) { it * SIZE + it }, List(SIZE) { it * SIZE + SIZE - 1 - it })
     private val LINES_OF = List(CELLS) { cell -> LINES.filter { cell in it } }
 
     private fun clashes(a: Card, b: Card) = a.rank == b.rank || a.suit == b.suit
 
     /** Whether [card] in [cell] clashes with none of the cards in its lines. */
     fun fits(grid: List<Card?>, cell: Int, card: Card) =
-        LINES_OF[cell].all { line -> line.all { other -> other == cell || grid[other]?.let { !clashes(it, card) } ?: true } }
+        LINES_OF[cell].all { line ->
+            line.all { other ->
+                other == cell || grid[other]?.let {
+                    !clashes(
+                        it,
+                        card
+                    )
+                } ?: true
+            }
+        }
 
     /** Up to [limit] ways to fill the empty places, trying cards in [order]. */
     fun solve(grid: List<Card?>, limit: Int, order: List<Card> = ALL): List<List<Card?>> {
@@ -145,7 +155,8 @@ object OzanamsSquare : Game<OzanamState> {
     }
 
     /** The places whose card clashes with another in one of its lines. */
-    fun conflicts(grid: List<Card?>): Set<Int> = grid.indices.filter { cell -> grid[cell]?.let { !fits(grid, cell, it) } ?: false }.toSet()
+    fun conflicts(grid: List<Card?>): Set<Int> =
+        grid.indices.filter { cell -> grid[cell]?.let { !fits(grid, cell, it) } ?: false }.toSet()
 
     fun solved(grid: List<Card?>) = grid.all { it != null } && conflicts(grid).isEmpty()
 
@@ -164,6 +175,7 @@ object OzanamsSquare : Game<OzanamState> {
                 grid[source.cell] = grid[cell]
                 grid[cell] = card
             }
+
             is Source.Tray -> {
                 if (source.card in grid) return null
                 grid[cell] = source.card
@@ -175,17 +187,26 @@ object OzanamsSquare : Game<OzanamState> {
     /** Sends the card at [cell] back to the tray. */
     fun unplace(state: OzanamState, cell: Int): OzanamState? {
         if (solved(state.grid) || state.given.getOrNull(cell) != false || state.grid[cell] == null) return null
-        return state.copy(grid = state.grid.mapIndexed { i, card -> if (i == cell) null else card }, moves = state.moves + 1)
+        return state.copy(
+            grid = state.grid.mapIndexed { i, card -> if (i == cell) null else card },
+            moves = state.moves + 1
+        )
     }
 
-    override fun outcome(state: OzanamState) = if (solved(state.grid)) Outcome(true, "The square is complete!") else null
+    override fun outcome(state: OzanamState) =
+        if (solved(state.grid)) Outcome(true, "The square is complete!") else null
 
     /** The gap between the square and the tray, × a card's width, on top of the usual gap. */
     private const val TRAY_GAP = 0.25f
     private const val GAP = 0.1f
 
     @Composable
-    override fun Board(state: OzanamState, play: (OzanamState) -> Unit, feedback: Feedback, modifier: Modifier) {
+    override fun Board(
+        state: OzanamState,
+        play: (OzanamState) -> Unit,
+        feedback: Feedback,
+        modifier: Modifier
+    ) {
         var picked by remember(state) { mutableStateOf<Source?>(null) }
         // Which card of each suit's pile is on top, counting from its Ace.
         var shown by remember { mutableStateOf(List(SIZE) { 0 }) }
@@ -201,7 +222,8 @@ object OzanamsSquare : Game<OzanamState> {
             val cardHeight = cardWidth * CARD_ASPECT
             val gap = cardWidth * GAP
             val rowStep = cardHeight + pileEdge(cardWidth) + gap
-            val totalWidth = cardWidth * SIZE + gap * (SIZE - 1) + cardWidth * (TRAY_GAP + GAP) + cardWidth * (1 + extra)
+            val totalWidth =
+                cardWidth * SIZE + gap * (SIZE - 1) + cardWidth * (TRAY_GAP + GAP) + cardWidth * (1 + extra)
             val left = (width - totalWidth) / 2
             val top = (height - rowStep * SIZE + gap) / 2
             val edge = pileEdge(cardWidth)
@@ -221,11 +243,9 @@ object OzanamsSquare : Game<OzanamState> {
                         y = y,
                         width = cardWidth,
                         selection = if (picked == Source.Place(cell)) Selection.Neutral else null,
-                        overlay = when {
-                            state.given[cell] -> CardOverlay.Fixed
-                            cell in conflicts -> CardOverlay.Bad
-                            else -> null
-                        },
+                        overlay = if (!state.given[cell] && cell in conflicts) CardOverlay.Bad else null,
+                        // Cards dealt into place, which never move, lie on black.
+                        face = if (state.given[cell]) Color.Black else null,
                     )
                 }
                 tap(x, y, cardWidth, cardHeight) {
@@ -235,7 +255,8 @@ object OzanamsSquare : Game<OzanamState> {
                         next != null -> feedback.tryMove(next, play)
                         !playing || state.given[cell] -> feedback.reject()
                         card == null -> if (from != null) feedback.reject()
-                        else -> picked = if (from == Source.Place(cell)) null else Source.Place(cell)
+                        else -> picked =
+                            if (from == Source.Place(cell)) null else Source.Place(cell)
                     }
                 }
             }
@@ -243,6 +264,8 @@ object OzanamsSquare : Game<OzanamState> {
             // The tray: a pile for each suit, one over the other, the card picked from it on top.
             state.tray.forEachIndexed { suit, pile ->
                 val y = cellY(suit) - edge
+                // Its place, which shows once the suit's cards are all on the square.
+                slot(trayX, y + edge, cardWidth)
                 val top = pile.getOrNull(shown[suit] % pile.size.coerceAtLeast(1))
                 val ordered = if (top == null) pile else pile - top + top
                 ordered.forEachIndexed { i, card ->
@@ -274,6 +297,7 @@ object OzanamsSquare : Game<OzanamState> {
                                 picked = Source.Tray(pile[next])
                             }
                         }
+
                         else -> picked = Source.Tray(top)
                     }
                 }

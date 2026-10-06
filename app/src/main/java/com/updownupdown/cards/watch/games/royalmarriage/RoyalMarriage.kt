@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardOverlay
@@ -58,15 +59,13 @@ object RoyalMarriage : Game<RoyalMarriageState> {
 
     override val rules = listOf(
         "## Objective",
-        "Discard every card except the **Queen** and **King of Hearts**, which must end up side by side.",
+        "Discard every card except the **Queen of Hearts** and **King of Hearts**, which must end up side by side.",
         "## Deal",
         "All 52 cards lie in one line, read left to right and then down: the Queen of Hearts first, the King of Hearts last.",
         "## Discarding",
-        "- Tap the card or cards to remove, then **Discard**. Double-tap a single card to discard it at once.",
-        "- One card, or two side by side, can go if the cards either side of them match in **rank or suit**.",
+        "- One card, or two side by side, can be discarded if the cards either side of them match in **rank or suit**.",
         "- A longer run can go only if every card in it is of the **same suit**, and the cards either side match in rank or suit.",
-        "- The Queen and King of Hearts never leave the line.",
-        "- The line closes up after every discard.",
+        "- Tap the card or cards to remove, then **Discard**. Double-tap a single card to discard it.",
     )
 
     fun isCouple(card: Card) = card == QUEEN || card == KING
@@ -120,6 +119,9 @@ object RoyalMarriage : Game<RoyalMarriageState> {
         GameAction<RoyalMarriageState>("Discard", enabled = outcome(state) == null && canDiscard(state.line, state.selected)) { discard(it) ?: it },
     )
 
+    /** The room between the cards' window and the Discard button, on top of the layout's own. */
+    private val BUTTON_GAP = 8.dp
+
     @Composable
     override fun Board(state: RoyalMarriageState, play: (RoyalMarriageState) -> Unit, feedback: Feedback, modifier: Modifier) {
         val playing = outcome(state) == null
@@ -133,8 +135,9 @@ object RoyalMarriage : Game<RoyalMarriageState> {
         val board = LocalBoardSize.current
         val rows = (state.line.size + COLUMNS - 1) / COLUMNS
         val valid = canDiscard(state.line, state.selected)
-        Box(modifier, contentAlignment = Alignment.Center) {
-            ScrollingCards(COLUMNS, rows, board, board, scroll = scroll) { places ->
+        // The window stops short of the board's foot, to stand clear of the Discard button.
+        Box(modifier, contentAlignment = Alignment.TopCenter) {
+            ScrollingCards(COLUMNS, rows, board, board - BUTTON_GAP, scroll = scroll) { places ->
                 state.line.forEachIndexed { index, card ->
                     val x = places.xOf(index)
                     val y = places.yOf(index)

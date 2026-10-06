@@ -266,9 +266,9 @@ object FortunesCall : Game<FortuneState> {
     // After a call: the called card turns over and shows for a while, the
     // card it was compared with leaves, the called card takes its place, and
     // after a pause the next card to call arrives.
-    private const val SHOW_MS = 600L
-    private const val FOLLOW_MS = 50L
-    private const val NEXT_MS = 100L
+    internal const val SHOW_MS = 600L
+    internal const val FOLLOW_MS = 50L
+    internal const val NEXT_MS = 100L
 
     /** The steps after a call, in order; [Ready] is waiting for the next one. */
     private enum class Step { Shown, Left, Moved, Ready }

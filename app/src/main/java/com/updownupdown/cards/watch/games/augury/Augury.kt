@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
@@ -129,23 +130,23 @@ object Augury : Game<AuguryState> {
         "Work out the **hidden law** well enough to make **eight correct guesses in a row**. The arc at the left fills with each.",
         "## Gameplay",
         "Each game has a secret law about which cards may follow the last card(s) on the path.",
-        "- Tap a card in your hand if you think it fits the law. If it does, it joins the path; if not, it lies greyed beside the last card.",
-        "- If you think no card in your hand fits, tap the crossed-out card. If you're right, you get a new hand; if a card did fit, it is played for you (shown in red), and your run is reset.",
+        "- Tap a card in your hand if you think it fits the law. If it does, it joins the path; if not, it lies greyed out beside the last card.",
+        "- If you think no card in your hand fits, tap the crossed-out card. If you're right, you get a new hand; if a card did fit, it is played for you (shown in red), and your run of correct guesses is reset.",
         "For all laws: A = 1, Jacks = 11, Queens = 12, Kings = 13.",
         "## Laws",
+        "- Must be the same colour",
         "- Must alternate colour",
         "- Must be the same suit or rank",
+        "- Must be a different suit",
         "- Must alternate between odd and even ranks",
         "- Must be higher rank; anything can follow J, Q or K",
         "- Must be within two ranks",
-        "- Must be the same colour",
-        "- Must be a different suit",
+        "- Must be within two ranks (Ace and King are neighbours)",
+        "- Must be at least three ranks apart",
         "- Must alternate between high (8–K) and low (A–7)",
         "- Must alternate between court and number cards",
         "- Must be lower rank; anything can follow an Ace",
-        "- Must be at least three ranks apart",
         "- Odds must follow odds, evens must follow evens",
-        "- Must be within two ranks (Ace and King are neighbours)",
         "- Must follow suits in order: spades, hearts, diamonds, clubs",
         "- Same suit as the last must be higher; the other suit of its colour must be lower; the other colour can follow anything",
         "- Red cards must be 8 or higher; black cards must be 7 or lower",
@@ -213,8 +214,10 @@ object Augury : Game<AuguryState> {
     }
 
     private const val GAP = 0.12f
-    /** Room round the hand for a border, and the gap between the grid's window and the hand. */
+    /** Room round the hand for a border. */
     private val PAD = 2.dp
+    /** The gap between the grid's window and the hand, × the gap between cards. */
+    private const val HAND_GAP = 3.5f
 
     @Composable
     override fun Board(state: AuguryState, play: (AuguryState) -> Unit, feedback: Feedback, modifier: Modifier) {
@@ -225,7 +228,7 @@ object Augury : Game<AuguryState> {
         val accent = LocalGameAccent.current
         val places = GridPlaces(COLUMNS, board, GAP, 0.dp)
         val handY = board - places.cardHeight - PAD
-        val window = handY - places.gap * 1.5f
+        val window = handY - places.gap * HAND_GAP
         val cells = cells(state)
         val rows = (cells.size + COLUMNS - 1) / COLUMNS
 
@@ -262,12 +265,10 @@ object Augury : Game<AuguryState> {
                         x = grid.xOf(index),
                         y = grid.yOf(index),
                         width = grid.cardWidth,
-                        overlay = when (kind) {
-                            Kind.Played -> null
-                            Kind.Rejected -> CardOverlay.Fixed
-                            Kind.Missed -> CardOverlay.Bad
-                        },
-                        alpha = if (kind == Kind.Rejected) 0.6f else 1f,
+                        overlay = if (kind == Kind.Missed) CardOverlay.Bad else null,
+                        // A card turned away lies faded, on black.
+                        face = if (kind == Kind.Rejected) Color.Black else null,
+                        alpha = if (kind == Kind.Rejected) 0.5f else 1f,
                         from = origin?.takeIf { it.first == card }?.second,
                         turnFrom = false,
                     )

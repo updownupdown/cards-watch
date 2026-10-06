@@ -10,22 +10,27 @@ screen) a little above the middle, the time above it, and a status line or
 action buttons in the crescent below. Nothing sits beside the board. Swiping
 right goes home (the system's back gesture). A short scroll down, by touch
 or the crown, brings up Reset (an icon, tapped twice; there's no undoing a reset) and Undo
-under the board, and the game's title and rules follow, then its ratings (`Game.rating`, the phone's), its stats and a
+under the board, and the game's title and rules follow, then its ratings (`Game.rating`, the phone's: each name
+beside its bar), its stats (under the chart icon) and a
 Top button, each line of text shrinking a little and fading as it passes the
 top and foot; the view snaps to the board or to
 those buttons (`GameScreen`), so a stray drag springs back. A finished game
 shows its result over the board: the message, Home and Play Again, then the
-score and time. It stays, with no scrolling, until one is chosen; a finished
+score and time, scrolling if there's more than fits. It stays, the game
+under it not scrolling, until one is chosen; a finished
 game left by swiping away is dealt anew when it's next opened. The game's
 own bottom button doesn't change when the game ends. Asleep (ambient), the board shows as grey
-outlines with no buttons (`LocalAmbient`).
+outlines with no buttons (`LocalAmbient`), while it's what's in view; on the
+home screen, the rules or a result, the logo shows instead. The tap that
+wakes the watch goes nowhere (`MainActivity`).
 In a game the screen stays on for 10 s after the last touch (`MainActivity`).
 
 The home screen has the last games played under "Continue Playing" (three,
 one or none: a setting), then every game, those pinned (by holding one)
-first, the settings (Haptics, Suit Colours, Show Continue Playing), stats
-across every game, and a card fact (`ui/CardFacts.kt`) at the foot. The app opens straight into the last game
-played. Each button is the
+first, the settings (Haptics, Suit Colours, Continue Playing), stats
+across every game (under the chart icon), and a card fact (`ui/CardFacts.kt`) at the foot. The app starts
+on the logo, then goes straight into the last game played (or home, if
+there's none). Each button is the
 game's wide picture (`banner`, cut to cover, never stretched) under 85% of the
 game's `accent` colour. The tile (`widget/GamesTileService`) offers the last
 game played and the two before it by name; a complication
@@ -88,11 +93,11 @@ keeps the undo history; `SaveStore` saves each game after every move.
   (`Game.fourSuitColours`, read through `LocalFourSuitColours`).
 - A game that needs more room than the square board, or has nothing under
   it, can change `boardFraction` and `boardLift` (Clock, Fifteen Puzzle, Nestor,
-  Memory, Lights Out).
+  Memory, Lights Out, Ten-Twenty-Thirty).
 - A board with more cards than it has room for (Accordion) scrolls them
   inside the board with `LocalBoardScroll`, so the crown turns the cards
   before the screen. `ScrollingCards` is that grid, fades and all (Ten-Twenty-Thirty,
-  Iris Garden, Royal Marriage, Augury).
+  Royal Marriage, Augury).
 - A progress arc on the screen's left edge is a `SideGauge` (Rogue Run, Augury).
 - A game whose wins differ gives a `scoreName` and `score`, for the stats'
   best score; every deal is timed while its screen is up (`GameSession`).

@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.runtime.Composable
@@ -24,7 +26,9 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextMeasurer
@@ -35,8 +39,10 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import com.updownupdown.cards.watch.R
@@ -58,13 +64,16 @@ private const val RULES_WIDTH = 0.9f
 private val PARAGRAPH_TOP = 10.dp
 /** The space under the Top button, so the round screen's foot cuts nothing off. */
 private val RULES_BOTTOM = 64.dp
-/** A rating's bar's thickness. */
+/** A rating's bar's thickness, and the gap between it and the rating's name. */
 private val RATING_BAR = 4.dp
+private val RATING_GAP = 10.dp
+/** The space over a heading. */
+private val HEADING_TOP = 24.dp
+/** The stats' icon. */
+private val STATS_ICON = 34.dp
 /** The pale line between the rules and the stats. */
 private val STATS_LINE = 1.dp
-/** A stat's name and its number: the width each gets, and the gap between them. */
-private val STATS_NAMES = 108.dp
-private val STATS_NUMBERS = 44.dp
+/** The gap between a stat's name and its number. */
 private val STATS_GAP = 12.dp
 
 // Near the round screen's top and foot each line shrinks a little and
@@ -139,9 +148,13 @@ fun GameRules(
 
             Heading("Ratings", accent, edge)
             val rating = game.rating
-            RatingMeter("Difficulty", rating.difficulty, accent, edge)
-            RatingMeter("Complexity", rating.complexity, accent, edge)
-            RatingMeter("Luck", rating.luck, accent, edge)
+            val ratingName = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.sp, color = AppColors.TextMuted)
+            val ratings = listOf("Difficulty" to rating.difficulty, "Complexity" to rating.complexity, "Luck" to rating.luck)
+            // The names share the widest one's width, so the bars all start and end together.
+            val nameWidth = with(LocalDensity.current) {
+                ratings.maxOf { measurer.measure(it.first.uppercase(), ratingName).size.width }.toDp()
+            }
+            ratings.forEach { (name, value) -> RatingMeter(name, value, ratingName, nameWidth, accent, edge) }
 
             Box(
                 Modifier
@@ -151,16 +164,28 @@ fun GameRules(
                     .height(STATS_LINE)
                     .background(AppColors.TextMuted.copy(alpha = 0.5f)),
             )
-            Heading("Stats", accent, edge, TextAlign.Center)
+            Icon(
+                painterResource(R.drawable.ic_chart),
+                contentDescription = "Stats",
+                tint = accent,
+                modifier = Modifier.padding(top = HEADING_TOP).then(edge).size(STATS_ICON),
+            )
             val small = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Light)
-            Stat("Won", "${stats.won}", small, edge)
-            Stat("Lost", "${stats.lost}", small, edge)
-            Stat("Win %", stats.winPercent?.let { "$it%" } ?: "–", small, edge)
-            Stat("Longest Streak", "${stats.bestStreak}", small, edge)
-            game.scoreName?.let { name ->
-                Stat(if (game.lowScoreWins) "Fewest $name" else "Best $name", stats.bestScore?.toString() ?: "–", small, edge)
+            val bold = small.copy(fontWeight = FontWeight.Bold)
+            val lines = listOfNotNull(
+                "Won" to "${stats.won}",
+                "Lost" to "${stats.lost}",
+                "Win %" to (stats.winPercent?.let { "$it%" } ?: "–"),
+                "Longest Streak" to "${stats.bestStreak}",
+                game.scoreName?.let { name -> (if (game.lowScoreWins) "Fewest $name" else "Best $name") to (stats.bestScore?.toString() ?: "–") },
+                "Fastest Time" to (stats.bestTimeMs?.let(::formatTime) ?: "–"),
+            )
+            // Each column as wide as its widest, so no name or number is cut short.
+            val (namesWidth, numbersWidth) = with(LocalDensity.current) {
+                lines.maxOf { measurer.measure(it.first, small).size.width }.toDp() to
+                    lines.maxOf { measurer.measure(it.second, bold).size.width }.toDp()
             }
-            Stat("Fastest Time", stats.bestTimeMs?.let(::formatTime) ?: "–", small, edge)
+            lines.forEach { (name, value) -> Stat(name, value, small, namesWidth, numbersWidth, edge) }
 
             ListButton(
                 "Top",
@@ -173,33 +198,27 @@ fun GameRules(
 }
 
 @Composable
-private fun Heading(text: String, color: Color, edge: Modifier, align: TextAlign = TextAlign.Start) {
+private fun Heading(text: String, color: Color, edge: Modifier) {
     Text(
         text = text.uppercase(),
-        textAlign = align,
         style = MaterialTheme.typography.titleSmall.copy(letterSpacing = HEADING_SPACING),
         color = color,
-        modifier = Modifier.fillMaxWidth().padding(top = 12.dp, bottom = 2.dp).then(edge),
+        modifier = Modifier.fillMaxWidth().padding(top = HEADING_TOP, bottom = 2.dp).then(edge),
     )
 }
 
-/** A rating's name in small capitals over a thin bar filled to [value] out of 100, in [color]. */
+/**
+ * A rating's name in small capitals ([style], [nameWidth] wide), and beside
+ * it a thin bar filled to [value] out of 100, in [color].
+ */
 @Composable
-private fun RatingMeter(name: String, value: Int, color: Color, edge: Modifier) {
-    Column(Modifier.fillMaxWidth().padding(top = 8.dp).then(edge)) {
-        Row(Modifier.fillMaxWidth()) {
-            Text(
-                text = name.uppercase(),
-                style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.sp),
-                color = AppColors.TextMuted,
-                modifier = Modifier.weight(1f),
-            )
-            Text("$value", style = MaterialTheme.typography.labelSmall, color = AppColors.TextMuted)
-        }
+private fun RatingMeter(name: String, value: Int, style: TextStyle, nameWidth: Dp, color: Color, edge: Modifier) {
+    Row(Modifier.fillMaxWidth().padding(top = 8.dp).then(edge), verticalAlignment = Alignment.CenterVertically) {
+        Text(name.uppercase(), style = style, maxLines = 1, softWrap = false, modifier = Modifier.width(nameWidth))
         Box(
             Modifier
-                .padding(top = 3.dp)
-                .fillMaxWidth()
+                .padding(start = RATING_GAP)
+                .weight(1f)
                 .height(RATING_BAR)
                 .clip(CircleShape)
                 .background(AppColors.Track),
@@ -211,13 +230,14 @@ private fun RatingMeter(name: String, value: Int, color: Color, edge: Modifier) 
 
 /** A stat in the middle of the screen: its name ending where its number starts. */
 @Composable
-private fun Stat(name: String, value: String, style: TextStyle, edge: Modifier) {
+private fun Stat(name: String, value: String, style: TextStyle, namesWidth: Dp, numbersWidth: Dp, edge: Modifier) {
     Row(
-        Modifier.fillMaxWidth().padding(top = PARAGRAPH_TOP).then(edge),
-        horizontalArrangement = Arrangement.spacedBy(STATS_GAP, Alignment.CenterHorizontally),
+        // As wide as the two columns, even past the margins on a small screen.
+        Modifier.padding(top = PARAGRAPH_TOP).wrapContentWidth(unbounded = true).then(edge),
+        horizontalArrangement = Arrangement.spacedBy(STATS_GAP),
     ) {
-        Text(name, style = style, textAlign = TextAlign.End, maxLines = 1, modifier = Modifier.width(STATS_NAMES))
-        Text(value, style = style.copy(fontWeight = FontWeight.Bold), maxLines = 1, modifier = Modifier.width(STATS_NUMBERS))
+        Text(name, style = style, textAlign = TextAlign.End, maxLines = 1, softWrap = false, modifier = Modifier.width(namesWidth))
+        Text(value, style = style.copy(fontWeight = FontWeight.Bold), maxLines = 1, softWrap = false, modifier = Modifier.width(numbersWidth))
     }
 }
 

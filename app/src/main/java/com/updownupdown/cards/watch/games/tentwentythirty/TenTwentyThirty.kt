@@ -8,9 +8,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.ScrollingCards
@@ -18,7 +19,6 @@ import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.tryMove
@@ -26,18 +26,19 @@ import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalBoardScroll
 import com.updownupdown.cards.watch.ui.LocalBoardSize
 import com.updownupdown.cards.watch.ui.WearGamePreview
+import kotlin.math.sqrt
 import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 
-/** The line, read left to right and then down, and the stock, its next card first. */
+/** The line, read left to right and then down: the whole deck, dealt at the start. */
 @Serializable
-data class TenTwentyThirtyState(val line: List<Card>, val stock: List<Card>)
+data class TenTwentyThirtyState(val line: List<Card>)
 
 /** Runs of cards next to each other in a line that total 10, 20 or 30 go out. */
 object TenTwentyThirty : Game<TenTwentyThirtyState> {
     const val COLUMNS = 5
-    private const val START = 3
+    private const val CARDS = 52
     private val DECADES = setOf(10, 20, 30)
 
     override val id = "ten-twenty-thirty"
@@ -49,16 +50,20 @@ object TenTwentyThirty : Game<TenTwentyThirtyState> {
     override val rating = Rating(difficulty = 45, complexity = 15, luck = 75)
     override val fourSuitColours = false
     override val stateSerializer: KSerializer<TenTwentyThirtyState> = TenTwentyThirtyState.serializer()
+    // The stock went when every card came to be dealt at the start.
+    override val saveVersion = 2
+
+    // Nothing under the board, which scrolls: as Accordion's.
+    override val boardFraction = 0.72f
+    override val boardLift = 0f
 
     override val rules = listOf(
         "## Objective",
         "**Win** by discarding all 52 cards.",
-        "**Lose** when the stock is empty and no run adds up.",
         "## Gameplay",
-        "- Cards count their face value; Jacks, Queens and Kings count **10**.",
-        "- Tap **Stock** to add the next card to the end of the line.",
-        "- Any **two or more cards next to each other** in the line that total **10, 20 or 30** can be discarded.",
-        "- Tap the cards of a run one after another, each next to the last; once they add up they go, and the cards after them close up.",
+        "All 52 cards are dealt face up in one line, read left to right and then down.",
+        "Cards count their face value; Jacks, Queens and Kings count **10**.",
+        "Any **two or more adjacent cards** in the line that total **10, 20 or 30** can be discarded.",
     )
 
     fun points(card: Card) = minOf(card.rank.value, 10)
@@ -73,15 +78,7 @@ object TenTwentyThirty : Game<TenTwentyThirtyState> {
         }
     }
 
-    override fun newGame(random: Random): TenTwentyThirtyState {
-        val deck = shuffledDeck(random)
-        return TenTwentyThirtyState(deck.take(START), deck.drop(START))
-    }
-
-    fun draw(state: TenTwentyThirtyState): TenTwentyThirtyState? {
-        val card = state.stock.firstOrNull() ?: return null
-        return TenTwentyThirtyState(state.line + card, state.stock.drop(1))
-    }
+    override fun newGame(random: Random) = TenTwentyThirtyState(shuffledDeck(random))
 
     /** Discards the run from [first] to [last], or null when it doesn't total a decade. */
     fun discard(state: TenTwentyThirtyState, first: Int, last: Int): TenTwentyThirtyState? {
@@ -91,14 +88,13 @@ object TenTwentyThirty : Game<TenTwentyThirtyState> {
     }
 
     override fun outcome(state: TenTwentyThirtyState) = when {
-        state.line.isEmpty() && state.stock.isEmpty() -> Outcome(true, "Every card counted out!")
-        state.stock.isEmpty() && !hasDecade(state.line) -> Outcome(false, "No run adds up")
+        state.line.isEmpty() -> Outcome(true, "Every card counted out!")
+        !hasDecade(state.line) -> Outcome(false, "No run adds up")
         else -> null
     }
 
-    override fun actions(state: TenTwentyThirtyState) = listOf(
-        GameAction<TenTwentyThirtyState>("Stock (${state.stock.size})", enabled = state.stock.isNotEmpty() && outcome(state) == null) { draw(it) ?: it },
-    )
+    /** Room round the cards for a picked card's border. */
+    private val PAD = 2.dp
 
     @Composable
     override fun Board(state: TenTwentyThirtyState, play: (TenTwentyThirtyState) -> Unit, feedback: Feedback, modifier: Modifier) {
@@ -106,21 +102,17 @@ object TenTwentyThirty : Game<TenTwentyThirtyState> {
         var picked by remember(state) { mutableStateOf<IntRange?>(null) }
         val playing = outcome(state) == null
         val scroll = LocalBoardScroll.current ?: rememberScrollState()
-        // A card drawn goes on the end of the line: bring it into view.
-        var shown by remember { mutableStateOf(state.line.size) }
-        LaunchedEffect(state.line.size) {
-            if (state.line.size > shown) {
-                withFrameNanos {}
-                scroll.animateScrollTo(scroll.maxValue)
-            } else if (state.line.size <= START) {
-                scroll.scrollTo(0)
-            }
-            shown = state.line.size
+        // A new deal starts from the top.
+        LaunchedEffect(state.takeIf { it.line.size == CARDS }) {
+            if (state.line.size == CARDS) scroll.scrollTo(0)
         }
         val board = LocalBoardSize.current
+        // The window on the cards: as tall as the round screen has room for at the board's width.
+        val diameter = board / boardFraction
+        val window = min(board, sqrt(diameter.value * diameter.value - board.value * board.value).dp - PAD * 2)
         val rows = (state.line.size + COLUMNS - 1) / COLUMNS
         Box(modifier, contentAlignment = Alignment.Center) {
-            ScrollingCards(COLUMNS, rows, board, board, scroll = scroll) { places ->
+            ScrollingCards(COLUMNS, rows, board, window, scroll = scroll) { places ->
                 val run = picked
                 state.line.forEachIndexed { index, card ->
                     val x = places.xOf(index)

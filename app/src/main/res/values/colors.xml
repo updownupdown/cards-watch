@@ -24,8 +24,8 @@
     <color name="game_fifteen_puzzle_pale">#E2AEEF</color>
     <color name="game_fortunes_call">#5A1C1C</color>
     <color name="game_fortunes_call_pale">#F69292</color>
-    <color name="game_four_seasons">#33402C</color>
-    <color name="game_four_seasons_pale">#C3DCAD</color>
+    <color name="game_little_windmill">#33402C</color>
+    <color name="game_little_windmill_pale">#C3DCAD</color>
     <color name="game_jailbreak">#432B14</color>
     <color name="game_jailbreak_pale">#E6AE82</color>
     <color name="game_tower_of_hanoi">#424825</color>
@@ -40,16 +40,12 @@
     <color name="game_memory_pale">#DCCDAD</color>
     <color name="game_rogue_run">#47341F</color>
     <color name="game_rogue_run_pale">#EBC89D</color>
-    <color name="game_seer">#2A4038</color>
-    <color name="game_seer_pale">#ADDCCB</color>
     <color name="game_triple_stack">#49261D</color>
     <color name="game_triple_stack_pale">#F4A894</color>
     <color name="game_augury">#213F45</color>
     <color name="game_augury_pale">#A5E2EE</color>
     <color name="game_ouroboros">#362145</color>
     <color name="game_ouroboros_pale">#D0A5EE</color>
-    <color name="game_iris_garden">#2C2145</color>
-    <color name="game_iris_garden_pale">#BBA5EE</color>
     <color name="game_ten_twenty_thirty">#3F4521</color>
     <color name="game_ten_twenty_thirty_pale">#E2EEA5</color>
     <color name="game_elevens">#453821</color>

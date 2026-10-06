@@ -2,9 +2,9 @@ package com.updownupdown.cards.watch.widget
 
 import androidx.wear.protolayout.DeviceParametersBuilders.DeviceParameters
 import com.updownupdown.cards.watch.games.clock.Clock
+import com.updownupdown.cards.watch.games.nestor.Nestor
 import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.memory.Memory
-import com.updownupdown.cards.watch.games.seer.Seer
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -18,7 +18,7 @@ import org.robolectric.annotation.Config
 class TileLayoutTest {
     private fun device(width: Int) = DeviceParameters.Builder().setScreenWidthDp(width).setScreenHeightDp(width).build()
 
-    private val games = listOf(Seer, Lycan, Clock, Memory)
+    private val games = listOf(Nestor, Lycan, Clock, Memory)
 
     @Test
     fun itBuildsWithAnyNumberOfRecentGames() {

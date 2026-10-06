@@ -41,9 +41,8 @@ import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
 import com.updownupdown.cards.watch.games.fifteen.FifteenState
 import com.updownupdown.cards.watch.games.fortune.Call
 import com.updownupdown.cards.watch.games.fortune.FortunesCall
-import com.updownupdown.cards.watch.games.fourseasons.FourSeasons
+import com.updownupdown.cards.watch.games.littlewindmill.LittleWindmill
 import com.updownupdown.cards.watch.games.hanoi.TowerOfHanoi
-import com.updownupdown.cards.watch.games.irisgarden.IrisGarden
 import com.updownupdown.cards.watch.games.jailbreak.Jailbreak
 import com.updownupdown.cards.watch.games.lightsout.LightsOut
 import com.updownupdown.cards.watch.games.lycan.Lycan
@@ -55,7 +54,6 @@ import com.updownupdown.cards.watch.games.ozanam.Source
 import com.updownupdown.cards.watch.games.rogue.RogueRun
 import com.updownupdown.cards.watch.games.royalmarriage.RoyalMarriage
 import com.updownupdown.cards.watch.games.rogue.RogueState
-import com.updownupdown.cards.watch.games.seer.Seer
 import com.updownupdown.cards.watch.games.tentwentythirty.TenTwentyThirty
 import com.updownupdown.cards.watch.games.triplestack.TripleStack
 import kotlin.random.Random
@@ -155,7 +153,6 @@ class ScreenshotTest {
         GameScreen(GameSession(RogueRun, SavedGame(RogueRun.saveVersion, state)) {}, {})
     }
 
-    @Test fun seer() = game(Seer, Seer.after({ Seer.predict(it, 0) }, { Seer.predict(it, 2) }, { Seer.predict(it, 1) }))
 
     @Test fun lycan() = game(Lycan, Lycan.after({ Lycan.togglePlayer(it, it.player[0].id) }))
 
@@ -167,7 +164,7 @@ class ScreenshotTest {
         GameScreen(GameSession(EbbAndFlow, SavedGame(EbbAndFlow.saveVersion, state)) {}, {})
     }
 
-    @Test fun fourSeasons() = game(FourSeasons, FourSeasons.after({ FourSeasons.draw(it) }, { FourSeasons.draw(it) }))
+    @Test fun littleWindmill() = game(LittleWindmill, LittleWindmill.after({ LittleWindmill.draw(it) }, { LittleWindmill.draw(it) }))
 
     @Test fun nestor() = game(Nestor)
 
@@ -180,22 +177,22 @@ class ScreenshotTest {
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
     fun home() = capture("home") {
-        HomeScreen(recent = listOf(FifteenPuzzle, Seer), pinned = listOf(Lycan.id), onOpen = {}, onPin = {}, haptics = true, onHaptics = {})
+        HomeScreen(recent = listOf(FifteenPuzzle, Nestor), pinned = listOf(Lycan.id), onOpen = {}, onPin = {}, haptics = true, onHaptics = {})
     }
 
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
     fun homeSettings() = capture("home_settings") {
         HomeScreen(
-            recent = listOf(FifteenPuzzle, Seer),
+            recent = listOf(FifteenPuzzle, Nestor),
             pinned = emptyList(),
             onOpen = {},
             onPin = {},
             haptics = true,
             onHaptics = {},
             continueShown = 1,
-            stats = mapOf(Seer.id to GameStats(won = 3, lost = 2, bestStreak = 2), Lycan.id to GameStats(lost = 4)),
-            startAt = 26,
+            stats = mapOf(Nestor.id to GameStats(won = 3, lost = 2, bestStreak = 2), Lycan.id to GameStats(lost = 4)),
+            startAt = 31,
         )
     }
 
@@ -203,15 +200,15 @@ class ScreenshotTest {
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
     fun homeStats() = capture("home_stats") {
         HomeScreen(
-            recent = listOf(FifteenPuzzle, Seer),
+            recent = listOf(FifteenPuzzle, Nestor),
             pinned = emptyList(),
             onOpen = {},
             onPin = {},
             haptics = true,
             onHaptics = {},
             continueShown = 1,
-            stats = mapOf(Seer.id to GameStats(won = 3, lost = 2, bestStreak = 2), Lycan.id to GameStats(lost = 4)),
-            startAt = 36,
+            stats = mapOf(Nestor.id to GameStats(won = 3, lost = 2, bestStreak = 2), Lycan.id to GameStats(lost = 4)),
+            startAt = 42,
         )
     }
 
@@ -280,9 +277,8 @@ class ScreenshotTest {
 
     @Test fun elevens() = game(Elevens)
 
-    @Test fun tenTwentyThirty() = game(TenTwentyThirty, TenTwentyThirty.after(*Array(9) { { s: com.updownupdown.cards.watch.games.tentwentythirty.TenTwentyThirtyState -> TenTwentyThirty.draw(s) } }))
+    @Test fun tenTwentyThirty() = game(TenTwentyThirty)
 
-    @Test fun irisGarden() = game(IrisGarden)
 
     @Test fun royalMarriage() = game(RoyalMarriage, RoyalMarriage.after({ RoyalMarriage.toggle(it, 2) }))
 
@@ -304,7 +300,14 @@ class ScreenshotTest {
         GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, state)) {}, {})
     }
 
-    @Test fun ouroborosPicked() = capture("ouroboros_picked", before = { compose.onRoot().performTouchInput { click(Offset(300f, 88f)) } }) {
+    @Test fun ouroborosPicked() = capture("ouroboros_picked", before = { compose.onRoot().performTouchInput { click(Offset(168f, 345f)) } }) {
         GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, Ouroboros.after({ Ouroboros.lookAround(it) }))) {}, {})
     }
+
+    // The second card, a number: its target comes in from the loop.
+    @Test fun ouroborosTarget() = capture("ouroboros_target", before = { compose.onRoot().performTouchInput { click(Offset(216f, 345f)) } }) {
+        GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, Ouroboros.after({ Ouroboros.lookAround(it) }))) {}, {})
+    }
+
+    @Test fun splash() = capture("splash") { SplashScreen() }
 }

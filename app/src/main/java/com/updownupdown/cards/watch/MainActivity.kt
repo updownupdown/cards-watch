@@ -4,15 +4,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.view.MotionEvent
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +39,7 @@ import com.updownupdown.cards.watch.ui.GameScreen
 import com.updownupdown.cards.watch.ui.HomeScreen
 import com.updownupdown.cards.watch.ui.LocalAsleep
 import com.updownupdown.cards.watch.ui.LocalHapticsOn
+import com.updownupdown.cards.watch.ui.SplashScreen
 import com.updownupdown.cards.watch.widget.refreshSurfaces
 import kotlinx.coroutines.delay
 
@@ -44,6 +51,12 @@ class MainActivity : ComponentActivity() {
     private var requested by mutableStateOf<String?>(null)
     /** The game on screen, shown on the sleep screen. */
     private var playing by mutableStateOf<Game<*>?>(null)
+    /** Whether that game's board is in view: not scrolled down to its rules, nor under its result. */
+    private var boardShown by mutableStateOf(true)
+    /** When the watch last woke, to let the tap that woke it go nowhere. */
+    private var wokeAt = 0L
+    /** Whether the touch going on now is kept from the app (it began asleep, or as the watch woke). */
+    private var swallowing = false
     private val saves get() = (application as CardsWatchApp).saves
 
     private val ambientObserver = AmbientLifecycleObserver(
@@ -60,6 +73,7 @@ class MainActivity : ComponentActivity() {
 
             override fun onExitAmbient() {
                 ambient = false
+                wokeAt = SystemClock.uptimeMillis()
                 playing?.let { saves.session(it).resume() }
             }
         },
@@ -84,11 +98,22 @@ class MainActivity : ComponentActivity() {
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
         stayAwake()
+        // A tap that wakes the watch only wakes it: it doesn't reach the game
+        // under the sleep screen, whether it arrives before the watch wakes or just after.
+        if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+            swallowing = ambient || SystemClock.uptimeMillis() - wokeAt < WAKE_GRACE_MS
+        }
+        if (swallowing) {
+            if (event.actionMasked == MotionEvent.ACTION_UP || event.actionMasked == MotionEvent.ACTION_CANCEL) swallowing = false
+            return true
+        }
         return super.dispatchTouchEvent(event)
     }
 
     override fun dispatchGenericMotionEvent(event: MotionEvent): Boolean {
         stayAwake()
+        // Nor does the crown, turned while asleep.
+        if (ambient) return true
         return super.dispatchGenericMotionEvent(event)
     }
 
@@ -109,18 +134,36 @@ class MainActivity : ComponentActivity() {
         refreshSurfaces(this)
         // A fresh launch goes straight back into the last game played.
         val resume = if (savedInstanceState == null) gameById(intent.getStringExtra(EXTRA_GAME) ?: saves.lastGameId) else null
+        // A fresh launch shows the logo first, while what's under it gets ready.
+        var splash by mutableStateOf(savedInstanceState == null)
         setContent {
             AppTheme {
                 CompositionLocalProvider(LocalHapticsOn provides saves.hapticsOn, LocalAsleep provides ambient) {
                     Box(Modifier.fillMaxSize()) {
                         AppScaffold {
-                            App(saves, startRoute = resume?.let { gameRoute(it.id) } ?: HOME, requested = requested, onOpened = { requested = null }) {
+                            App(
+                                saves,
+                                startRoute = resume?.let { gameRoute(it.id) } ?: HOME,
+                                requested = requested,
+                                onOpened = { requested = null },
+                                onBoardShown = { boardShown = it },
+                            ) {
                                 playing = it
                                 stayAwake()
                             }
                         }
-                        // Over the app, so the game underneath keeps its place.
-                        if (ambient) AmbientScreen(playing?.let { saves.session(it) }, ambientTick)
+                        if (splash) {
+                            LaunchedEffect(Unit) {
+                                delay(SPLASH_MS)
+                                splash = false
+                            }
+                        }
+                        AnimatedVisibility(splash, enter = EnterTransition.None, exit = fadeOut(tween(SPLASH_FADE_MS))) {
+                            SplashScreen()
+                        }
+                        // Over the app, so the game underneath keeps its place. A game's board shows
+                        // only while it's what's in view (not its rules, nor its result); else the logo.
+                        if (ambient) AmbientScreen(playing?.takeIf { boardShown }?.let { saves.session(it) }, ambientTick)
                     }
                 }
             }
@@ -134,15 +177,35 @@ private const val GAME_SCREEN_ON_MS = 10_000L
 /** The id of the game to open, on an intent from the tile or a complication. */
 const val EXTRA_GAME = "game"
 
+/** How long the logo shows as the app starts, and how long it takes to fade. */
+private const val SPLASH_MS = 900L
+private const val SPLASH_FADE_MS = 250
+
+/** How soon after waking a touch may reach the app: the one that woke it doesn't. */
+private const val WAKE_GRACE_MS = 400L
+
 /** How long the home list stays blank under a game the app opens into. */
 private const val OPENING_MS = 600L
 
 private const val HOME = "home"
+private const val GAME_ROUTE = "game/{id}"
 private fun gameRoute(id: String) = "game/$id"
 
 @Composable
-private fun App(saves: SaveStore, startRoute: String, requested: String?, onOpened: () -> Unit, onPlaying: (Game<*>?) -> Unit) {
+private fun App(
+    saves: SaveStore,
+    startRoute: String,
+    requested: String?,
+    onOpened: () -> Unit,
+    onBoardShown: (Boolean) -> Unit,
+    onPlaying: (Game<*>?) -> Unit,
+) {
     val nav = rememberSwipeDismissableNavController()
+    // The game on top, if it's a game, from the back stack: the home list stays
+    // composed under a game (to be seen as it's swiped away), so it can't tell.
+    val top by nav.currentBackStackEntryFlow.collectAsState(null)
+    val playing = top?.takeIf { it.destination.route == GAME_ROUTE }?.let { gameById(it.arguments?.getString("id")) }
+    LaunchedEffect(playing) { onPlaying(playing) }
     LaunchedEffect(requested) {
         val game = gameById(requested) ?: return@LaunchedEffect
         nav.popBackStack(HOME, inclusive = false)
@@ -154,7 +217,6 @@ private fun App(saves: SaveStore, startRoute: String, requested: String?, onOpen
     SwipeDismissableNavHost(navController = nav, startDestination = HOME) {
         composable(HOME) {
             if (opening) return@composable
-            LaunchedEffect(Unit) { onPlaying(null) }
             HomeScreen(
                 recent = saves.recentGameIds.mapNotNull(::gameById),
                 pinned = saves.pinnedGameIds,
@@ -169,17 +231,15 @@ private fun App(saves: SaveStore, startRoute: String, requested: String?, onOpen
                 stats = saves.allStats(),
             )
         }
-        composable("game/{id}") { entry ->
+        composable(GAME_ROUTE) { entry ->
             val game = gameById(entry.arguments?.getString("id")) ?: return@composable
-            LaunchedEffect(game.id) {
-                saves.lastGameId = game.id
-                onPlaying(game)
-            }
+            LaunchedEffect(game.id) { saves.lastGameId = game.id }
             GameScreen(
                 saves.session(game),
                 onHome = { nav.popBackStack(HOME, inclusive = false) },
                 stats = saves.stats(game),
                 fourSuitColours = saves.suitColours.fourIn(game),
+                onBoardShown = onBoardShown,
             )
         }
     }

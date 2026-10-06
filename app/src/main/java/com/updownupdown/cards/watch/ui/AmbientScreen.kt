@@ -1,6 +1,7 @@
 package com.updownupdown.cards.watch.ui
 
 import android.text.format.DateFormat
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -58,28 +59,38 @@ fun AmbientScreen(session: GameSession<*>?, tick: Int = 0) {
     val context = LocalContext.current
     val time = remember(tick) { DateFormat.getTimeFormat(context).format(Date()) }
     Box(Modifier.fillMaxSize().background(Color.Black)) {
-        if (session != null) {
-            AmbientBoard(session)
-        } else {
-            Column(
-                Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Image(painterResource(R.drawable.logo_spade_outline), contentDescription = null, modifier = Modifier.size(72.dp))
-                Text(
-                    text = "Solitarius",
-                    style = TextStyle(fontFamily = Outfit, fontWeight = FontWeight.Medium, fontSize = 15.sp, textAlign = TextAlign.Center),
-                    color = AppColors.Ambient,
-                    modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp),
-                )
-            }
-        }
+        if (session != null) AmbientBoard(session) else Logo(R.drawable.logo_spade_outline, AppColors.Ambient)
         Text(
             text = time,
             style = TextStyle(fontFamily = Outfit, fontWeight = FontWeight.Medium, fontSize = 14.sp),
             color = AppColors.Ambient,
             modifier = Modifier.align(Alignment.TopCenter).padding(top = 10.dp),
+        )
+    }
+}
+
+/** The app's logo in the middle of the screen, shown as the app starts. */
+@Composable
+fun SplashScreen() {
+    Box(Modifier.fillMaxSize().background(Color.Black)) {
+        Logo(R.drawable.logo_spade, Color.White)
+    }
+}
+
+/** The spade ([spade]) over "Solitarius" in [textColour], in the middle of the screen. */
+@Composable
+private fun Logo(@DrawableRes spade: Int, textColour: Color) {
+    Column(
+        Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Image(painterResource(spade), contentDescription = null, modifier = Modifier.size(72.dp))
+        Text(
+            text = "Solitarius",
+            style = TextStyle(fontFamily = Outfit, fontWeight = FontWeight.Medium, fontSize = 15.sp, textAlign = TextAlign.Center),
+            color = textColour,
+            modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp),
         )
     }
 }

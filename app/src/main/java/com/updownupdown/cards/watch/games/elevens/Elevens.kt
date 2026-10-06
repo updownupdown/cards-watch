@@ -49,15 +49,10 @@ object Elevens : Game<ElevensState> {
 
     override val rules = listOf(
         "## Objective",
-        "**Win** by clearing the whole deck, in pairs that total **11** or in royal **Jack-Queen-King** triplets.",
-        "**Lose** when no pair or triplet can be made and cards remain.",
-        "## Card Values",
-        "Aces are 1 and number cards their value. Jacks, Queens and Kings have no value and only go out together.",
+        "Win by clearing the whole deck, in pairs that total **11**, or in royal **Jack-Queen-King** triplets.",
         "## Gameplay",
-        "- Tap two cards that total 11: **A and 10, 2 and 9, 3 and 8, 4 and 7, 5 and 6**.",
-        "- Or tap one Jack, one Queen and one King, in any order.",
-        "- Removed cards are replaced at once from the stock.",
-        "Every deal allows at least four moves in a row.",
+        "Tap two cards that total 11: **A and 10, 2 and 9, 3 and 8, 4 and 7, 5 and 6**.",
+        "For face cards, tap one Jack, one Queen and one King, which will be removed together.",
     )
 
     private fun isRoyal(card: Card) = card.rank in ROYALS

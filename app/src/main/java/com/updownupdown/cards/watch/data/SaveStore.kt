@@ -74,7 +74,7 @@ class SaveStore(private val context: Context, private val scope: CoroutineScope)
 
     /** How cards colour their suits (the home screen's Suit Colours). */
     var suitColours: SuitColours by mutableStateOf(
-        runCatching { SuitColours.valueOf(prefs.getString(KEY_SUIT_COLOURS, null) ?: "") }.getOrDefault(SuitColours.Four),
+        runCatching { SuitColours.valueOf(prefs.getString(KEY_SUIT_COLOURS, null) ?: "") }.getOrDefault(SuitColours.Auto),
     )
         private set
 

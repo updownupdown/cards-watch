@@ -1,10 +1,15 @@
 package com.updownupdown.cards.watch.games.hanoi
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -12,13 +17,17 @@ import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
+import com.updownupdown.cards.watch.cards.RoundScreen
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.tryMove
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
 import com.updownupdown.cards.watch.ui.GamePreview
+import com.updownupdown.cards.watch.ui.LocalBoardSize
 import com.updownupdown.cards.watch.ui.WearGamePreview
 import kotlin.random.Random
 import kotlinx.serialization.KSerializer
@@ -95,11 +104,29 @@ object TowerOfHanoi : Game<HanoiState> {
     override val lowScoreWins = true
     override fun score(state: HanoiState) = state.moves
 
-    override fun status(state: HanoiState) = if (state.moves == 1) "1 move" else "${state.moves} moves"
+    /** The move count's room, from the screen's left edge, and how far in from that edge it sits. */
+    private val COUNT_HEIGHT = 40.dp
+    private val COUNT_IN = 10.dp
 
     @Composable
     override fun Board(state: HanoiState, play: (HanoiState) -> Unit, feedback: Feedback, modifier: Modifier) {
         var selected by remember(state) { mutableStateOf<Int?>(null) }
+        // The move count alone, outside the board at the screen's left, level with its middle.
+        val board = LocalBoardSize.current
+        val screen = RoundScreen(board, boardLift)
+        val outside = (screen.size - board) / 2
+        Box(
+            Modifier.offset(x = -outside, y = screen.middleY - COUNT_HEIGHT / 2).size(outside, COUNT_HEIGHT),
+            contentAlignment = Alignment.CenterStart,
+        ) {
+            Text(
+                text = "${state.moves}",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                modifier = Modifier.padding(start = COUNT_IN),
+            )
+        }
         CardTable(modifier) {
             // Narrow cards, so a tall pile still shows each card's rank.
             val cardWidth = width * CARD_WIDTH

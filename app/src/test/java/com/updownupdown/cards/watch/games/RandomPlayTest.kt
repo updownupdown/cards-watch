@@ -13,9 +13,8 @@ import com.updownupdown.cards.watch.games.elevens.Elevens
 import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
 import com.updownupdown.cards.watch.games.fortune.Call
 import com.updownupdown.cards.watch.games.fortune.FortunesCall
-import com.updownupdown.cards.watch.games.fourseasons.FourSeasons
+import com.updownupdown.cards.watch.games.littlewindmill.LittleWindmill
 import com.updownupdown.cards.watch.games.hanoi.TowerOfHanoi
-import com.updownupdown.cards.watch.games.irisgarden.IrisGarden
 import com.updownupdown.cards.watch.games.jailbreak.Jailbreak
 import com.updownupdown.cards.watch.games.lightsout.LightsOut
 import com.updownupdown.cards.watch.games.lycan.Lycan
@@ -26,7 +25,6 @@ import com.updownupdown.cards.watch.games.ozanam.OzanamsSquare
 import com.updownupdown.cards.watch.games.ozanam.Source
 import com.updownupdown.cards.watch.games.rogue.RogueRun
 import com.updownupdown.cards.watch.games.royalmarriage.RoyalMarriage
-import com.updownupdown.cards.watch.games.seer.Seer
 import com.updownupdown.cards.watch.games.tentwentythirty.TenTwentyThirty
 import com.updownupdown.cards.watch.games.triplestack.TripleStack
 import org.junit.Assert.assertEquals
@@ -83,12 +81,12 @@ class RandomPlayTest {
         if (r.nextInt(4) == 0) EbbAndFlow.draw(s) else s.hand.randomOrNull(r)?.let { EbbAndFlow.play(s, it, r.nextInt(EbbAndFlow.PILES)) }
     }
 
-    @Test fun fourSeasons() = fuzz(FourSeasons) { s, r ->
-        val source = r.nextInt(FourSeasons.WASTE + 1)
+    @Test fun littleWindmill() = fuzz(LittleWindmill) { s, r ->
+        val source = r.nextInt(LittleWindmill.WASTE + 1)
         when (r.nextInt(4)) {
-            0 -> FourSeasons.draw(s)
-            1 -> FourSeasons.toFoundation(s, source)
-            else -> FourSeasons.toTableau(s, source, r.nextInt(FourSeasons.TABLEAU))
+            0 -> LittleWindmill.draw(s)
+            1 -> LittleWindmill.toFoundation(s, source)
+            else -> LittleWindmill.toTableau(s, source, r.nextInt(LittleWindmill.TABLEAU))
         }
     }
 
@@ -135,10 +133,6 @@ class RandomPlayTest {
         }
     }
 
-    @Test fun seer() = fuzz(Seer) { s, r ->
-        if (s.freed.isNotEmpty()) Seer.dispose(s, r.nextBoolean()) else Seer.predict(s, r.nextInt(8))
-    }
-
     @Test fun lycan() = fuzz(Lycan) { s, r ->
         when {
             s.roundResult != null -> Lycan.nextRound(s, r)
@@ -163,23 +157,8 @@ class RandomPlayTest {
     }
 
     @Test fun tenTwentyThirty() = fuzz(TenTwentyThirty) { s, r ->
-        if (r.nextInt(3) == 0) TenTwentyThirty.draw(s) else {
-            val first = r.nextInt(s.line.size.coerceAtLeast(1))
-            TenTwentyThirty.discard(s, first, first + 1 + r.nextInt(4))
-        }
-    }
-
-    @Test fun irisGarden() = fuzz(IrisGarden, games = 10) { s, r ->
-        IrisGarden.pairs(s.grid).randomOrNull(r)?.let { (a, b) -> IrisGarden.pair(s, a, b) }
-    }
-
-    @Test
-    fun irisGardenDealsCanBeCleared() {
-        repeat(10) { seed ->
-            val state = IrisGarden.newGame(Random(seed))
-            assertEquals(IrisGarden.CELLS, state.grid.filterNotNull().toSet().size)
-            assertTrue(state.grid.filterNotNull().groupBy { it.rank }.values.all { it.size == 4 })
-        }
+        val first = r.nextInt(s.line.size.coerceAtLeast(1))
+        TenTwentyThirty.discard(s, first, first + 1 + r.nextInt(4))
     }
 
     @Test fun royalMarriage() = fuzz(RoyalMarriage) { s, r ->

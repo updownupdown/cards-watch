@@ -9,6 +9,8 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.dp
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
+import com.updownupdown.cards.watch.cards.CARD_FLIP_MS
+import com.updownupdown.cards.watch.cards.CARD_MOVE_MS
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.cardTag
 import com.updownupdown.cards.watch.game.Feedback
@@ -60,21 +62,32 @@ class FortunesCallBoardTest {
         val right = x(compared)
         assertTrue("the card to call is left of the one to compare", left < right)
 
+        // When each step starts, from the call, as the board times them.
+        val leaves = CARD_FLIP_MS + FortunesCall.SHOW_MS
+        val crosses = leaves + FortunesCall.FOLLOW_MS
+        val crossed = crosses + CARD_MOVE_MS
+        val next = crosses + CARD_MOVE_MS + FortunesCall.NEXT_MS
+        // Half the gap between two steps, to look between them.
+        fun between(a: Long, b: Long) = (a + b) / 2
+
         state = FortunesCall.call(state, Call.Red)!!
-        step(600)
+        var now = between(0, leaves)
+        step(now)
         // Turned over where it was, with the old card still beside it and no new card yet.
         assertEquals(left, x(called), 1f)
         assertEquals(right, x(compared), 1f)
         gone(after)
 
         // The old card leaves, the called one crosses, and only then the next arrives.
-        step(400)
+        step(between(crosses, crossed) - now)
+        now = between(crosses, crossed)
         assertTrue("the compared card is leaving to the right", x(compared) > right)
-        step(700)
+        step(between(crossed, next) - now)
+        now = between(crossed, next)
         assertEquals(right, x(called), 1f)
         gone(compared)
         gone(after)
-        step(1500)
+        step(next + CARD_MOVE_MS + 500 - now)
         assertEquals(left, x(after), 1f)
     }
 }
