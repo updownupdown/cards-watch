@@ -1,5 +1,8 @@
 package com.updownupdown.cards.watch.ui
 
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -7,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,18 +18,24 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -44,7 +54,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.OpenOnPhoneDialog
+import androidx.wear.compose.material3.OpenOnPhoneDialogDefaults
 import androidx.wear.compose.material3.Text
+import androidx.wear.compose.material3.openOnPhoneDialogCurvedText
+import androidx.wear.remote.interactions.RemoteActivityHelper
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Game
@@ -76,6 +90,12 @@ private val STATS_ICON = 34.dp
 private val STATS_LINE = 1.dp
 /** The gap between a stat's name and its number. */
 private val STATS_GAP = 12.dp
+/** The game's picture over its title: its shape, corners and the space under it. */
+private const val PICTURE_ASPECT = 3f
+private val PICTURE_CORNER = 12.dp
+private val PICTURE_GAP = 10.dp
+/** The width of the button opening the picture's page on the phone, enough for its label. */
+private val PHONE_BUTTON_WIDTH = 168.dp
 /** The space between the artwork's title, its artist and its source. */
 private val CREDIT_GAP = 2.dp
 
@@ -89,7 +109,7 @@ private const val EDGE_SCALE = 0.85f
 private const val EDGE_ALPHA = 0.45f
 
 /**
- * A game's title and rules (its [Game.rules]), its [stats] and its
+ * A game's picture, title and rules (its [Game.rules]), its [stats] and its
  * picture's credit, under the board on the game's screen, ending in a button
  * back to the board.
  *
@@ -126,6 +146,18 @@ fun GameRules(
             }
         }
         Column(Modifier.fillMaxWidth(RULES_WIDTH), horizontalAlignment = Alignment.CenterHorizontally) {
+            // The game's picture, wide, over its title.
+            Image(
+                painterResource(game.banner),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .padding(bottom = PICTURE_GAP)
+                    .then(edge)
+                    .fillMaxWidth()
+                    .aspectRatio(PICTURE_ASPECT)
+                    .clip(RoundedCornerShape(PICTURE_CORNER)),
+            )
             val title = MaterialTheme.typography.titleMedium
             Text(
                 text = game.title,
@@ -192,6 +224,7 @@ fun GameRules(
             lines.forEach { (name, value) -> Stat(name, value, small, namesWidth, numbersWidth, edge) }
 
             Credit(game.credit, accent, width, measurer, edge)
+            OpenOnPhone(game.credit.link, edge)
 
             ListButton(
                 "Top",
@@ -262,6 +295,34 @@ private fun Credit(credit: ArtCredit, color: Color, width: Int, measurer: TextMe
                 modifier = Modifier.fillMaxWidth().padding(top = if (n == 0 && i > 0) CREDIT_GAP else 0.dp).then(edge),
             )
         }
+    }
+}
+
+/**
+ * A button that opens [link] (the picture's page) on the paired phone, and
+ * says so in Wear's open-on-phone dialog. Without a phone it only says so.
+ */
+@Composable
+private fun OpenOnPhone(link: String, edge: Modifier) {
+    val context = LocalContext.current
+    var opened by remember { mutableStateOf(false) }
+    ListButton(
+        "View on Phone",
+        Modifier.padding(top = 12.dp).wrapContentWidth(unbounded = true).then(edge).width(PHONE_BUTTON_WIDTH).height(36.dp),
+        icon = R.drawable.ic_phone,
+    ) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link)).addCategory(Intent.CATEGORY_BROWSABLE)
+        runCatching { RemoteActivityHelper(context).startRemoteActivity(intent) }
+        opened = true
+    }
+    val text = OpenOnPhoneDialogDefaults.text
+    val style = OpenOnPhoneDialogDefaults.curvedTextStyle
+    OpenOnPhoneDialog(
+        visible = opened,
+        onDismissRequest = { opened = false },
+        curvedText = { openOnPhoneDialogCurvedText(text = text, style = style) },
+    ) {
+        OpenOnPhoneDialogDefaults.Icon()
     }
 }
 

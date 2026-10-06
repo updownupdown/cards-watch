@@ -116,7 +116,7 @@ object Augury : Game<AuguryState> {
     override val id = "augury"
     override val thumbnail = R.drawable.thumb_augury
     override val banner = R.drawable.banner_augury
-    override val credit = ArtCredit("The Oracle", "Camillo Miola", "1880", "J. Paul Getty Museum")
+    override val credit = ArtCredit("The Oracle", "Camillo Miola", "1880", "J. Paul Getty Museum", "https://commons.wikimedia.org/wiki/File:Camillo_Miola_(Biacca)_-_The_Oracle_-_72.PA.32_-_J._Paul_Getty_Museum.jpg")
     override val accent = R.color.game_augury
     override val accentPale = R.color.game_augury_pale
     override val title = "Augury"

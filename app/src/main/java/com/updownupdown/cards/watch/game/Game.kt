@@ -114,8 +114,11 @@ interface Game<S : Any> {
 /** Each out of 100, as the phone app rates its games. */
 data class Rating(val difficulty: Int, val complexity: Int, val luck: Int)
 
-/** A game's picture: what it is, who made it and when (when known), and where it's from. */
-data class ArtCredit(val title: String, val artist: String, val date: String?, val source: String)
+/**
+ * A game's picture: what it is, who made it and when (when known), and where
+ * it's from, with [link] to its page there, opened on the phone.
+ */
+data class ArtCredit(val title: String, val artist: String, val date: String?, val source: String, val link: String)
 
 data class Outcome(val won: Boolean, val message: String)
 

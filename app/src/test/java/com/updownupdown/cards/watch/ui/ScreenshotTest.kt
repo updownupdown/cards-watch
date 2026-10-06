@@ -193,9 +193,9 @@ class ScreenshotTest {
     }
 
     private val someStats = mapOf(
-        Nestor.id to GameStats(won = 7, lost = 3, bestStreak = 4),
-        Lycan.id to GameStats(won = 1, lost = 4, bestStreak = 1),
-        RogueRun.id to GameStats(won = 2, lost = 2, bestStreak = 2),
+        Nestor.id to GameStats(won = 7, lost = 3, bestStreak = 4, bestTimeMs = 154_000),
+        Lycan.id to GameStats(won = 1, lost = 4, bestStreak = 1, bestScore = 31, bestTimeMs = 402_000),
+        RogueRun.id to GameStats(won = 2, lost = 2, bestStreak = 2, bestScore = 14, bestTimeMs = 233_000),
         Clock.id to GameStats(lost = 3),
     )
 

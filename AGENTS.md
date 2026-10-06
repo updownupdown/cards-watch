@@ -10,9 +10,10 @@ screen) a little above the middle, the time above it, and a status line or
 action buttons in the crescent below. Nothing sits beside the board. Swiping
 right goes home (the system's back gesture). A short scroll down, by touch
 or the crown, brings up Reset (an icon, tapped twice; there's no undoing a reset) and Undo
-under the board, and the game's title and rules follow, then its ratings (`Game.rating`, the phone's: each name
+under the board, and the game's picture (its `banner`), title and rules follow, then its ratings (`Game.rating`, the phone's: each name
 beside its bar), its stats (under the chart icon), its picture's credit
-(`Game.credit`, the phone's) and a Top button, each line of text shrinking a little and fading as it passes the
+(`Game.credit`, the phone's) with View on Phone, which opens the picture's
+page on the phone (`RemoteActivityHelper`, then Wear's open-on-phone dialog), and a Top button, each line of text shrinking a little and fading as it passes the
 top and foot; the view snaps to the board or to
 those buttons (`GameScreen`), so a stray drag springs back. A finished game
 shows its result over the board: the message, Home and Play Again, then the
@@ -29,7 +30,7 @@ The home screen has the last games played under "Continue Playing" (three,
 one or none: a setting), then every game, those pinned (by holding one)
 first, then Stats and Settings buttons, and a card fact (`ui/CardFacts.kt`) at the foot.
 Each button opens its own screen, swiped away like a game: `StatsScreen`
-(stats across every game, and each game played) and `SettingsScreen`
+(stats across every game, and each game played, which opens it) and `SettingsScreen`
 (Haptics, Suit Colours, Continue Playing). The app starts
 on the logo, then goes straight into the last game played (or home, if
 there's none). Each button is the
@@ -43,7 +44,10 @@ logo or, where a face wants text, "Solitarius". Both open
 - Games draw only playing cards, plus short text. No stand-in shapes for cards.
 - Each game's picture and its credit are the phone's (`assets/thumbnails` and
   `thumbnailCredit` in its `src/data/games/<id>.ts`): `thumb_<id>` (96 px
-  square) and `banner_<id>` (384×128) in `drawable-nodpi`, cut from it.
+  square) and `banner_<id>` (384×128) in `drawable-nodpi`, cut from it by
+  `scripts/game-art.py`, which also prints the game's `credit` line.
+- Neighbours on the home screen (in order of title) have clearly different
+  colours: at least ΔE 15 apart (CIELAB) for the dark ones.
 - **Every card is 25:35** (`CARD_ASPECT`); cards only scale. All cards in a
   game are the same size. Lay them out with `CardLayout`. A card is its rank
   over its suit, both in the middle, in the suit's colour, drawn from the SVGs in `src/main/card-icons`; `cards/CardStyle.kt`
@@ -126,11 +130,17 @@ on a watch by the `baselineprofile` module: `./gradlew
 :app:generateBaselineProfile` with a watch connected. It walks the home list
 and the first game there, making a few real moves in it.
 
+Without a watch, run the Baseline profile workflow (GitHub Actions, by hand):
+it measures on a Wear OS emulator and opens a pull request with the profile.
+
 Judge speed on the `fast` build variant, never on debug. Cards draw through
 `drawWithCache` and share one set of icon paths (`CardIcons`): keep per-frame
 work out of drawing.
 
 ## Checks
+
+The Checks workflow runs the unit tests and records every screenshot (kept as
+an artifact) on each push and pull request.
 
 `./gradlew testDebugUnitTest`, which includes `RandomPlayTest`: add a case
 there for each new game, as it catches crashes in the rules. `CardTableTest`

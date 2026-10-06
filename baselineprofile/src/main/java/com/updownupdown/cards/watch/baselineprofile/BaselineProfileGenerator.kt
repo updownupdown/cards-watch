@@ -2,6 +2,7 @@ package com.updownupdown.cards.watch.baselineprofile
 
 import androidx.benchmark.macro.junit4.BaselineProfileRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.uiautomator.By
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,9 +25,12 @@ class BaselineProfileGenerator {
         val height = device.displayHeight
         fun at(fraction: Float) = (height * fraction).toInt()
 
-        // Back to the home list (the app reopens the last game), and through it.
-        device.pressBack()
-        device.waitForIdle()
+        // Back to the home list if the app reopened the last game (not on a
+        // fresh install, such as the emulator in CI), and through it.
+        if (!device.hasObject(By.text("All Games"))) {
+            device.pressBack()
+            device.waitForIdle()
+        }
         device.swipe(x, at(0.7f), x, at(0.3f), 12)
         device.swipe(x, at(0.3f), x, at(0.7f), 12)
         device.waitForIdle()

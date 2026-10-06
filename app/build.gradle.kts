@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.wear.tooling.preview)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.wear)
+    // Opens a game's picture's page on the phone, from its credit.
+    implementation(libs.wear.remote.interactions)
     implementation(libs.profileinstaller)
     // The profile measured on a watch: ./gradlew :app:generateBaselineProfile
     baselineProfile(project(":baselineprofile"))

@@ -79,7 +79,7 @@ object Jailbreak : Game<JailbreakState> {
     override val id = "jailbreak"
     override val thumbnail = R.drawable.thumb_jailbreak
     override val banner = R.drawable.banner_jailbreak
-    override val credit = ArtCredit("Escape of the Duke of Beaufort, 1648", "Caspar Luyken", "1699", "Rijksmuseum")
+    override val credit = ArtCredit("Escape of the Duke of Beaufort, 1648", "Caspar Luyken", "1699", "Rijksmuseum", "https://www.rijksmuseum.nl/en/collection/object/Ontsnapping-van-de-hertog-van-Beaufort-1648--c1781418e042ecb22a0cb5c853c988a0")
     override val accent = R.color.game_jailbreak
     override val accentPale = R.color.game_jailbreak_pale
     override val title = "Jailbreak"
