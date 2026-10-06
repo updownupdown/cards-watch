@@ -305,6 +305,13 @@ class ScreenshotTest {
         GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, state)) {}, {})
     }
 
+    @Test
+    fun ouroborosFaceUp() = capture("ouroboros_face_up") {
+        // Every card face up, to check the top cards' ranks all show.
+        val state = Ouroboros.newGame(Random(3)).let { it.copy(deck = it.deck.map { card -> card.copy(faceUp = true) }) }
+        GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, state)) {}, {})
+    }
+
     @Test fun ouroborosPicked() = capture("ouroboros_picked", before = { compose.onRoot().performTouchInput { click(Offset(216f, 345f)) } }) {
         GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, Ouroboros.after({ Ouroboros.lookAround(it) }))) {}, {})
     }

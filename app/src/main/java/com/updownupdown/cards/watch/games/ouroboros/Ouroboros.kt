@@ -1,5 +1,8 @@
 package com.updownupdown.cards.watch.games.ouroboros
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,12 +11,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
@@ -22,10 +31,12 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.CARD_ASPECT
+import com.updownupdown.cards.watch.cards.COLLECT_GLOW_MS
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardColors
 import com.updownupdown.cards.watch.cards.CardIcons
 import com.updownupdown.cards.watch.cards.CardTable
+import com.updownupdown.cards.watch.cards.LocalUndoing
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.Suit
@@ -245,12 +256,13 @@ object Ouroboros : Game<OuroborosState> {
 
     /**
      * The space from one card of the loop to the next, × a card's width: the
-     * top two apart, so their taps don't meet; the next ten, then ten closing
-     * up to what's left for the rest, which share it. None is more than
+     * top two apart, so their taps don't meet; the next ten far enough apart
+     * that each one's rank shows, then ten closing up to what's left for the
+     * rest, which share it. None is more than
      * [MOST_STEP], so cards always overlap a little (but the top two).
      */
     private const val FIRST_STEP = 1.1f
-    private const val NEAR_STEP = 0.5f
+    private const val NEAR_STEP = 0.85f
     private const val NEAR = 10
     private const val CLOSING = 10
     private const val MOST_STEP = 0.85f
@@ -357,8 +369,8 @@ object Ouroboros : Game<OuroborosState> {
                     Alignment.CenterHorizontally
                 ),
             ) {
-                Count("Jewels", state.aces)
-                Count("Trinkets", state.trinkets)
+                Count("Jewels", state.aces, AppColors.JewelGlow)
+                Count("Trinkets", state.trinkets, AppColors.TrinketGlow)
             }
             CardTable(Modifier.size(board)) {
                 val count = state.deck.size
@@ -487,10 +499,44 @@ object Ouroboros : Game<OuroborosState> {
     /** The space between the jewels' count and the trinkets'. */
     private val COUNTS_GAP = 14.dp
 
-    /** A count's name, small and pale, over its number. */
+    /** The glow's widest ring, × the count's width. */
+    private const val GLOW_REACH = 0.9f
+
+    /**
+     * A count's name, small and pale, over its number. When the count goes up
+     * (not on an undo), a ring of [glow] grows out from behind it and fades,
+     * once.
+     */
     @Composable
-    private fun Count(name: String, value: Int) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    private fun Count(name: String, value: Int, glow: Color) {
+        val ring = remember { Animatable(1f) }
+        var last by remember { mutableIntStateOf(value) }
+        val undoing = LocalUndoing.current
+        val ambient = LocalAmbient.current
+        LaunchedEffect(value) {
+            val grew = value > last && !undoing && !ambient
+            last = value
+            if (grew) {
+                ring.snapTo(0f)
+                ring.animateTo(1f, tween(COLLECT_GLOW_MS, easing = LinearOutSlowInEasing))
+            }
+        }
+        Column(
+            Modifier.drawBehind {
+                val t = ring.value
+                if (t >= 1f) return@drawBehind
+                val reach = size.width * GLOW_REACH
+                val r = reach * (0.3f + 0.7f * t)
+                val fade = 1f - t
+                // A soft glow filling the ring, and the ring itself.
+                drawCircle(
+                    Brush.radialGradient(listOf(glow.copy(alpha = 0.45f * fade), Color.Transparent), center, r),
+                    r,
+                )
+                drawCircle(glow.copy(alpha = fade), r, style = Stroke(width = 2.dp.toPx() * (1f + t)))
+            },
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             Text(
                 name,
                 style = MaterialTheme.typography.bodyExtraSmall,
