@@ -65,7 +65,7 @@ object TripleStack : Game<TripleStackState> {
     override val id = "triple-stack"
     override val thumbnail = R.drawable.thumb_triple_stack
     override val banner = R.drawable.banner_triple_stack
-    override val credit = ArtCredit("A Country Grocer", "Hans Smidth", "1908 - 1909", "Artvee")
+    override val credit = ArtCredit("A Country Grocer", "Hans Smidth", "1908 - 1909", "Artvee", "https://artvee.com/dl/a-country-grocer/")
     override val accent = R.color.game_triple_stack
     override val accentPale = R.color.game_triple_stack_pale
     override val title = "Triple Stack"

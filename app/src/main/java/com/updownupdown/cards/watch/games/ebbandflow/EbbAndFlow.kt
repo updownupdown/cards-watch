@@ -68,7 +68,7 @@ object EbbAndFlow : Game<EbbAndFlowState> {
     override val id = "ebb-and-flow"
     override val thumbnail = R.drawable.thumb_ebb_and_flow
     override val banner = R.drawable.banner_ebb_and_flow
-    override val credit = ArtCredit("Beach at Low Tide (Mouth of the River)", "Hilaire Germain Edgar Degas", "1869", "Art Institute of Chicago")
+    override val credit = ArtCredit("Beach at Low Tide (Mouth of the River)", "Hilaire Germain Edgar Degas", "1869", "Art Institute of Chicago", "https://www.artic.edu/artworks/218848")
     override val accent = R.color.game_ebb_and_flow
     override val accentPale = R.color.game_ebb_and_flow_pale
     override val title = "Ebb & Flow"

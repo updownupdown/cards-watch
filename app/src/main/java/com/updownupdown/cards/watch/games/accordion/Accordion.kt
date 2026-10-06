@@ -62,7 +62,7 @@ object Accordion : Game<AccordionState> {
     override val id = "accordion"
     override val thumbnail = R.drawable.thumb_accordion
     override val banner = R.drawable.banner_accordion
-    override val credit = ArtCredit("Pierre Mac Orlan", "Jules Pascin", "1924", "Wikimedia Commons")
+    override val credit = ArtCredit("Pierre Mac Orlan", "Jules Pascin", "1924", "Wikimedia Commons", "https://commons.wikimedia.org/wiki/File:Pierre_Mac_Orlan_MET_DT4183.jpg")
     override val accent = R.color.game_accordion
     override val accentPale = R.color.game_accordion_pale
     override val title = "Accordion"

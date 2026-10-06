@@ -45,7 +45,7 @@ object TenTwentyThirty : Game<TenTwentyThirtyState> {
     override val id = "ten-twenty-thirty"
     override val thumbnail = R.drawable.thumb_ten_twenty_thirty
     override val banner = R.drawable.banner_ten_twenty_thirty
-    override val credit = ArtCredit("Daikoku with an Abacus", "Keisai Eisen", "1828", "Art Institute of Chicago")
+    override val credit = ArtCredit("Daikoku with an Abacus", "Keisai Eisen", "1828", "Art Institute of Chicago", "https://www.artic.edu/artworks/81282")
     override val accent = R.color.game_ten_twenty_thirty
     override val accentPale = R.color.game_ten_twenty_thirty_pale
     override val title = "Ten-Twenty-Thirty"

@@ -84,7 +84,15 @@ Stalker and Twelve Trials, which were once on the maybe list.
   (teal) and Rogue Run (crimson) changed so they stand apart from the games
   beside them on the home screen; Nestor (green) changed with its picture.
 - **Pictures and credits** follow the phone's (2026-10-06): each game's
-  credit is at the foot of its rules, under its stats.
+  picture is at the top of its rules, over its title, and its credit at the
+  foot, under its stats, with View on Phone to open the picture's page on
+  the phone. `scripts/game-art.py` cuts the pictures from the phone's.
+- **Stats by game** (2026-10-06): each line opens its game, and shows its
+  fastest win and best score ("Fastest 2:34 · Moves 41") under its bar.
+- **Home colours checked** (2026-10-06): neighbours at least ΔE 15 apart.
+  Aces Up (violet grey), Clock (slate blue), Memory (sepia), Royal Marriage
+  (gold) and Ten-Twenty-Thirty (indigo) changed for it; Ten-Twenty-Thirty and
+  Tower of Hanoi were all but the same colour.
 - **The result** is the game's message, in green or red with the buttons
   (Home is an icon), then the time against the best ("NEW BEST!" when it
   is), and the game's wins and losses. It scrolls, by touch or the crown,

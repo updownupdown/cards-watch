@@ -1,6 +1,7 @@
 package com.updownupdown.cards.watch.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +40,7 @@ import androidx.wear.compose.material3.lazy.transformedHeight
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameStats
+import com.updownupdown.cards.watch.game.formatTime
 import com.updownupdown.cards.watch.games.ALL_GAMES
 import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.nestor.Nestor
@@ -87,7 +90,8 @@ internal fun overallStats(stats: Map<String, GameStats>): OverallStats {
  * completed (won at least once) as a bar, wins, losses and the share won side
  * by side over a bar split between them, deals played and the longest
  * streak, the game played most (tapping it opens it), then each game played,
- * most played first, with its wins and losses over a bar of its share won.
+ * most played first, with its wins and losses over a bar of its share won and
+ * its fastest win and best score; tapping one opens it.
  */
 @Composable
 fun StatsScreen(stats: Map<String, GameStats>, onOpen: (Game<*>) -> Unit) {
@@ -155,7 +159,7 @@ fun StatsScreen(stats: Map<String, GameStats>, onOpen: (Game<*>) -> Unit) {
             if (byGame.isNotEmpty()) {
                 item { SectionHeading("By Game", transformed(spec).padding(top = GROUP_GAP)) }
                 items(byGame, key = { "game:${it.first.id}" }) { (game, gameStats) ->
-                    GameLine(game, gameStats, transformed(spec))
+                    GameLine(game, gameStats, { onOpen(game) }, transformed(spec))
                 }
             } else {
                 item {
@@ -247,13 +251,25 @@ private fun WinBar(won: Int, lost: Int, modifier: Modifier) {
 
 /**
  * A game played: its title in its pale colour, its wins and losses at the
- * right, over a thin bar of its share won in the same colour.
+ * right, over a thin bar of its share won in the same colour, then its
+ * fastest win and best score (fewest moves, or highest score), when it has them. Tapping it opens the game.
  */
 @Composable
-private fun GameLine(game: Game<*>, stats: GameStats, modifier: Modifier) {
+private fun GameLine(game: Game<*>, stats: GameStats, onOpen: () -> Unit, modifier: Modifier) {
     val colour = colorResource(game.accentPale)
     val small = MaterialTheme.typography.bodySmall
-    Column(modifier.fillMaxWidth().padding(vertical = 5.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    val bests = listOfNotNull(
+        stats.bestTimeMs?.let { "Fastest ${formatTime(it)}" },
+        game.scoreName?.let { name -> stats.bestScore?.let { "$name $it" } },
+    )
+    Column(
+        modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .clickable(onClickLabel = "Play ${game.title}", onClick = onOpen)
+            .padding(vertical = 5.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         Column(Modifier.fillMaxWidth(GAME_WIDTH)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
@@ -280,6 +296,16 @@ private fun GameLine(game: Game<*>, stats: GameStats, modifier: Modifier) {
                 )
             }
             Bar((stats.winPercent ?: 0) / 100f, colour, GAME_BAR, Modifier.padding(top = 3.dp))
+            if (bests.isNotEmpty()) {
+                Text(
+                    bests.joinToString(" · "),
+                    style = small.copy(fontWeight = FontWeight.Light),
+                    color = AppColors.TextMuted,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(top = 2.dp),
+                )
+            }
         }
     }
 }

@@ -94,7 +94,7 @@ object Lycan : Game<LycanState> {
     override val id = "lycan"
     override val thumbnail = R.drawable.thumb_lycan
     override val banner = R.drawable.banner_lycan
-    override val credit = ArtCredit("Lone Wolf", "Alfred Wierusz-Kowalski", null, "Wikimedia Commons")
+    override val credit = ArtCredit("Lone Wolf", "Alfred Wierusz-Kowalski", null, "Wikimedia Commons", "https://commons.wikimedia.org/wiki/File:Alfred_Wierusz-Kowalski_-_Samotny_wilk.jpg")
     override val accent = R.color.game_lycan
     override val accentPale = R.color.game_lycan_pale
     override val title = "Lycan"

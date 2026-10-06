@@ -41,7 +41,7 @@ object Elevens : Game<ElevensState> {
     override val id = "elevens"
     override val thumbnail = R.drawable.thumb_elevens
     override val banner = R.drawable.banner_elevens
-    override val credit = ArtCredit("Allegory of Arithmetic", "Laurent de La Hyre", "1650", "The Walters Art Museum")
+    override val credit = ArtCredit("Allegory of Arithmetic", "Laurent de La Hyre", "1650", "The Walters Art Museum", "https://commons.wikimedia.org/wiki/File:Laurent_de_La_Hyre_-_Allegory_of_Arithmetic_-_Walters_371917.jpg")
     override val accent = R.color.game_elevens
     override val accentPale = R.color.game_elevens_pale
     override val title = "Elevens"
