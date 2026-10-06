@@ -239,9 +239,6 @@ object Ouroboros : Game<OuroborosState> {
     private const val BOTTOM = 90f
     private const val LAST = 30f + 360f
 
-    /** No time over the loop, which runs right round the top. */
-    override val showsTime = false
-
     /** A card's width, × the screen's. */
     private const val CARD = 0.115f
 

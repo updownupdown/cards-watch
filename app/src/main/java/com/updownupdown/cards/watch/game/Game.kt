@@ -54,14 +54,11 @@ interface Game<S : Any> {
 
     /**
      * Whether the game's cards are better told apart by suit than by colour,
-     * for the home screen's Suit Colours set to Auto: true where suits matter
+     * for the Settings screen's Suit Colours set to Auto: true where suits matter
      * (Rogue Run), false where only red and black do (Jailbreak) or neither
      * does (Lycan). When in doubt, true.
      */
     val fourSuitColours: Boolean get() = true
-
-    /** Whether the time shows above the board; not where the board reaches round the top. */
-    val showsTime: Boolean get() = true
 
     /** The board's side, and how far it sits above the middle, × the screen's diameter. */
     val boardFraction: Float get() = BOARD_FRACTION

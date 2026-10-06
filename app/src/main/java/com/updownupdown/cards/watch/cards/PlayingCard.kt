@@ -45,7 +45,7 @@ object CardColors {
 
 /**
  * Whether cards show a colour for each suit (true) or only red and white:
- * the home screen's Suit Colours, and for Auto, the game's [com.updownupdown.cards.watch.game.Game.fourSuitColours].
+ * the Settings screen's Suit Colours, and for Auto, the game's [com.updownupdown.cards.watch.game.Game.fourSuitColours].
  */
 val LocalFourSuitColours = compositionLocalOf { true }
 

@@ -72,7 +72,7 @@ class SaveStore(private val context: Context, private val scope: CoroutineScope)
         prefs.edit().putBoolean(KEY_HAPTICS, on).apply()
     }
 
-    /** How cards colour their suits (the home screen's Suit Colours). */
+    /** How cards colour their suits (the Settings screen's Suit Colours). */
     var suitColours: SuitColours by mutableStateOf(
         runCatching { SuitColours.valueOf(prefs.getString(KEY_SUIT_COLOURS, null) ?: "") }.getOrDefault(SuitColours.Auto),
     )

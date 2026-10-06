@@ -93,13 +93,13 @@ keeps the undo history; `SaveStore` saves each game after every move.
   draws ("Deal (27)"), or else as text worded "Stock: 27". Piles use `pile` (the top card up and to the
   right of the shaded card below, when there is one); overlapping columns
   use `fan`.
-- Each suit has its own colour, unless the home screen's Suit Colours says
+- Each suit has its own colour, unless the Settings screen's Suit Colours says
   Two (red and white), or Auto and the game's suits don't matter
   (`Game.fourSuitColours`, read through `LocalFourSuitColours`).
 - A game that needs more room than the square board, or has nothing under
   it, can change `boardFraction` and `boardLift` (Clock, Fifteen Puzzle, Nestor,
-  Memory, Lights Out, Ten-Twenty-Thirty). A board that reaches round the top
-  hides the time (`showsTime`, Ouroboros).
+  Memory, Lights Out, Ten-Twenty-Thirty). A board that reaches up into the
+  time's room (Ouroboros) has the time drawn over it, on a fade to black.
 - A board with more cards than it has room for (Accordion) scrolls them
   inside the board with `LocalBoardScroll`, so the crown turns the cards
   before the screen. `ScrollingCards` is that grid, fades and all (Ten-Twenty-Thirty,
