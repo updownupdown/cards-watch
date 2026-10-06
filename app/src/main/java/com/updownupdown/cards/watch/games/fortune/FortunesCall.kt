@@ -36,6 +36,7 @@ import com.updownupdown.cards.watch.cards.LocalUndoing
 import com.updownupdown.cards.watch.cards.RoundScreen
 import com.updownupdown.cards.watch.cards.isRed
 import com.updownupdown.cards.watch.cards.shuffledDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Rating
@@ -81,6 +82,7 @@ object FortunesCall : Game<FortuneState> {
     override val id = "fortunes-call"
     override val thumbnail = R.drawable.thumb_fortunes_call
     override val banner = R.drawable.banner_fortunes_call
+    override val credit = ArtCredit("The Fortune-Teller", "Georges de La Tour", "probably 1630s", "The Metropolitan Museum of Art")
     override val accent = R.color.game_fortunes_call
     override val accentPale = R.color.game_fortunes_call_pale
     override val title = "Fortune's Call"

@@ -39,7 +39,9 @@ import com.updownupdown.cards.watch.ui.GameScreen
 import com.updownupdown.cards.watch.ui.HomeScreen
 import com.updownupdown.cards.watch.ui.LocalAsleep
 import com.updownupdown.cards.watch.ui.LocalHapticsOn
+import com.updownupdown.cards.watch.ui.SettingsScreen
 import com.updownupdown.cards.watch.ui.SplashScreen
+import com.updownupdown.cards.watch.ui.StatsScreen
 import com.updownupdown.cards.watch.widget.refreshSurfaces
 import kotlinx.coroutines.delay
 
@@ -188,6 +190,8 @@ private const val WAKE_GRACE_MS = 400L
 private const val OPENING_MS = 600L
 
 private const val HOME = "home"
+private const val STATS = "stats"
+private const val SETTINGS = "settings"
 private const val GAME_ROUTE = "game/{id}"
 private fun gameRoute(id: String) = "game/$id"
 
@@ -222,13 +226,22 @@ private fun App(
                 pinned = saves.pinnedGameIds,
                 onOpen = { nav.navigate(gameRoute(it.id)) },
                 onPin = saves::togglePin,
+                onStats = { nav.navigate(STATS) },
+                onSettings = { nav.navigate(SETTINGS) },
+                continueShown = saves.continueShown,
+            )
+        }
+        composable(STATS) {
+            StatsScreen(saves.allStats(), onOpen = { nav.navigate(gameRoute(it.id)) })
+        }
+        composable(SETTINGS) {
+            SettingsScreen(
                 haptics = saves.hapticsOn,
                 onHaptics = saves::setHaptics,
                 suitColours = saves.suitColours,
                 onSuitColours = saves::chooseSuitColours,
                 continueShown = saves.continueShown,
                 onContinueShown = saves::chooseContinueShown,
-                stats = saves.allStats(),
             )
         }
         composable(GAME_ROUTE) { entry ->

@@ -11,8 +11,8 @@ action buttons in the crescent below. Nothing sits beside the board. Swiping
 right goes home (the system's back gesture). A short scroll down, by touch
 or the crown, brings up Reset (an icon, tapped twice; there's no undoing a reset) and Undo
 under the board, and the game's title and rules follow, then its ratings (`Game.rating`, the phone's: each name
-beside its bar), its stats (under the chart icon) and a
-Top button, each line of text shrinking a little and fading as it passes the
+beside its bar), its stats (under the chart icon), its picture's credit
+(`Game.credit`, the phone's) and a Top button, each line of text shrinking a little and fading as it passes the
 top and foot; the view snaps to the board or to
 those buttons (`GameScreen`), so a stray drag springs back. A finished game
 shows its result over the board: the message, Home and Play Again, then the
@@ -27,8 +27,10 @@ In a game the screen stays on for 10 s after the last touch (`MainActivity`).
 
 The home screen has the last games played under "Continue Playing" (three,
 one or none: a setting), then every game, those pinned (by holding one)
-first, the settings (Haptics, Suit Colours, Continue Playing), stats
-across every game (under the chart icon), and a card fact (`ui/CardFacts.kt`) at the foot. The app starts
+first, then Stats and Settings buttons, and a card fact (`ui/CardFacts.kt`) at the foot.
+Each button opens its own screen, swiped away like a game: `StatsScreen`
+(stats across every game, and each game played) and `SettingsScreen`
+(Haptics, Suit Colours, Continue Playing). The app starts
 on the logo, then goes straight into the last game played (or home, if
 there's none). Each button is the
 game's wide picture (`banner`, cut to cover, never stretched) under 85% of the
@@ -39,6 +41,9 @@ logo or, where a face wants text, "Solitarius". Both open
 `MainActivity` with `EXTRA_GAME`.
 
 - Games draw only playing cards, plus short text. No stand-in shapes for cards.
+- Each game's picture and its credit are the phone's (`assets/thumbnails` and
+  `thumbnailCredit` in its `src/data/games/<id>.ts`): `thumb_<id>` (96 px
+  square) and `banner_<id>` (384×128) in `drawable-nodpi`, cut from it.
 - **Every card is 25:35** (`CARD_ASPECT`); cards only scale. All cards in a
   game are the same size. Lay them out with `CardLayout`. A card is its rank
   over its suit, both in the middle, in the suit's colour, drawn from the SVGs in `src/main/card-icons`; `cards/CardStyle.kt`
@@ -93,7 +98,8 @@ keeps the undo history; `SaveStore` saves each game after every move.
   (`Game.fourSuitColours`, read through `LocalFourSuitColours`).
 - A game that needs more room than the square board, or has nothing under
   it, can change `boardFraction` and `boardLift` (Clock, Fifteen Puzzle, Nestor,
-  Memory, Lights Out, Ten-Twenty-Thirty).
+  Memory, Lights Out, Ten-Twenty-Thirty). A board that reaches round the top
+  hides the time (`showsTime`, Ouroboros).
 - A board with more cards than it has room for (Accordion) scrolls them
   inside the board with `LocalBoardScroll`, so the crown turns the cards
   before the screen. `ScrollingCards` is that grid, fades and all (Ten-Twenty-Thirty,

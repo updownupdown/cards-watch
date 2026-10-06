@@ -29,7 +29,7 @@ import com.updownupdown.cards.watch.games.gameById
 import com.updownupdown.cards.watch.ui.AppColors
 
 /** Bump when the tile's pictures change (a game added, a thumbnail replaced). */
-private const val RESOURCES_VERSION = "1"
+private const val RESOURCES_VERSION = "2"
 
 /** The button to continue the last game: its height and its picture's size. */
 private const val CONTINUE_HEIGHT = 56f

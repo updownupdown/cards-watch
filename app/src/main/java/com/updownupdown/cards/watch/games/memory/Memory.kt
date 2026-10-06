@@ -10,6 +10,7 @@ import com.updownupdown.cards.watch.cards.CardOverlay
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.PAIR_SHOW_MS
 import com.updownupdown.cards.watch.cards.fullDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Rating
@@ -44,6 +45,7 @@ object Memory : Game<MemoryState> {
     override val id = "memory"
     override val thumbnail = R.drawable.thumb_memory
     override val banner = R.drawable.banner_memory
+    override val credit = ArtCredit("Remembrance of Italy", "Jean Baptiste Camille Corot", "1863", "Art Institute of Chicago")
     override val accent = R.color.game_memory
     override val accentPale = R.color.game_memory_pale
     override val title = "Memory"

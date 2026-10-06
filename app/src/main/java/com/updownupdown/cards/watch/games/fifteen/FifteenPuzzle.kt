@@ -9,6 +9,7 @@ import com.updownupdown.cards.watch.cards.CardOverlay
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Suit
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Rating
@@ -37,6 +38,7 @@ object FifteenPuzzle : Game<FifteenState> {
     override val id = "fifteen-puzzle"
     override val thumbnail = R.drawable.thumb_fifteen_puzzle
     override val banner = R.drawable.banner_fifteen_puzzle
+    override val credit = ArtCredit("Solving a Puzzle", "Okumura Masanobu", "Early to mid-18th century", "Art Institute of Chicago")
     override val accent = R.color.game_fifteen_puzzle
     override val accentPale = R.color.game_fifteen_puzzle_pale
     override val title = "Fifteen Puzzle"

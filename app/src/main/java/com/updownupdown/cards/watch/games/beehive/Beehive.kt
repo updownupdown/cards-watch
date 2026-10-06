@@ -16,6 +16,7 @@ import com.updownupdown.cards.watch.cards.CardStyle
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.RoundScreen
 import com.updownupdown.cards.watch.cards.shuffledDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Rating
@@ -51,6 +52,7 @@ object Beehive : Game<BeehiveState> {
     override val id = "beehive"
     override val thumbnail = R.drawable.thumb_beehive
     override val banner = R.drawable.banner_beehive
+    override val credit = ArtCredit("Gathering Honey, Tomb of Rekhmire", "Nina de Garis Davies", "ca. 1479–1425 BCE", "The Metropolitan Museum of Art")
     override val accent = R.color.game_beehive
     override val accentPale = R.color.game_beehive_pale
     override val title = "Beehive"

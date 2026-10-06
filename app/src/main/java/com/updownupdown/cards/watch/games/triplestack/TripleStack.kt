@@ -29,6 +29,7 @@ import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.isRed
 import com.updownupdown.cards.watch.cards.shuffledDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Rating
@@ -64,6 +65,7 @@ object TripleStack : Game<TripleStackState> {
     override val id = "triple-stack"
     override val thumbnail = R.drawable.thumb_triple_stack
     override val banner = R.drawable.banner_triple_stack
+    override val credit = ArtCredit("A Country Grocer", "Hans Smidth", "1908 - 1909", "Artvee")
     override val accent = R.color.game_triple_stack
     override val accentPale = R.color.game_triple_stack_pale
     override val title = "Triple Stack"

@@ -17,6 +17,7 @@ import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.RoundScreen
 import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.shuffledDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Rating
@@ -56,6 +57,7 @@ object LittleWindmill : Game<LittleWindmillState> {
     override val id = "little-windmill"
     override val thumbnail = R.drawable.thumb_little_windmill
     override val banner = R.drawable.banner_little_windmill
+    override val credit = ArtCredit("A Windmill on a Polder Waterway, Known as ‘In the Month of July’", "Paul Joseph Constantin Gabriël", "about 1889", "Rijksmuseum")
     override val accent = R.color.game_little_windmill
     override val accentPale = R.color.game_little_windmill_pale
     override val title = "Little Windmill"

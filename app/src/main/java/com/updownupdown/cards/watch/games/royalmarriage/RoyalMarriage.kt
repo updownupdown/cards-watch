@@ -17,6 +17,7 @@ import com.updownupdown.cards.watch.cards.ScrollingCards
 import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.cards.fullDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
@@ -51,6 +52,7 @@ object RoyalMarriage : Game<RoyalMarriageState> {
     override val id = "royal-marriage"
     override val thumbnail = R.drawable.thumb_royal_marriage
     override val banner = R.drawable.banner_royal_marriage
+    override val credit = ArtCredit("The Wedding by Proxy of Marie de' Medici to King Henry IV", "Peter Paul Rubens", "1622–25", "Wikimedia Commons")
     override val accent = R.color.game_royal_marriage
     override val accentPale = R.color.game_royal_marriage_pale
     override val title = "Royal Marriage"

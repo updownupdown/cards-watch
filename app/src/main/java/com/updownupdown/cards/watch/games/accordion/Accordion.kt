@@ -29,6 +29,7 @@ import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Removal
 import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.shuffledDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Rating
@@ -61,6 +62,7 @@ object Accordion : Game<AccordionState> {
     override val id = "accordion"
     override val thumbnail = R.drawable.thumb_accordion
     override val banner = R.drawable.banner_accordion
+    override val credit = ArtCredit("Pierre Mac Orlan", "Jules Pascin", "1924", "Wikimedia Commons")
     override val accent = R.color.game_accordion
     override val accentPale = R.color.game_accordion_pale
     override val title = "Accordion"

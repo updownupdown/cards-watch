@@ -8,6 +8,7 @@ import com.updownupdown.cards.watch.cards.CardLayout
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Suit
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Rating
@@ -39,6 +40,7 @@ object LightsOut : Game<LightsOutState> {
     override val id = "lights-out"
     override val thumbnail = R.drawable.thumb_lights_out
     override val banner = R.drawable.banner_lights_out
+    override val credit = ArtCredit("Eruption of Mt Vesuvius, Seen from the Ponte della Maddalena in Naples", "Francesco Piranesi", "c. 1783", "Rijksmuseum")
     override val accent = R.color.game_lights_out
     override val accentPale = R.color.game_lights_out_pale
     override val title = "Lights Out"

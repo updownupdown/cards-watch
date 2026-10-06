@@ -17,6 +17,7 @@ import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.ScrollingCards
 import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.shuffledDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
@@ -44,6 +45,7 @@ object TenTwentyThirty : Game<TenTwentyThirtyState> {
     override val id = "ten-twenty-thirty"
     override val thumbnail = R.drawable.thumb_ten_twenty_thirty
     override val banner = R.drawable.banner_ten_twenty_thirty
+    override val credit = ArtCredit("Daikoku with an Abacus", "Keisai Eisen", "1828", "Art Institute of Chicago")
     override val accent = R.color.game_ten_twenty_thirty
     override val accentPale = R.color.game_ten_twenty_thirty_pale
     override val title = "Ten-Twenty-Thirty"

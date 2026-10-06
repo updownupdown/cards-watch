@@ -250,6 +250,7 @@ private fun <S : Any> GameScreenContent(
                     GameLayout(
                         boardFraction = game.boardFraction,
                         boardLift = game.boardLift,
+                        showTime = game.showsTime,
                         bottom = { size -> game.Bottom(state, session::play, haptics, size) },
                     ) {
                         CompositionLocalProvider(LocalUndoing provides session.undone, LocalDeal provides session.deal, LocalBoardScroll provides boardScroll) {

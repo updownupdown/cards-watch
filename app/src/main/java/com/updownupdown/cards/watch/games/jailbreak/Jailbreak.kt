@@ -36,6 +36,7 @@ import com.updownupdown.cards.watch.cards.Selection
 import com.updownupdown.cards.watch.cards.pileEdge
 import com.updownupdown.cards.watch.cards.isRed
 import com.updownupdown.cards.watch.cards.shuffledDeck
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Rating
@@ -78,6 +79,7 @@ object Jailbreak : Game<JailbreakState> {
     override val id = "jailbreak"
     override val thumbnail = R.drawable.thumb_jailbreak
     override val banner = R.drawable.banner_jailbreak
+    override val credit = ArtCredit("Escape of the Duke of Beaufort, 1648", "Caspar Luyken", "1699", "Rijksmuseum")
     override val accent = R.color.game_jailbreak
     override val accentPale = R.color.game_jailbreak_pale
     override val title = "Jailbreak"

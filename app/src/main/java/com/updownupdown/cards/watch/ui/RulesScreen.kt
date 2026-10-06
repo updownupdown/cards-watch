@@ -46,6 +46,7 @@ import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import com.updownupdown.cards.watch.R
+import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameStats
 import com.updownupdown.cards.watch.game.formatTime
@@ -75,6 +76,8 @@ private val STATS_ICON = 34.dp
 private val STATS_LINE = 1.dp
 /** The gap between a stat's name and its number. */
 private val STATS_GAP = 12.dp
+/** The space between the artwork's title, its artist and its source. */
+private val CREDIT_GAP = 2.dp
 
 // Near the round screen's top and foot each line shrinks a little and
 // fades. Paragraphs are split into their lines first, so it happens line by
@@ -86,8 +89,9 @@ private const val EDGE_SCALE = 0.85f
 private const val EDGE_ALPHA = 0.45f
 
 /**
- * A game's title and rules (its [Game.rules]) and its [stats], under the
- * board on the game's screen, ending in a button back to the board.
+ * A game's title and rules (its [Game.rules]), its [stats] and its
+ * picture's credit, under the board on the game's screen, ending in a button
+ * back to the board.
  *
  * @param scroll the screen's scroll, and [viewport] its height in pixels, to
  *   fit each line to the round screen as it passes the top and foot.
@@ -187,6 +191,8 @@ fun GameRules(
             }
             lines.forEach { (name, value) -> Stat(name, value, small, namesWidth, numbersWidth, edge) }
 
+            Credit(game.credit, accent, width, measurer, edge)
+
             ListButton(
                 "Top",
                 Modifier.padding(top = 20.dp).then(edge).width(104.dp).height(40.dp),
@@ -224,6 +230,37 @@ private fun RatingMeter(name: String, value: Int, style: TextStyle, nameWidth: D
                 .background(AppColors.Track),
         ) {
             Box(Modifier.fillMaxWidth(value.coerceIn(0, 100) / 100f).height(RATING_BAR).clip(CircleShape).background(color))
+        }
+    }
+}
+
+/**
+ * The game's picture: what it is, in [color], then who made it and when,
+ * then where it's from, each line in the middle and each wrapped line its own,
+ * to fit the round screen as it scrolls.
+ */
+@Composable
+private fun Credit(credit: ArtCredit, color: Color, width: Int, measurer: TextMeasurer, edge: Modifier) {
+    val small = MaterialTheme.typography.bodySmall
+    val title = small.copy(fontWeight = FontWeight.Medium, color = color, textAlign = TextAlign.Center)
+    val rest = small.copy(fontWeight = FontWeight.Light, color = AppColors.TextMuted, textAlign = TextAlign.Center)
+    val parts = remember(credit, width, small) {
+        listOf(
+            credit.title to title,
+            listOfNotNull(credit.artist, credit.date).joinToString(", ") to rest,
+            credit.source to rest,
+        ).map { (text, style) -> lines(AnnotatedString(text), style, width, measurer) to style }
+    }
+    Heading("Artwork", color, edge)
+    parts.forEachIndexed { i, (wrapped, style) ->
+        wrapped.forEachIndexed { n, line ->
+            Text(
+                line,
+                style = style,
+                softWrap = false,
+                maxLines = 1,
+                modifier = Modifier.fillMaxWidth().padding(top = if (n == 0 && i > 0) CREDIT_GAP else 0.dp).then(edge),
+            )
         }
     }
 }

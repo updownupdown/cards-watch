@@ -33,6 +33,9 @@ interface Game<S : Any> {
     @get:DrawableRes
     val banner: Int
 
+    /** The picture's credit, as the phone app gives it. */
+    val credit: ArtCredit
+
     /** A dark color from that picture (in colors.xml), laid over it on the button so the title reads. */
     @get:ColorRes
     val accent: Int
@@ -56,6 +59,9 @@ interface Game<S : Any> {
      * does (Lycan). When in doubt, true.
      */
     val fourSuitColours: Boolean get() = true
+
+    /** Whether the time shows above the board; not where the board reaches round the top. */
+    val showsTime: Boolean get() = true
 
     /** The board's side, and how far it sits above the middle, × the screen's diameter. */
     val boardFraction: Float get() = BOARD_FRACTION
@@ -110,6 +116,9 @@ interface Game<S : Any> {
 
 /** Each out of 100, as the phone app rates its games. */
 data class Rating(val difficulty: Int, val complexity: Int, val luck: Int)
+
+/** A game's picture: what it is, who made it and when (when known), and where it's from. */
+data class ArtCredit(val title: String, val artist: String, val date: String?, val source: String)
 
 data class Outcome(val won: Boolean, val message: String)
 
