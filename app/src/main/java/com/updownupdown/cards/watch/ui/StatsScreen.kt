@@ -51,7 +51,7 @@ private val GAME_BAR = 3.dp
 private val GROUP_GAP = 14.dp
 
 /** A big number's size, × the theme's large title. */
-private const val NUMBER_SCALE = 1.1f
+private const val NUMBER_SCALE = 1f
 
 /** How much of the list's width the games' lines take, so their ends clear the round edge. */
 private const val GAME_WIDTH = 0.86f
@@ -112,20 +112,20 @@ fun StatsScreen(stats: Map<String, GameStats>, onOpen: (Game<*>) -> Unit) {
                             modifier = Modifier.padding(bottom = 3.dp),
                         )
                     }
-                    StatLabel("Games Completed")
+                    StatLabel("Completed")
                     Bar(overall.completed / ALL_GAMES.size.toFloat(), AppColors.PaleYellow, BAR, Modifier.padding(top = 6.dp))
                 }
             }
 
             // Won, lost and the share won, over a bar of the two.
             item {
-                Column(transformed(spec).padding(top = GROUP_GAP).fillMaxWidth(0.9f), horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(transformed(spec).padding(top = GROUP_GAP).fillMaxWidth(0.8f), horizontalAlignment = Alignment.CenterHorizontally) {
                     Row(Modifier.fillMaxWidth()) {
                         Figure("${overall.won}", "Won", AppColors.Good)
                         Figure("${overall.lost}", "Lost", AppColors.Bad)
                         Figure(overall.winPercent?.let { "$it%" } ?: "–", "Win %", Color.White)
                     }
-                    WinBar(overall.won, overall.lost, Modifier.padding(top = 6.dp).fillMaxWidth(0.8f))
+                    WinBar(overall.won, overall.lost, Modifier.padding(top = 6.dp).fillMaxWidth(0.85f))
                 }
             }
 
