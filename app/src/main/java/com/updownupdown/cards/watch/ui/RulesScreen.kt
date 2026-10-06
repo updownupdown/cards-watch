@@ -9,8 +9,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -52,7 +53,6 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.OpenOnPhoneDialog
 import androidx.wear.compose.material3.OpenOnPhoneDialogDefaults
@@ -81,17 +81,20 @@ private val PARAGRAPH_TOP = 10.dp
 private val RULES_BOTTOM = 64.dp
 /** A rating's bar's thickness, and the gap between it and the rating's name. */
 private val RATING_BAR = 4.dp
-private val RATING_GAP = 10.dp
+private val RATING_GAP = 8.dp
 /** The space over a heading. */
 private val HEADING_TOP = 24.dp
-/** The stats' icon. */
-private val STATS_ICON = 34.dp
-/** The pale line between the rules and the stats. */
-private val STATS_LINE = 1.dp
-/** The gap between a stat's name and its number. */
-private val STATS_GAP = 12.dp
-/** The game's picture over its title: its shape, corners and the space under it. */
-private const val PICTURE_ASPECT = 3f
+/** The ratings' and stats' boxes: their corners and the space inside them. */
+private val BOX_CORNER = 14.dp
+private val BOX_PADDING = 10.dp
+/** The space over the ratings' heading and under their box. */
+private val RATINGS_TOP = 36.dp
+private val RATINGS_BOTTOM = 12.dp
+/** The gap between the stats' boxes. */
+private val STATS_GAP = 6.dp
+/** A stat's number, × the theme's medium title. */
+private const val STAT_SCALE = 1.2f
+/** The game's whole picture, with its credit: its corners and the space under it. */
 private val PICTURE_CORNER = 12.dp
 private val PICTURE_GAP = 10.dp
 /** The width of the button opening the picture's page on the phone, enough for its label. */
@@ -109,9 +112,9 @@ private const val EDGE_SCALE = 0.85f
 private const val EDGE_ALPHA = 0.45f
 
 /**
- * A game's picture, title and rules (its [Game.rules]), its [stats] and its
- * picture's credit, under the board on the game's screen, ending in a button
- * back to the board.
+ * A game's title and rules (its [Game.rules]), its ratings, its [stats] and
+ * its whole picture with its credit, under the board on the game's screen,
+ * ending in a button back to the board.
  *
  * @param scroll the screen's scroll, and [viewport] its height in pixels, to
  *   fit each line to the round screen as it passes the top and foot.
@@ -146,18 +149,6 @@ fun GameRules(
             }
         }
         Column(Modifier.fillMaxWidth(RULES_WIDTH), horizontalAlignment = Alignment.CenterHorizontally) {
-            // The game's picture, wide, over its title.
-            Image(
-                painterResource(game.banner),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .padding(bottom = PICTURE_GAP)
-                    .then(edge)
-                    .fillMaxWidth()
-                    .aspectRatio(PICTURE_ASPECT)
-                    .clip(RoundedCornerShape(PICTURE_CORNER)),
-            )
             val title = MaterialTheme.typography.titleMedium
             Text(
                 text = game.title,
@@ -182,7 +173,7 @@ fun GameRules(
                 }
             }
 
-            Heading("Ratings", accent, edge)
+            Heading("Ratings", accent, edge, top = RATINGS_TOP)
             val rating = game.rating
             val ratingName = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.sp, color = AppColors.TextMuted)
             val ratings = listOf("Difficulty" to rating.difficulty, "Complexity" to rating.complexity, "Luck" to rating.luck)
@@ -190,39 +181,49 @@ fun GameRules(
             val nameWidth = with(LocalDensity.current) {
                 ratings.maxOf { measurer.measure(it.first.uppercase(), ratingName).size.width }.toDp()
             }
-            ratings.forEach { (name, value) -> RatingMeter(name, value, ratingName, nameWidth, accent, edge) }
-
-            Box(
+            Column(
                 Modifier
-                    .padding(top = 18.dp, bottom = 6.dp)
+                    .padding(top = 6.dp, bottom = RATINGS_BOTTOM)
                     .then(edge)
                     .fillMaxWidth()
-                    .height(STATS_LINE)
-                    .background(AppColors.TextMuted.copy(alpha = 0.5f)),
-            )
-            Icon(
-                painterResource(R.drawable.ic_chart),
-                contentDescription = "Stats",
-                tint = accent,
-                modifier = Modifier.padding(top = HEADING_TOP).then(edge).size(STATS_ICON),
-            )
-            val small = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Light)
-            val bold = small.copy(fontWeight = FontWeight.Bold)
-            val lines = listOfNotNull(
+                    .clip(RoundedCornerShape(BOX_CORNER))
+                    .background(AppColors.Panel)
+                    .padding(BOX_PADDING),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                ratings.forEach { (name, value) -> RatingMeter(name, value, ratingName, nameWidth, accent) }
+            }
+
+            Heading("Stats", accent, edge)
+            val figures = listOfNotNull(
                 "Won" to "${stats.won}",
                 "Lost" to "${stats.lost}",
                 "Win %" to (stats.winPercent?.let { "$it%" } ?: "–"),
-                "Longest Streak" to "${stats.bestStreak}",
+                "Best Streak" to "${stats.bestStreak}",
                 game.scoreName?.let { name -> (if (game.lowScoreWins) "Fewest $name" else "Best $name") to (stats.bestScore?.toString() ?: "–") },
-                "Fastest Time" to (stats.bestTimeMs?.let(::formatTime) ?: "–"),
+                "Fastest" to (stats.bestTimeMs?.let(::formatTime) ?: "–"),
             )
-            // Each column as wide as its widest, so no name or number is cut short.
-            val (namesWidth, numbersWidth) = with(LocalDensity.current) {
-                lines.maxOf { measurer.measure(it.first, small).size.width }.toDp() to
-                    lines.maxOf { measurer.measure(it.second, bold).size.width }.toDp()
+            // Two to a row, each its own box; an odd one out alone in the middle.
+            figures.chunked(2).forEach { row ->
+                Row(
+                    Modifier.padding(top = STATS_GAP).then(edge).fillMaxWidth().height(IntrinsicSize.Min),
+                    horizontalArrangement = Arrangement.spacedBy(STATS_GAP, Alignment.CenterHorizontally),
+                ) {
+                    row.forEach { (name, value) -> Stat(name, value, if (row.size == 1) Modifier.fillMaxWidth(0.5f) else Modifier.weight(1f)) }
+                }
             }
-            lines.forEach { (name, value) -> Stat(name, value, small, namesWidth, numbersWidth, edge) }
 
+            Heading("Artwork", accent, edge)
+            Image(
+                painterResource(game.art),
+                contentDescription = game.credit.title,
+                contentScale = ContentScale.FillWidth,
+                modifier = Modifier
+                    .padding(top = 6.dp, bottom = PICTURE_GAP)
+                    .then(edge)
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(PICTURE_CORNER)),
+            )
             Credit(game.credit, accent, width, measurer, edge)
             OpenOnPhone(game.credit.link, edge)
 
@@ -237,12 +238,12 @@ fun GameRules(
 }
 
 @Composable
-private fun Heading(text: String, color: Color, edge: Modifier) {
+private fun Heading(text: String, color: Color, edge: Modifier, top: Dp = HEADING_TOP) {
     Text(
         text = text.uppercase(),
         style = MaterialTheme.typography.titleSmall.copy(letterSpacing = HEADING_SPACING),
         color = color,
-        modifier = Modifier.fillMaxWidth().padding(top = HEADING_TOP, bottom = 2.dp).then(edge),
+        modifier = Modifier.fillMaxWidth().padding(top = top, bottom = 2.dp).then(edge),
     )
 }
 
@@ -251,8 +252,8 @@ private fun Heading(text: String, color: Color, edge: Modifier) {
  * it a thin bar filled to [value] out of 100, in [color].
  */
 @Composable
-private fun RatingMeter(name: String, value: Int, style: TextStyle, nameWidth: Dp, color: Color, edge: Modifier) {
-    Row(Modifier.fillMaxWidth().padding(top = 8.dp).then(edge), verticalAlignment = Alignment.CenterVertically) {
+private fun RatingMeter(name: String, value: Int, style: TextStyle, nameWidth: Dp, color: Color) {
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Text(name.uppercase(), style = style, maxLines = 1, softWrap = false, modifier = Modifier.width(nameWidth))
         Box(
             Modifier
@@ -268,7 +269,7 @@ private fun RatingMeter(name: String, value: Int, style: TextStyle, nameWidth: D
 }
 
 /**
- * The game's picture: what it is, in [color], then who made it and when,
+ * The game's picture's credit: what it is, in [color], then who made it and when,
  * then where it's from, each line in the middle and each wrapped line its own,
  * to fit the round screen as it scrolls.
  */
@@ -284,7 +285,6 @@ private fun Credit(credit: ArtCredit, color: Color, width: Int, measurer: TextMe
             credit.source to rest,
         ).map { (text, style) -> lines(AnnotatedString(text), style, width, measurer) to style }
     }
-    Heading("Artwork", color, edge)
     parts.forEachIndexed { i, (wrapped, style) ->
         wrapped.forEachIndexed { n, line ->
             Text(
@@ -326,16 +326,31 @@ private fun OpenOnPhone(link: String, edge: Modifier) {
     }
 }
 
-/** A stat in the middle of the screen: its name ending where its number starts. */
+/** A stat in its own box, as tall as its row: its number, large, over its name, small and muted. */
 @Composable
-private fun Stat(name: String, value: String, style: TextStyle, namesWidth: Dp, numbersWidth: Dp, edge: Modifier) {
-    Row(
-        // As wide as the two columns, even past the margins on a small screen.
-        Modifier.padding(top = PARAGRAPH_TOP).wrapContentWidth(unbounded = true).then(edge),
-        horizontalArrangement = Arrangement.spacedBy(STATS_GAP),
+private fun Stat(name: String, value: String, modifier: Modifier) {
+    val number = MaterialTheme.typography.titleMedium
+    Column(
+        modifier
+            .fillMaxHeight()
+            .clip(RoundedCornerShape(BOX_CORNER))
+            .background(AppColors.Panel)
+            .padding(horizontal = 4.dp, vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
-        Text(name, style = style, textAlign = TextAlign.End, maxLines = 1, softWrap = false, modifier = Modifier.width(namesWidth))
-        Text(value, style = style.copy(fontWeight = FontWeight.Bold), maxLines = 1, softWrap = false, modifier = Modifier.width(numbersWidth))
+        Text(
+            value,
+            style = number.copy(fontSize = number.fontSize * STAT_SCALE, fontWeight = FontWeight.Bold),
+            maxLines = 1,
+            softWrap = false,
+        )
+        Text(
+            name,
+            style = MaterialTheme.typography.labelSmall,
+            color = AppColors.TextMuted,
+            textAlign = TextAlign.Center,
+        )
     }
 }
 

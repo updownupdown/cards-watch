@@ -32,6 +32,7 @@ object AcesUp : Game<AcesUpState> {
     override val id = "aces-up"
     override val thumbnail = R.drawable.thumb_aces_up
     override val banner = R.drawable.banner_aces_up
+    override val art = R.drawable.art_aces_up
     override val credit = ArtCredit("Playing Card: Ace of Spades", "Unknown artist", null, "Art Institute of Chicago", "https://www.artic.edu/artworks/82930")
     override val accent = R.color.game_aces_up
     override val accentPale = R.color.game_aces_up_pale

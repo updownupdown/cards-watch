@@ -59,6 +59,7 @@ object TowerOfHanoi : Game<HanoiState> {
     override val id = "tower-of-hanoi"
     override val thumbnail = R.drawable.thumb_tower_of_hanoi
     override val banner = R.drawable.banner_tower_of_hanoi
+    override val art = R.drawable.art_tower_of_hanoi
     override val credit = ArtCredit("The Tower of Babel", "Pieter Bruegel the Elder", "1563", "Artvee", "https://artvee.com/dl/the-tower-of-babel-vienna/")
     override val accent = R.color.game_tower_of_hanoi
     override val accentPale = R.color.game_tower_of_hanoi_pale

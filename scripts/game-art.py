@@ -6,8 +6,9 @@ Cuts games' pictures for the watch from the phone app's, and prints their credit
 
 For each game id named (the phone's id: "little-windmill"), it reads the phone's
 picture (assets/thumbnails/<Name>.webp in the phone repo, given first) and writes
-the watch's two cuts of it to app/src/main/res/drawable-nodpi:
+it and the watch's two cuts of it to app/src/main/res/drawable-nodpi:
 
+- art_<id>.webp, the whole picture ART_WIDTH wide, under the game's rules;
 - banner_<id>.webp, 384×128 (3:1), behind the game's home button;
 - thumb_<id>.webp, 96×96, for the tile and complication.
 
@@ -31,6 +32,9 @@ from PIL import Image
 
 OUT = Path(__file__).resolve().parent.parent / "app/src/main/res/drawable-nodpi"
 
+# The whole picture's width, as wide as the rules' text on a large watch.
+ART_WIDTH = 384
+
 # Where each cut's middle sits, down the picture: (banner, thumbnail).
 CROPS = {
     "elevens": (0.3, 0.4),
@@ -51,6 +55,12 @@ def cut(image: Image.Image, aspect: float, middle: float) -> Image.Image:
     x = (w - cw) // 2
     y = min(max(round(h * middle - ch / 2), 0), h - ch)
     return image.crop((x, y, x + cw, y + ch))
+
+
+def art(image: Image.Image) -> Image.Image:
+    """The whole of [image], ART_WIDTH wide."""
+    w, h = image.size
+    return image.resize((ART_WIDTH, round(h * ART_WIDTH / w)), Image.LANCZOS)
 
 
 def kotlin(value):
@@ -84,9 +94,10 @@ def main():
         image = Image.open(phone / "assets/thumbnails" / picture_name(phone, game)).convert("RGB")
         banner, thumb = CROPS.get(game, (0.5, 0.5))
         name = game.replace("-", "_")
+        art(image).save(OUT / f"art_{name}.webp", quality=80)
         cut(image, 3, banner).resize((384, 128), Image.LANCZOS).save(OUT / f"banner_{name}.webp", quality=85)
         cut(image, 1, thumb).resize((96, 96), Image.LANCZOS).save(OUT / f"thumb_{name}.webp", quality=85)
-        print(f"{game}: banner_{name}.webp, thumb_{name}.webp")
+        print(f"{game}: art_{name}.webp, banner_{name}.webp, thumb_{name}.webp")
         print(credit(phone, game))
 
 

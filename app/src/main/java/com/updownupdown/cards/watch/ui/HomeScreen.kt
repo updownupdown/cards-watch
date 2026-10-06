@@ -3,18 +3,22 @@ package com.updownupdown.cards.watch.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -58,6 +62,7 @@ import com.updownupdown.cards.watch.games.lycan.Lycan
 import kotlin.math.max
 import kotlin.math.roundToInt
 import kotlin.random.Random
+import kotlinx.coroutines.launch
 
 /** The space under the logo, enough that the first button doesn't slide up over it. */
 private val LOGO_GAP = 28.5.dp
@@ -66,7 +71,7 @@ private val LOGO_GAP = 28.5.dp
 private val SECTION_GAP = 12.dp
 
 /** The space between the Stats and Settings buttons. */
-private val BUTTON_GAP = 4.dp
+private val BUTTON_GAP = 12.dp
 
 /** A game's title on its button, × the usual button text. */
 private const val TITLE_SCALE = 1.1f
@@ -103,8 +108,8 @@ private class CoverPainter(private val image: ImageBitmap, private val scrim: Co
 
 /**
  * The home list: the games played last under "Continue Playing", then every
- * game, those pinned first, then the Stats and Settings buttons, each to its
- * own screen, and a card fact. Holding a game in the full list pins it there,
+ * game, those pinned first, then the Stats and Settings buttons side by side,
+ * each to its own screen, a card fact and a button back to the top. Holding a game in the full list pins it there,
  * or unpins it.
  *
  * @param recent the games played, the last first.
@@ -125,6 +130,7 @@ fun HomeScreen(
     val listState = rememberTransformingLazyColumnState(initialAnchorItemIndex = startAt)
     val spec = rememberTransformationSpec()
     val buzz = rememberHaptics()
+    val scope = rememberCoroutineScope()
     val games = ALL_GAMES.sortedBy { it.title }
         .sortedBy { game -> pinned.indexOf(game.id).let { if (it < 0) Int.MAX_VALUE else it } }
     ScreenScaffold(scrollState = listState) { contentPadding ->
@@ -184,22 +190,15 @@ fun HomeScreen(
                     transformation = SurfaceTransformation(spec),
                 )
             }
-            // Stats and settings, each on its own screen.
+            // Stats and settings, each on its own screen, side by side.
             item {
-                ListButton(
-                    "Stats",
-                    transformed(spec).padding(top = SECTION_GAP).fillMaxWidth(),
-                    icon = R.drawable.ic_chart,
-                    onClick = onStats,
-                )
-            }
-            item {
-                ListButton(
-                    "Settings",
-                    transformed(spec).padding(top = BUTTON_GAP).fillMaxWidth(),
-                    icon = R.drawable.ic_settings,
-                    onClick = onSettings,
-                )
+                Row(
+                    transformed(spec).padding(top = SECTION_GAP * 2).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(BUTTON_GAP, Alignment.CenterHorizontally),
+                ) {
+                    IconListButton(R.drawable.ic_chart, "Stats", onClick = onStats)
+                    IconListButton(R.drawable.ic_settings, "Settings", onClick = onSettings)
+                }
             }
             // A card fact; tapping it brings another.
             item {
@@ -231,6 +230,17 @@ fun HomeScreen(
                         color = AppColors.TextMuted,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(top = 8.dp),
+                    )
+                }
+            }
+            // Back up to the logo.
+            item {
+                Box(transformed(spec).fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    ListButton(
+                        "Top",
+                        Modifier.width(104.dp).height(40.dp),
+                        icon = R.drawable.ic_chevron_up,
+                        onClick = { scope.launch { listState.animateScrollToItem(0) } },
                     )
                 }
             }

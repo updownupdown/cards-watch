@@ -45,6 +45,7 @@ object Memory : Game<MemoryState> {
     override val id = "memory"
     override val thumbnail = R.drawable.thumb_memory
     override val banner = R.drawable.banner_memory
+    override val art = R.drawable.art_memory
     override val credit = ArtCredit("Remembrance of Italy", "Jean Baptiste Camille Corot", "1863", "Art Institute of Chicago", "https://www.artic.edu/artworks/43126")
     override val accent = R.color.game_memory
     override val accentPale = R.color.game_memory_pale

@@ -82,6 +82,7 @@ object FortunesCall : Game<FortuneState> {
     override val id = "fortunes-call"
     override val thumbnail = R.drawable.thumb_fortunes_call
     override val banner = R.drawable.banner_fortunes_call
+    override val art = R.drawable.art_fortunes_call
     override val credit = ArtCredit("The Fortune-Teller", "Georges de La Tour", "probably 1630s", "The Metropolitan Museum of Art", "https://www.metmuseum.org/art/collection/search/436838")
     override val accent = R.color.game_fortunes_call
     override val accentPale = R.color.game_fortunes_call_pale

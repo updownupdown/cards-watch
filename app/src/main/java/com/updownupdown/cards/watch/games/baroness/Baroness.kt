@@ -36,6 +36,7 @@ object Baroness : Game<BaronessState> {
     override val id = "baroness"
     override val thumbnail = R.drawable.thumb_baroness
     override val banner = R.drawable.banner_baroness
+    override val art = R.drawable.art_baroness
     override val credit = ArtCredit("Portrait of the Baroness of Bernus", "Philipp Veit", "1838", "Wikimedia Commons", "https://commons.wikimedia.org/wiki/File:Portrait_of_the_Baroness_of_Bernus_(SM_1798).png")
     override val accent = R.color.game_baroness
     override val accentPale = R.color.game_baroness_pale

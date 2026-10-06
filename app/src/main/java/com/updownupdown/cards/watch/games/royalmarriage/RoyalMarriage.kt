@@ -52,6 +52,7 @@ object RoyalMarriage : Game<RoyalMarriageState> {
     override val id = "royal-marriage"
     override val thumbnail = R.drawable.thumb_royal_marriage
     override val banner = R.drawable.banner_royal_marriage
+    override val art = R.drawable.art_royal_marriage
     override val credit = ArtCredit("The Wedding by Proxy of Marie de' Medici to King Henry IV", "Peter Paul Rubens", "1622–25", "Wikimedia Commons", "https://commons.wikimedia.org/wiki/File:Peter_Paul_Rubens_-_The_Wedding_by_Proxy_of_Marie_de%27_Medici_to_King_Henry_IV.jpg")
     override val accent = R.color.game_royal_marriage
     override val accentPale = R.color.game_royal_marriage_pale

@@ -33,6 +33,10 @@ interface Game<S : Any> {
     @get:DrawableRes
     val banner: Int
 
+    /** The whole picture, uncut, with its credit under the game's rules. */
+    @get:DrawableRes
+    val art: Int
+
     /** The picture's credit, as the phone app gives it. */
     val credit: ArtCredit
 

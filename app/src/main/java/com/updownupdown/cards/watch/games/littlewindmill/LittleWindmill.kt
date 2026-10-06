@@ -57,6 +57,7 @@ object LittleWindmill : Game<LittleWindmillState> {
     override val id = "little-windmill"
     override val thumbnail = R.drawable.thumb_little_windmill
     override val banner = R.drawable.banner_little_windmill
+    override val art = R.drawable.art_little_windmill
     override val credit = ArtCredit("A Windmill on a Polder Waterway, Known as ‘In the Month of July’", "Paul Joseph Constantin Gabriël", "about 1889", "Rijksmuseum", "https://commons.wikimedia.org/wiki/File:Een_molen_aan_een_poldervaart,_bekend_als_%E2%80%98In_de_maand_juli%E2%80%99_Rijksmuseum_SK-A-1505.jpeg")
     override val accent = R.color.game_little_windmill
     override val accentPale = R.color.game_little_windmill_pale

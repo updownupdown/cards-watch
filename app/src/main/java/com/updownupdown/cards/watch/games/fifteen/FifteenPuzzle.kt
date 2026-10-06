@@ -38,6 +38,7 @@ object FifteenPuzzle : Game<FifteenState> {
     override val id = "fifteen-puzzle"
     override val thumbnail = R.drawable.thumb_fifteen_puzzle
     override val banner = R.drawable.banner_fifteen_puzzle
+    override val art = R.drawable.art_fifteen_puzzle
     override val credit = ArtCredit("Solving a Puzzle", "Okumura Masanobu", "Early to mid-18th century", "Art Institute of Chicago", "https://www.artic.edu/artworks/21405")
     override val accent = R.color.game_fifteen_puzzle
     override val accentPale = R.color.game_fifteen_puzzle_pale

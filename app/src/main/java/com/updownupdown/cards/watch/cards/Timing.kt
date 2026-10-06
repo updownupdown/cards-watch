@@ -15,5 +15,7 @@ const val CARD_DEAL_STAGGER_MS = 100
 const val CARD_DEAL_MAX_MS = 800
 /** How long a new deal waits, once the last deal's cards have slid away, before it's dealt. */
 const val CARD_CLEAR_PAUSE_MS = 200
+/** How long Ouroboros's ring takes to grow and fade from behind a count that goes up. */
+const val COLLECT_GLOW_MS = 900
 /** How long Memory shows a turned-up pair before turning it back or taking it away. */
 const val PAIR_SHOW_MS = 2400L

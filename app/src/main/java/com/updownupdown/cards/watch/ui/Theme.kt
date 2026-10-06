@@ -61,6 +61,13 @@ object AppColors {
     /** The thin dark edge around every card, so overlapping cards stand apart. */
     val CardEdge = Color(0xFF000000)
 
+    /** The rings that glow from Ouroboros's counts as a jewel or a trinket is collected. */
+    val JewelGlow = Color(0xFFFF4D5E)
+    val TrinketGlow = Color(0xFFFFC94A)
+
+    /** A pale grey box behind a group, such as a game's ratings and stats. */
+    val Panel = Color(0x24FFFFFF)
+
     /** The unfilled part of a progress bar. */
     val Track = Color(0xFF3A3A44)
 

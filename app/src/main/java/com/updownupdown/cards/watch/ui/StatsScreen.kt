@@ -51,7 +51,10 @@ private val BAR = 6.dp
 private val GAME_BAR = 3.dp
 
 /** The space between the stats' groups. */
-private val GROUP_GAP = 14.dp
+private val GROUP_GAP = 28.dp
+
+/** The space between the list's items, twice Wear's, so they stay apart as they scroll. */
+private val ITEM_GAP = 8.dp
 
 /** A big number's size, × the theme's large title. */
 private const val NUMBER_SCALE = 1f
@@ -90,7 +93,7 @@ internal fun overallStats(stats: Map<String, GameStats>): OverallStats {
  * completed (won at least once) as a bar, wins, losses and the share won side
  * by side over a bar split between them, deals played and the longest
  * streak, the game played most (tapping it opens it), then each game played,
- * most played first, with its wins and losses over a bar of its share won and
+ * by title, with its wins and losses over a bar of its share won and
  * its fastest win and best score; tapping one opens it.
  */
 @Composable
@@ -99,23 +102,19 @@ fun StatsScreen(stats: Map<String, GameStats>, onOpen: (Game<*>) -> Unit) {
     val spec = rememberTransformationSpec()
     val overall = overallStats(stats)
     val byGame = ALL_GAMES.mapNotNull { game -> stats[game.id]?.takeIf { it.won + it.lost > 0 }?.let { game to it } }
-        .sortedWith(compareByDescending<Pair<Game<*>, GameStats>> { it.second.won + it.second.lost }.thenBy { it.first.title })
+        .sortedBy { it.first.title }
     ScreenScaffold(scrollState = listState) { contentPadding ->
-        TransformingLazyColumn(state = listState, contentPadding = contentPadding) {
+        TransformingLazyColumn(
+            state = listState,
+            contentPadding = contentPadding,
+            verticalArrangement = Arrangement.spacedBy(ITEM_GAP, Alignment.Top),
+        ) {
             item { ScreenTitle(R.drawable.ic_chart, "Stats", transformed(spec)) }
 
             // Games completed, out of all of them.
             item {
                 Column(transformed(spec).fillMaxWidth(0.8f), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Row(verticalAlignment = Alignment.Bottom) {
-                        BigNumber("${overall.completed}", AppColors.PaleYellow)
-                        Text(
-                            " / ${ALL_GAMES.size}",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = AppColors.TextMuted,
-                            modifier = Modifier.padding(bottom = 3.dp),
-                        )
-                    }
+                    BigNumber("${overall.completed}/${ALL_GAMES.size}", AppColors.PaleYellow)
                     StatLabel("Completed")
                     Bar(overall.completed / ALL_GAMES.size.toFloat(), AppColors.PaleYellow, BAR, Modifier.padding(top = 6.dp))
                 }
@@ -157,7 +156,7 @@ fun StatsScreen(stats: Map<String, GameStats>, onOpen: (Game<*>) -> Unit) {
             }
 
             if (byGame.isNotEmpty()) {
-                item { SectionHeading("By Game", transformed(spec).padding(top = GROUP_GAP)) }
+                item { SectionHeading("All Games", transformed(spec).padding(top = GROUP_GAP)) }
                 items(byGame, key = { "game:${it.first.id}" }) { (game, gameStats) ->
                     GameLine(game, gameStats, { onOpen(game) }, transformed(spec))
                 }

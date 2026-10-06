@@ -67,6 +67,7 @@ object OzanamsSquare : Game<OzanamState> {
     override val id = "ozanams-square"
     override val thumbnail = R.drawable.thumb_ozanams_square
     override val banner = R.drawable.banner_ozanams_square
+    override val art = R.drawable.art_ozanams_square
     override val credit = ArtCredit("Melencolia I", "Albrecht Dürer", "1514", "The Metropolitan Museum of Art", "https://commons.wikimedia.org/wiki/File:Melencolia_I_MET_DP820348.jpg")
     override val accent = R.color.game_ozanams_square
     override val accentPale = R.color.game_ozanams_square_pale

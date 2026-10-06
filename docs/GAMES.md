@@ -52,7 +52,7 @@ watch and released; keep its notes as a record of the decisions behind it. Rules
 | Royal Marriage | Built | Added by the owner (2026-10-04). All 52 dealt at once in a scrolling five-wide grid (default board), the Queen and King of Hearts shaded grey. The grid's window stops 8 dp short of the board's foot, for room over the Discard button. **Discard** on the bottom button, enabled only when the picked cards can go; picked cards are green then, blue otherwise. Picks are kept in the state (not an undo step) so the button can see them. Double-tapping a lone card that can go discards it. The picture is the phone's, Rubens's *Wedding by Proxy of Marie de' Medici*. |
 | Ozanam's Square | Built | Added by the owner (2026-10-04). The 4×4 square with the tray at its right: a pile for each suit (spades, hearts, diamonds, clubs), one over the other beside the square's rows, set a little further off than the square's own gap; each pile's place shows as an empty slot once its cards are all out. The cards are smaller than Memory's, at the limit of what's usable (owner). Tap a pile to pick its top card; tapping the picked pile again brings up the next card of that suit. Tap a space to place it, a placed card then a space to move or swap it, or a placed card then any pile to send it back. Given cards lie on black (owner, 2026-10-05), clashing cards are tinted red. Plays the phone's Easy deal (seven cards given, one solution); best score is the fewest moves. |
 | Augury | Built | Added by the owner (2026-10-04). The path in a scrolling five-wide grid (Accordion's fades), centred while it's one or two rows; under it, fixed, 3.5 card gaps below the grid's window, the hand of four with a card-sized **none fit** button before it (the not-allowed mark), so there's no button in the crescent. Scrolling past the grid's foot scrolls the screen on to Reset and Undo. The run of guesses is an arc on the screen's left like Rogue Run's, with no number. Cards played glide up from the hand; a card turned away lies on black at 50%; a hand declared empty slides off to the right. Plays the phone's Easy laws. No undo: it would make the law too easy to test. |
-| Ouroboros | Built | Added by the owner (2026-10-04): "the round card layout is perfect for a watch". The loop of 53 round the whole screen (a board of 100%), the time over it as in every game, on a fade to black over the cards at the top (owner, 2026-10-06). As on the phone, the top card is at the bottom (owner, 2026-10-05): the top two either side of 6 o'clock (the top card just right of it, the next just left), tops facing in so both read upright, and the loop runs on clockwise, up the left, across the top and down the right, the last card at 4 o'clock (owner, 2026-10-06). Its one gap is at 5 o'clock, between the last card and the top one, and never at the top: as the loop shortens, it closes up behind the top card and the gap grows. The top two stand apart (1.1 cards), so their taps don't meet; the next ten are half a card apart, the ten after close up to what the rest share, and no two are more than 0.85 of a card apart, so cards always overlap a little. Cards keep their stacking as they move, and glide round the loop (`TableCard.orbit`) rather than across it. In the middle: the three marked paths in an arch under the loop, the middle one highest, each the same way in from it, a map mark on each while empty; under them "Jewels" and "Trinkets", pale and small, each over its count, side by side. Collected cards leave to the right. No buttons: tap the top card while face down to look around; tap either top card, face up, to pick it; the card a picked number lands on is purple, pulled in so it barely overlaps the loop (it may cover the paths), and tapping it explores; with a number picked, tap an empty path to mark it; tap a marked path to put its card back on top (picked). |
+| Ouroboros | Built | Added by the owner (2026-10-04): "the round card layout is perfect for a watch". The loop of 53 round the whole screen (a board of 100%), the time over it as in every game, on a fade to black over the cards at the top (owner, 2026-10-06). As on the phone, the top card is at the bottom (owner, 2026-10-05): the top two either side of 6 o'clock (the top card just right of it, the next just left), tops facing in so both read upright, and the loop runs on clockwise, up the left, across the top and down the right, the last card at 4 o'clock (owner, 2026-10-06). Its one gap is at 5 o'clock, between the last card and the top one, and never at the top: as the loop shortens, it closes up behind the top card and the gap grows. The top two stand apart (1.1 cards), so their taps don't meet; the next ten are 0.85 of a card apart, so each one's rank shows (owner, 2026-10-06: it's needed to decide), the ten after close up to what the rest share, and no two are more than 0.85 of a card apart, so cards always overlap a little. Cards keep their stacking as they move, and glide round the loop (`TableCard.orbit`) rather than across it. In the middle: the three marked paths in an arch under the loop, the middle one highest, each the same way in from it, a map mark on each while empty; under them "Jewels" and "Trinkets", pale and small, each over its count, side by side; as one goes up, a ring grows from behind it and fades, once (red for a jewel, gold for a trinket; owner, 2026-10-06). Collected cards leave to the right. No buttons: tap the top card while face down to look around; tap either top card, face up, to pick it; the card a picked number lands on is purple, pulled in so it barely overlaps the loop (it may cover the paths), and tapping it explores; with a number picked, tap an empty path to mark it; tap a marked path to put its card back on top (picked). |
 
 ## Skipped
 
@@ -72,21 +72,26 @@ Stalker and Twelve Trials, which were once on the maybe list.
   Four (`Game.fourSuitColours`).
 - **Continue Playing** shows the last 1 or 3 games, or Hide (a setting).
 - **Stats and Settings** (owner, 2026-10-06) each have their own screen,
-  from buttons under the games on the home screen, to declutter it. The
-  settings' headings have more room over them than the list's.
+  from buttons under the games on the home screen, to declutter it: icons
+  only, side by side, with twice the room over them (owner, 2026-10-06). A
+  Top button ends the home list. The settings' headings have more room over
+  them than the list's; both screens' titles have more room under them.
 - **Stats** across every game: games completed (won at least once) out of
-  all, large, over a bar; Won (green), Lost (red) and Win % side by side over
+  all ("6/24", all in yellow), large, over a bar; Won (green), Lost (red) and Win % side by side over
   a bar split between wins and losses; Played and Best Streak side by side;
-  the game played most as its home button (tapping it opens it); then each
-  game played, most first, its title in its pale colour, its wins and losses
-  and win %, over a thin bar of its win % in that colour.
+  the game played most as its home button (tapping it opens it); then under
+  All Games each game played, by title (owner, 2026-10-06), its title in its pale colour, its wins and losses
+  and win %, over a thin bar of its win % in that colour. The list's items
+  and its groups have twice Wear's room between them, so they stay apart as
+  they scroll.
 - **Game colours** (owner, 2026-10-06): Dominion (plum), Ozanam's Square
   (teal) and Rogue Run (crimson) changed so they stand apart from the games
   beside them on the home screen; Nestor (green) changed with its picture.
 - **Pictures and credits** follow the phone's (2026-10-06): each game's
-  picture is at the top of its rules, over its title, and its credit at the
-  foot, under its stats, with View on Phone to open the picture's page on
-  the phone. `scripts/game-art.py` cuts the pictures from the phone's.
+  whole picture, uncut, is at the foot of its rules under Artwork, with its
+  credit, under its stats (owner, 2026-10-06: not over the title), then View
+  on Phone to open the picture's page on the phone. `scripts/game-art.py`
+  makes the pictures from the phone's.
 - **Stats by game** (2026-10-06): each line opens its game, and shows its
   fastest win and best score ("Fastest 2:34 · Moves 41") under its bar.
 - **Home colours checked** (2026-10-06): neighbours at least ΔE 15 apart.
@@ -99,8 +104,10 @@ Stalker and Twelve Trials, which were once on the maybe list.
   when there's more than fits.
 - **Ratings** (difficulty, complexity, luck) are the phone's: each name in
   small capitals beside its bar, with no number, the bars all one width and
-  lined up. Headings in the rules have twice the room over them they had;
-  the stats under the rules sit under the chart icon, in the game's colour.
+  lined up, in a pale grey box with more room over and under it (owner,
+  2026-10-06). Headings in the rules have twice the room over them they had.
+  The stats under the rules have a Stats heading, each stat its own box, two
+  to a row: its number over its name.
 - **Opening** (owner, 2026-10-05): the logo (the spade over "Solitarius")
   shows first, then the last game played, or home if there's none.
 - **Asleep**, a game's board shows only while it's in view; on the home

@@ -40,6 +40,7 @@ object LightsOut : Game<LightsOutState> {
     override val id = "lights-out"
     override val thumbnail = R.drawable.thumb_lights_out
     override val banner = R.drawable.banner_lights_out
+    override val art = R.drawable.art_lights_out
     override val credit = ArtCredit("Eruption of Mt Vesuvius, Seen from the Ponte della Maddalena in Naples", "Francesco Piranesi", "c. 1783", "Rijksmuseum", "https://www.rijksmuseum.nl/en/collection/object/Eruption-of-Mt-Vesuvius-Seen-from-the-Ponte-della-Maddalena-in-Naples--e30197f5500c476812d6b072e2b4186d")
     override val accent = R.color.game_lights_out
     override val accentPale = R.color.game_lights_out_pale

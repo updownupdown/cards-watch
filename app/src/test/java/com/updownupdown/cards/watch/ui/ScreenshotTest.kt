@@ -183,7 +183,7 @@ class ScreenshotTest {
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
     fun homeFoot() = capture("home_foot") {
-        HomeScreen(recent = listOf(FifteenPuzzle, Nestor), pinned = emptyList(), onOpen = {}, onPin = {}, continueShown = 1, startAt = 30)
+        HomeScreen(recent = listOf(FifteenPuzzle, Nestor), pinned = emptyList(), onOpen = {}, onPin = {}, continueShown = 1, startAt = 29)
     }
 
     @Test
@@ -261,7 +261,10 @@ class ScreenshotTest {
     }
 
     @Test
-    fun ratings() = capture("ratings", before = { compose.onRoot().performTouchInput { swipe(center, center + Offset(0f, 330f), durationMillis = 3000) }; compose.onRoot().performTouchInput { swipe(center, center + Offset(0f, 330f), durationMillis = 3000) } }) {
+    fun ratings() = capture("ratings", before = {
+        // Up from the foot, past the artwork.
+        repeat(5) { compose.onRoot().performTouchInput { swipe(center, center + Offset(0f, 330f), durationMillis = 3000) } }
+    }) {
         val session = GameSession(FifteenPuzzle, SavedGame(1, FifteenPuzzle.newGame(Random(3)))) {}
         GameScreen(session, {}, ScrollState(100_000), GameStats(won = 5, lost = 3))
     }
@@ -299,6 +302,13 @@ class ScreenshotTest {
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
     fun ouroborosLarge() = capture("ouroboros_large") {
         val state = Ouroboros.after({ Ouroboros.lookAround(it) }, { s -> Ouroboros.tops(s).firstOrNull { Ouroboros.usable(s, it) }?.let { Ouroboros.mark(s, it, 1) } })
+        GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, state)) {}, {})
+    }
+
+    @Test
+    fun ouroborosFaceUp() = capture("ouroboros_face_up") {
+        // Every card face up, to check the top cards' ranks all show.
+        val state = Ouroboros.newGame(Random(3)).let { it.copy(deck = it.deck.map { card -> card.copy(faceUp = true) }) }
         GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, state)) {}, {})
     }
 

@@ -66,6 +66,7 @@ object Clock : Game<ClockState> {
     override val id = "clock"
     override val thumbnail = R.drawable.thumb_clock
     override val banner = R.drawable.banner_clock
+    override val art = R.drawable.art_clock
     override val credit = ArtCredit("Boy Holding Hourglass and Chinese Fan", "Unknown artist", "1780s", "Art Institute of Chicago", "https://www.artic.edu/artworks/47757")
     override val accent = R.color.game_clock
     override val accentPale = R.color.game_clock_pale

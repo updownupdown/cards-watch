@@ -52,6 +52,7 @@ object Beehive : Game<BeehiveState> {
     override val id = "beehive"
     override val thumbnail = R.drawable.thumb_beehive
     override val banner = R.drawable.banner_beehive
+    override val art = R.drawable.art_beehive
     override val credit = ArtCredit("Gathering Honey, Tomb of Rekhmire", "Nina de Garis Davies", "ca. 1479–1425 BCE", "The Metropolitan Museum of Art", "https://www.metmuseum.org/art/collection/search/544626")
     override val accent = R.color.game_beehive
     override val accentPale = R.color.game_beehive_pale
