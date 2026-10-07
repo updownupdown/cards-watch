@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
@@ -11,11 +13,33 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.updownupdown.cards.watch"
+        // The phone app's package: both are one Play listing, the watch on
+        // its Wear OS track.
+        applicationId = "com.updownupdown.cards"
         minSdk = 30
         targetSdk = 36
-        versionCode = 1
+        // Bump for every upload. The version code follows it, in a range of
+        // its own (36MMmmpp, after targetSdk), as it must never repeat one of
+        // the phone's, whose codes EAS counts up from 1.
         versionName = "0.1.0"
+        val (major, minor, patch) = versionName!!.split(".").map(String::toInt)
+        versionCode = targetSdk!! * 10_000_000 + major * 10_000 + minor * 100 + patch
+    }
+
+    // The phone's upload key (from `eas credentials` in the phone app), kept
+    // out of the repo in keystore.properties: storeFile, storePassword,
+    // keyAlias, keyPassword. Without it the release build is left unsigned.
+    val upload = rootProject.file("keystore.properties").takeIf { it.exists() }
+        ?.let { file -> Properties().apply { file.inputStream().use(::load) } }
+    signingConfigs {
+        if (upload != null) {
+            create("upload") {
+                storeFile = rootProject.file(upload.getProperty("storeFile"))
+                storePassword = upload.getProperty("storePassword")
+                keyAlias = upload.getProperty("keyAlias")
+                keyPassword = upload.getProperty("keyPassword")
+            }
+        }
     }
 
     buildTypes {
@@ -23,6 +47,7 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
+            signingConfig = signingConfigs.findByName("upload")
         }
         // Release speed for testing on the watch: shrunk and optimised, not
         // debuggable, signed with the debug key. Debug builds of Compose run

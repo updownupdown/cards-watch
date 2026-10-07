@@ -187,3 +187,13 @@ there for each new game, as it catches crashes in the rules. `CardTableTest`
 steps the clock to check how cards move; `GameScrollTest` checks the snap. To see screens without a watch,
 `./gradlew recordRoborazziDebug` renders them (small and large round) to
 `app/build/outputs/roborazzi`; add a case to `ScreenshotTest` for new screens.
+
+## Release
+
+The watch shares the phone app's Play listing: the same package
+(`com.updownupdown.cards`, though the code stays in `com.updownupdown.cards.watch`)
+and the same upload key, uploaded to the listing's Wear OS track. Bump
+`versionName` for every upload; `versionCode` follows it in a range of its own
+(`36MMmmpp`), so it never repeats one of the phone's (EAS counts those up from
+1). The release build signs with the key in `keystore.properties`, kept out of
+the repo (see README).
