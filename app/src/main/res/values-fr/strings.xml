@@ -7,6 +7,7 @@
     <string name="settings">Réglages</string>
     <string name="continue_playing">Continuer</string>
     <string name="all_games">Tous les jeux</string>
+    <string name="stats_by_game" formatted="false">Jeux (V/D/%)</string>
     <string name="stat_won">Gagnées</string>
     <string name="stat_lost">Perdues</string>
     <string name="stat_win_percent" formatted="false">% victoires</string>

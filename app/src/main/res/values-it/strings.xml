@@ -7,6 +7,7 @@
     <string name="settings">Impostazioni</string>
     <string name="continue_playing">Continua a giocare</string>
     <string name="all_games">Tutti i giochi</string>
+    <string name="stats_by_game" formatted="false">Giochi (V/S/%)</string>
     <string name="stat_won">Vittorie</string>
     <string name="stat_lost">Sconfitte</string>
     <string name="stat_win_percent" formatted="false">% vittorie</string>

@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeUp
 import androidx.compose.ui.test.swipe
 import androidx.wear.compose.material3.AppScaffold
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
@@ -119,6 +120,11 @@ class LocaleScreenshotTest(private val language: AppLanguage) {
     @Test fun settingsLanguage() = capture("settings_language") { SettingsScreen(haptics = true, onHaptics = {}, language = language, startAt = 19) }
 
     @Test fun stats() = capture("stats") { StatsScreen(someStats, onOpen = {}) }
+
+    // Down to each game's line, under its heading.
+    @Test fun statsScrolled() = capture("stats_scrolled", before = { compose.onRoot().performTouchInput { swipeUp() } }) {
+        StatsScreen(someStats, onOpen = {})
+    }
 
     @Test fun statsEmpty() = capture("stats_empty") { StatsScreen(emptyMap(), onOpen = {}) }
 

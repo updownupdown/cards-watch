@@ -7,6 +7,7 @@
     <string name="settings">Pengaturan</string>
     <string name="continue_playing">Lanjutkan</string>
     <string name="all_games">Semua permainan</string>
+    <string name="stats_by_game" formatted="false">Permainan (M/K/%)</string>
     <string name="stat_won">Menang</string>
     <string name="stat_lost">Kalah</string>
     <string name="stat_win_percent" formatted="false">% Menang</string>

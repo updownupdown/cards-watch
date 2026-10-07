@@ -159,7 +159,7 @@ fun StatsScreen(stats: Map<String, GameStats>, onOpen: (Game<*>) -> Unit) {
             }
 
             if (byGame.isNotEmpty()) {
-                item { SectionHeading(stringResource(R.string.all_games), transformed(spec).padding(top = GROUP_GAP)) }
+                item { SectionHeading(stringResource(R.string.stats_by_game), transformed(spec).padding(top = GROUP_GAP)) }
                 items(byGame, key = { "game:${it.first.id}" }) { (game, gameStats) ->
                     GameLine(game, gameStats, { onOpen(game) }, transformed(spec))
                 }
