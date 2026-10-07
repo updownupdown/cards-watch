@@ -186,7 +186,7 @@ an artifact) on each push and pull request.
 there for each new game, as it catches crashes in the rules. `CardTableTest`
 steps the clock to check how cards move; `GameScrollTest` checks the snap. To see screens without a watch,
 `./gradlew recordRoborazziDebug` renders them (small and large round) to
-`app/build/outputs/roborazzi`; add a case to `ScreenshotTest` for new screens.
+`app/build/outputs/roborazzi`; add a case to `ScreenshotTest` for new screens. `StoreScreenshotTest` renders the Play listing's Wear screenshots, in every language, to `app/build/outputs/store`.
 
 ## Release
 
