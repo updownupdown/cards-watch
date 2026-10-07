@@ -40,6 +40,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextMeasurer
@@ -64,6 +66,7 @@ import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameStats
 import com.updownupdown.cards.watch.game.formatTime
+import com.updownupdown.cards.watch.game.upper
 import kotlin.math.abs
 
 /** The title's and the rules text's sizes, × the theme's title and body text. */
@@ -143,20 +146,21 @@ fun GameRules(
         val accent = colorResource(game.accentPale)
         val measurer = rememberTextMeasurer()
         // Each paragraph as the lines it wraps to at this width.
-        val paragraphs = remember(game, width, text) {
-            game.rules.map { line ->
+        val rules = stringArrayResource(game.rules)
+        val paragraphs = remember(rules, width, text) {
+            rules.map { line ->
                 if (line.startsWith("## ")) null else lines(rich(line.removePrefix("- ")), text, width, measurer)
             }
         }
         Column(Modifier.fillMaxWidth(RULES_WIDTH), horizontalAlignment = Alignment.CenterHorizontally) {
             val title = MaterialTheme.typography.titleMedium
             Text(
-                text = game.title,
+                text = stringResource(game.title),
                 style = title.copy(fontSize = title.fontSize * TITLE_SCALE, lineHeight = title.lineHeight * TITLE_SCALE),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth().then(edge),
             )
-            game.rules.forEachIndexed { i, line ->
+            rules.forEachIndexed { i, line ->
                 val wrapped = paragraphs[i]
                 if (wrapped == null) {
                     Heading(line.removePrefix("## "), accent, edge)
@@ -173,13 +177,17 @@ fun GameRules(
                 }
             }
 
-            Heading("Ratings", accent, edge, top = RATINGS_TOP)
+            Heading(stringResource(R.string.ratings), accent, edge, top = RATINGS_TOP)
             val rating = game.rating
             val ratingName = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.sp, color = AppColors.TextMuted)
-            val ratings = listOf("Difficulty" to rating.difficulty, "Complexity" to rating.complexity, "Luck" to rating.luck)
+            val ratings = listOf(
+                stringResource(R.string.rating_difficulty) to rating.difficulty,
+                stringResource(R.string.rating_complexity) to rating.complexity,
+                stringResource(R.string.rating_luck) to rating.luck,
+            )
             // The names share the widest one's width, so the bars all start and end together.
             val nameWidth = with(LocalDensity.current) {
-                ratings.maxOf { measurer.measure(it.first.uppercase(), ratingName).size.width }.toDp()
+                ratings.maxOf { measurer.measure(it.first.upper(), ratingName).size.width }.toDp()
             }
             Column(
                 Modifier
@@ -194,14 +202,17 @@ fun GameRules(
                 ratings.forEach { (name, value) -> RatingMeter(name, value, ratingName, nameWidth, accent) }
             }
 
-            Heading("Stats", accent, edge)
+            Heading(stringResource(R.string.stats), accent, edge)
             val figures = listOfNotNull(
-                "Won" to "${stats.won}",
-                "Lost" to "${stats.lost}",
-                "Win %" to (stats.winPercent?.let { "$it%" } ?: "–"),
-                "Best Streak" to "${stats.bestStreak}",
-                game.scoreName?.let { name -> (if (game.lowScoreWins) "Fewest $name" else "Best $name") to (stats.bestScore?.toString() ?: "–") },
-                "Fastest" to (stats.bestTimeMs?.let(::formatTime) ?: "–"),
+                stringResource(R.string.stat_won) to "${stats.won}",
+                stringResource(R.string.stat_lost) to "${stats.lost}",
+                stringResource(R.string.stat_win_percent) to (stats.winPercent?.let { stringResource(R.string.percent, it) } ?: "–"),
+                stringResource(R.string.stat_best_streak) to "${stats.bestStreak}",
+                game.scoreName?.let { name ->
+                    stringResource(if (game.lowScoreWins) R.string.stat_fewest_score else R.string.stat_best_score, stringResource(name)) to
+                        (stats.bestScore?.toString() ?: "–")
+                },
+                stringResource(R.string.stat_fastest) to (stats.bestTimeMs?.let(::formatTime) ?: "–"),
             )
             // Two to a row, each its own box; an odd one out alone in the middle.
             figures.chunked(2).forEach { row ->
@@ -213,7 +224,7 @@ fun GameRules(
                 }
             }
 
-            Heading("Artwork", accent, edge)
+            Heading(stringResource(R.string.artwork), accent, edge)
             Image(
                 painterResource(game.art),
                 contentDescription = game.credit.title,
@@ -228,7 +239,7 @@ fun GameRules(
             OpenOnPhone(game.credit.link, edge)
 
             ListButton(
-                "Top",
+                stringResource(R.string.top),
                 Modifier.padding(top = 20.dp).then(edge).width(104.dp).height(40.dp),
                 icon = R.drawable.ic_chevron_up,
                 onClick = onTop,
@@ -307,7 +318,7 @@ private fun OpenOnPhone(link: String, edge: Modifier) {
     val context = LocalContext.current
     var opened by remember { mutableStateOf(false) }
     ListButton(
-        "View on Phone",
+        stringResource(R.string.view_on_phone),
         Modifier.padding(top = 12.dp).wrapContentWidth(unbounded = true).then(edge).width(PHONE_BUTTON_WIDTH).height(36.dp),
         icon = R.drawable.ic_phone,
     ) {

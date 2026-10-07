@@ -18,6 +18,7 @@ import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.WearGamePreview
 import kotlin.random.Random
@@ -45,18 +46,12 @@ object Elevens : Game<ElevensState> {
     override val credit = ArtCredit("Allegory of Arithmetic", "Laurent de La Hyre", "1650", "The Walters Art Museum", "https://commons.wikimedia.org/wiki/File:Laurent_de_La_Hyre_-_Allegory_of_Arithmetic_-_Walters_371917.jpg")
     override val accent = R.color.game_elevens
     override val accentPale = R.color.game_elevens_pale
-    override val title = "Elevens"
+    override val title = R.string.elevens_title
     override val rating = Rating(difficulty = 55, complexity = 10, luck = 80)
     override val fourSuitColours = false
     override val stateSerializer: KSerializer<ElevensState> = ElevensState.serializer()
 
-    override val rules = listOf(
-        "## Objective",
-        "Win by clearing the whole deck, in pairs that total **11**, or in royal **Jack-Queen-King** triplets.",
-        "## Gameplay",
-        "Tap two cards that total 11: **A and 10, 2 and 9, 3 and 8, 4 and 7, 5 and 6**.",
-        "For face cards, tap one Jack, one Queen and one King, which will be removed together.",
-    )
+    override val rules = R.array.elevens_rules
 
     private fun isRoyal(card: Card) = card.rank in ROYALS
 
@@ -121,12 +116,12 @@ object Elevens : Game<ElevensState> {
     }
 
     override fun outcome(state: ElevensState) = when {
-        cleared(state) -> Outcome(true, "The whole deck cleared!")
-        sets(state.grid).isEmpty() -> Outcome(false, "No pair or royal triplet left")
+        cleared(state) -> Outcome(true, text(R.string.elevens_won))
+        sets(state.grid).isEmpty() -> Outcome(false, text(R.string.elevens_lost))
         else -> null
     }
 
-    override fun status(state: ElevensState) = "Stock: ${state.stock.size}"
+    override fun status(state: ElevensState) = text(R.string.stock_count, state.stock.size)
 
     @Composable
     override fun Board(state: ElevensState, play: (ElevensState) -> Unit, feedback: Feedback, modifier: Modifier) {

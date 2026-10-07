@@ -17,8 +17,9 @@ import com.updownupdown.cards.watch.cards.fullDeck
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.WearGamePreview
 import kotlin.random.Random
@@ -47,7 +48,7 @@ object Dominion : Game<DominionState> {
     override val credit = ArtCredit("Procession of a Daimyo", "Hishikawa Moronobu", "ca. 1681–84", "Art Institute of Chicago", "https://www.artic.edu/artworks/30113")
     override val accent = R.color.game_dominion
     override val accentPale = R.color.game_dominion_pale
-    override val title = "Dominion"
+    override val title = R.string.dominion_title
     override val rating = Rating(difficulty = 65, complexity = 35, luck = 35)
     override val stateSerializer: KSerializer<DominionState> = DominionState.serializer()
     override val saveVersion = 2
@@ -57,15 +58,7 @@ object Dominion : Game<DominionState> {
     override val boardFraction = 0.76f
     override val boardLift = 0f
 
-    override val rules = listOf(
-        "## Objective",
-        "**Win** by reducing all fifteen cards to a single card on the board.",
-        "**Lose** when no conquest is possible, or when one of the cards on the board has no possible match left.",
-        "## Gameplay",
-        "Tap a card, then tap a card of the **same rank or suit** next to it (diagonals count) to conquer it.",
-        "A card may also conquer a card further along the same row or column when every space between them is empty.",
-        "Each deal uses three of the four suits, and every card has at least one match to begin with.",
-    )
+    override val rules = R.array.dominion_rules
 
     /**
      * Fifteen cards from three suits (one, at random, is left out). A deal
@@ -129,9 +122,9 @@ object Dominion : Game<DominionState> {
         (0 until CELLS).any { from -> (0 until CELLS).any { to -> canConquer(state, from, to) } }
 
     override fun outcome(state: DominionState): Outcome? = when {
-        state.board.count { it.isNotEmpty() } == 1 -> Outcome(true, "One card rules them all!")
-        isolated(state.board) -> Outcome(false, "A card can't be conquered")
-        !hasConquest(state) -> Outcome(false, "No conquests left")
+        state.board.count { it.isNotEmpty() } == 1 -> Outcome(true, text(R.string.dominion_won))
+        isolated(state.board) -> Outcome(false, text(R.string.dominion_isolated))
+        !hasConquest(state) -> Outcome(false, text(R.string.dominion_stuck))
         else -> null
     }
 

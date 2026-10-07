@@ -20,9 +20,10 @@ import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.WearGamePreview
@@ -61,22 +62,11 @@ object LittleWindmill : Game<LittleWindmillState> {
     override val credit = ArtCredit("A Windmill on a Polder Waterway, Known as ‘In the Month of July’", "Paul Joseph Constantin Gabriël", "about 1889", "Rijksmuseum", "https://commons.wikimedia.org/wiki/File:Een_molen_aan_een_poldervaart,_bekend_als_%E2%80%98In_de_maand_juli%E2%80%99_Rijksmuseum_SK-A-1505.jpeg")
     override val accent = R.color.game_little_windmill
     override val accentPale = R.color.game_little_windmill_pale
-    override val title = "Little Windmill"
+    override val title = R.string.little_windmill_title
     override val rating = Rating(difficulty = 65, complexity = 25, luck = 55)
     override val stateSerializer: KSerializer<LittleWindmillState> = LittleWindmillState.serializer()
 
-    override val rules = listOf(
-        "## Objective",
-        "Move all 52 cards to the four corner foundations.",
-        "## Foundations",
-        "An **Ace** is taken from the deck to start the first corner. The other three Aces start the other corners as they come up.",
-        "Build each foundation **up by suit**, from Ace to King.",
-        "## The Cross",
-        "Five cards are dealt to the cross. Build its piles **down, regardless of suit**. Nothing goes on an Ace.",
-        "Any available card may fill an empty space in the cross.",
-        "## Draw and Waste",
-        "Tap **Draw** to turn the stock one card at a time onto the **waste**, at the left. There is no redeal.",
-    )
+    override val rules = R.array.little_windmill_rules
 
     override fun newGame(random: Random): LittleWindmillState {
         val shuffled = shuffledDeck(random)
@@ -148,13 +138,13 @@ object LittleWindmill : Game<LittleWindmillState> {
         }
 
     override fun outcome(state: LittleWindmillState) = when {
-        state.foundations.all { it.size == RANKS } -> Outcome(true, "Every suit is home!")
-        !hasMove(state) -> Outcome(false, "No moves remain")
+        state.foundations.all { it.size == RANKS } -> Outcome(true, text(R.string.little_windmill_won))
+        !hasMove(state) -> Outcome(false, text(R.string.outcome_no_moves_remain))
         else -> null
     }
 
     override fun actions(state: LittleWindmillState) = listOf(
-        GameAction<LittleWindmillState>("Draw (${state.stock.size})", enabled = state.stock.isNotEmpty()) { draw(it) ?: it },
+        GameAction<LittleWindmillState>(text(R.string.action_draw, state.stock.size), enabled = state.stock.isNotEmpty()) { draw(it) ?: it },
     )
 
     private const val SIDE = 3

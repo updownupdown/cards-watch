@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
@@ -50,6 +51,7 @@ import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.BottomActions
@@ -59,9 +61,9 @@ import com.updownupdown.cards.watch.ui.LocalAmbient
 import com.updownupdown.cards.watch.ui.LocalBoardSize
 import com.updownupdown.cards.watch.ui.SideGauge
 import com.updownupdown.cards.watch.ui.WearGamePreview
+import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /**
  * Scoundrel, as the phone's Rogue Run plays it.
@@ -97,25 +99,11 @@ object RogueRun : Game<RogueState> {
     override val credit = ArtCredit("The Round Tower, from \"Carceri d'invenzione\" (Imaginary Prisons)", "Giovanni Battista Piranesi", "ca. 1749–50", "The Metropolitan Museum of Art", "https://www.metmuseum.org/art/collection/search/337725")
     override val accent = R.color.game_rogue_run
     override val accentPale = R.color.game_rogue_run_pale
-    override val title = "Rogue Run"
+    override val title = R.string.rogue_run_title
     override val rating = Rating(difficulty = 70, complexity = 55, luck = 45)
     override val stateSerializer: KSerializer<RogueState> = RogueState.serializer()
 
-    override val rules = listOf(
-        "## Objective",
-        "Get through every room before your health runs out.",
-        "## Cards Types",
-        "- **Black cards are monsters.** Fighting one costs health equal to its value (J: 11, Q: 12, K: 13, A: 14).",
-        "- **Diamonds are weapons.** A weapon takes its value off each monster's damage. After it kills a monster it can only fight monsters of **equal or lower** value than the last one it killed.",
-        "- **Hearts are potions** and heal you by their value, up to 20.",
-        "## Rooms",
-        "- Tap a room card, and confirm/choose its action. You can double tap to act on non-monster cards.",
-        "- With a monster picked, **Fist** fights that monster barehanded, while **Wpn** uses the equipped weapon for lower damage, if available.",
-        "- Resolve any three cards of a room to move on; the fourth stays for the next room.",
-        "- With no card picked, **Run** allows you to puts the whole room at the bottom of the dungeon. You can't run from two rooms in a row.",
-        "## Scoring",
-        "Your score is equal to your health left, plus a bonus when you finish with an unused potion while at full health.",
-    )
+    override val rules = R.array.rogue_run_rules
 
     fun value(card: Card) = if (card.rank == Rank.Ace) 14 else card.rank.value
 
@@ -288,15 +276,15 @@ object RogueRun : Game<RogueState> {
         previous.copy(selected = null) != next.copy(selected = null)
 
     // ---- End ----
-    override val scoreName = "Score"
+    override val scoreName = R.string.score_score
 
     /** The health left, plus the last potion's value when it was drunk at full health. */
     override fun score(state: RogueState) =
         state.health + if (state.health == MAX_HEALTH) state.lastWasPotion ?: 0 else 0
 
     override fun outcome(state: RogueState): Outcome? = when {
-        state.health <= 0 -> Outcome(false, "Slain in room ${state.roomNumber}")
-        state.deck.isEmpty() && state.room.all { it == null } -> Outcome(true, "Escaped!")
+        state.health <= 0 -> Outcome(false, text(R.string.rogue_run_lost, state.roomNumber))
+        state.deck.isEmpty() && state.room.all { it == null } -> Outcome(true, text(R.string.rogue_run_won))
         else -> null
     }
 
@@ -305,19 +293,19 @@ object RogueRun : Game<RogueState> {
         val card = index?.let { state.room[it] }
             ?: return listOf(
                 GameAction(
-                    "Run",
+                    text(R.string.rogue_run_run),
                     enabled = canRun(state),
                     color = AppColors.ButtonOrange
                 ) { run(it) ?: it })
         return when (kind(card)) {
             Kind.Potion -> listOf(
                 GameAction(
-                    "Heal +${minOf(value(card), MAX_HEALTH - state.health)}",
+                    text(R.string.rogue_run_heal, minOf(value(card), MAX_HEALTH - state.health)),
                     color = AppColors.ButtonGreen
                 ) { drink(it, index) ?: it },
             )
 
-            Kind.Weapon -> listOf(GameAction("Equip", color = AppColors.ButtonBlue) {
+            Kind.Weapon -> listOf(GameAction(text(R.string.rogue_run_equip), color = AppColors.ButtonBlue) {
                 equip(
                     it,
                     index
@@ -326,7 +314,7 @@ object RogueRun : Game<RogueState> {
             // The weapon, when it can be used, has its own button on the board.
             Kind.Monster -> listOf(
                 GameAction(
-                    "Fist −${value(card)}",
+                    text(R.string.rogue_run_fist, value(card)),
                     color = AppColors.ButtonRed
                 ) { fight(it, index, false) ?: it })
         }
@@ -453,10 +441,12 @@ object RogueRun : Game<RogueState> {
 
         // The weapon button's longest label, in the buttons' text.
         val buttonStyle = MaterialTheme.typography.labelMedium
-        val buttonLabelWidth = remember(buttonStyle, density) {
+        // Two digits of damage, as wide as they come.
+        val longestLabel = stringResource(R.string.rogue_run_weapon, 0).replace("0", "00")
+        val buttonLabelWidth = remember(buttonStyle, density, longestLabel) {
             with(density) {
                 measurer.measure(
-                    "Wpn −00",
+                    longestLabel,
                     buttonStyle,
                     maxLines = 1
                 ).size.width.toDp()
@@ -516,7 +506,7 @@ object RogueRun : Game<RogueState> {
                     // Health matters most, so it's larger, in what the others leave (smaller only if it must be).
                     val health = MaterialTheme.typography.labelLarge
                     BasicText(
-                        text = "HP: ${state.health}",
+                        text = stringResource(R.string.rogue_run_health, state.health),
                         style = health.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                         maxLines = 1,
                         autoSize = TextAutoSize.StepBased(
@@ -525,8 +515,8 @@ object RogueRun : Game<RogueState> {
                         ),
                         modifier = Modifier.weight(1f),
                     )
-                    SmallStat("Rm: ${state.roomNumber + state.roomsSkipped}")
-                    SmallStat("Dk: ${state.deck.size}")
+                    SmallStat(stringResource(R.string.rogue_run_room, state.roomNumber + state.roomsSkipped))
+                    SmallStat(stringResource(R.string.rogue_run_deck, state.deck.size))
                 }
 
                 // Sword icon in middle of weapon pile (under cards)
@@ -572,7 +562,7 @@ object RogueRun : Game<RogueState> {
                         contentAlignment = Alignment.CenterStart
                     ) {
                         GameButton(
-                            label = "Wpn −${maxOf(0, value(monster) - value(state.weapon))}",
+                            label = stringResource(R.string.rogue_run_weapon, maxOf(0, value(monster) - value(state.weapon))),
                             onClick = { feedback.tryMove(fight(state, picked, true), play) },
                             width = buttonWidth,
                             height = WEAPON_BUTTON,

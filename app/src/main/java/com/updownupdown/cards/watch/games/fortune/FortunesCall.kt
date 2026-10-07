@@ -1,5 +1,6 @@
 package com.updownupdown.cards.watch.games.fortune
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -22,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.MaterialTheme
@@ -39,26 +41,27 @@ import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.GameButton
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalAmbient
 import com.updownupdown.cards.watch.ui.LocalBoardSize
 import com.updownupdown.cards.watch.ui.WearGamePreview
+import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
-import kotlin.time.Duration.Companion.milliseconds
 
 @Serializable
-enum class Call(val label: String, val points: Int) {
-    Red("Red", 1),
-    Black("Black", 1),
-    Higher("Higher", 2),
-    Lower("Lower", 2),
+enum class Call(@param:StringRes val label: Int, val points: Int) {
+    Red(R.string.fortunes_call_red, 1),
+    Black(R.string.fortunes_call_black, 1),
+    Higher(R.string.fortunes_call_higher, 2),
+    Lower(R.string.fortunes_call_lower, 2),
 }
 
 /**
@@ -86,20 +89,12 @@ object FortunesCall : Game<FortuneState> {
     override val credit = ArtCredit("The Fortune-Teller", "Georges de La Tour", "probably 1630s", "The Metropolitan Museum of Art", "https://www.metmuseum.org/art/collection/search/436838")
     override val accent = R.color.game_fortunes_call
     override val accentPale = R.color.game_fortunes_call_pale
-    override val title = "Fortune's Call"
+    override val title = R.string.fortunes_call_title
     override val rating = Rating(difficulty = 55, complexity = 10, luck = 85)
     override val fourSuitColours = false
     override val stateSerializer: KSerializer<FortuneState> = FortuneState.serializer()
 
-    override val rules = listOf(
-        "## Objective",
-        "Score 20 points by making correct guesses before making three wrong calls.",
-        "## Gameplay",
-        "Predict the colour of the face-down card, or its rank relative to the face up card.",
-        "Correct **Red** or **Black** guesses score 1 point.",
-        "Correct **Higher** or **Lower** guesses score 2 points.",
-        "Equal ranks are neither higher nor lower.",
-    )
+    override val rules = R.array.fortunes_call_rules
 
     override fun newGame(random: Random): FortuneState {
         val deck = shuffledDeck(random)
@@ -128,9 +123,9 @@ object FortunesCall : Game<FortuneState> {
     }
 
     override fun outcome(state: FortuneState) = when {
-        state.score >= TARGET -> Outcome(true, "You reached $TARGET points!")
-        state.misses >= MAX_MISSES -> Outcome(false, "Three misses")
-        state.deck.isEmpty() -> Outcome(false, "Out of cards")
+        state.score >= TARGET -> Outcome(true, text(R.string.fortunes_call_won, TARGET))
+        state.misses >= MAX_MISSES -> Outcome(false, text(R.string.fortunes_call_misses))
+        state.deck.isEmpty() -> Outcome(false, text(R.string.fortunes_call_out))
         else -> null
     }
 
@@ -313,7 +308,7 @@ object FortunesCall : Game<FortuneState> {
                     Triple(Call.Lower, places.right, places.footY),
                 ).forEach { (call, x, y) ->
                     GameButton(
-                        label = call.label,
+                        label = stringResource(call.label),
                         width = places.cardWidth,
                         height = places.button,
                         shape = RoundedCornerShape(BUTTON_CORNER),
@@ -326,8 +321,8 @@ object FortunesCall : Game<FortuneState> {
                         textColor = AppColors.ListButtonText,
                         modifier = Modifier.offset(x, y),
                         icon = when (call) {
-                            Call.Red -> ({ Letter("R") })
-                            Call.Black -> ({ Letter("B") })
+                            Call.Red -> ({ Letter(stringResource(R.string.fortunes_call_red_letter)) })
+                            Call.Black -> ({ Letter(stringResource(R.string.fortunes_call_black_letter)) })
                             else -> ({ Arrow(up = call == Call.Higher) })
                         },
                         onClick = {

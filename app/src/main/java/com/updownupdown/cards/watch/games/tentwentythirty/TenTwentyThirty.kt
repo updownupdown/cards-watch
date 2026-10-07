@@ -22,6 +22,7 @@ import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalBoardScroll
@@ -49,7 +50,7 @@ object TenTwentyThirty : Game<TenTwentyThirtyState> {
     override val credit = ArtCredit("Daikoku with an Abacus", "Keisai Eisen", "1828", "Art Institute of Chicago", "https://www.artic.edu/artworks/81282")
     override val accent = R.color.game_ten_twenty_thirty
     override val accentPale = R.color.game_ten_twenty_thirty_pale
-    override val title = "Ten-Twenty-Thirty"
+    override val title = R.string.ten_twenty_thirty_title
     override val rating = Rating(difficulty = 45, complexity = 15, luck = 75)
     override val fourSuitColours = false
     override val stateSerializer: KSerializer<TenTwentyThirtyState> = TenTwentyThirtyState.serializer()
@@ -60,14 +61,7 @@ object TenTwentyThirty : Game<TenTwentyThirtyState> {
     override val boardFraction = 0.72f
     override val boardLift = 0f
 
-    override val rules = listOf(
-        "## Objective",
-        "**Win** by discarding all 52 cards.",
-        "## Gameplay",
-        "All 52 cards are dealt face up in one line, read left to right and then down.",
-        "Cards count their face value; Jacks, Queens and Kings count **10**.",
-        "Any **two or more adjacent cards** in the line that total **10, 20 or 30** can be discarded.",
-    )
+    override val rules = R.array.ten_twenty_thirty_rules
 
     fun points(card: Card) = minOf(card.rank.value, 10)
 
@@ -91,8 +85,8 @@ object TenTwentyThirty : Game<TenTwentyThirtyState> {
     }
 
     override fun outcome(state: TenTwentyThirtyState) = when {
-        state.line.isEmpty() -> Outcome(true, "Every card counted out!")
-        !hasDecade(state.line) -> Outcome(false, "No run adds up")
+        state.line.isEmpty() -> Outcome(true, text(R.string.ten_twenty_thirty_won))
+        !hasDecade(state.line) -> Outcome(false, text(R.string.ten_twenty_thirty_lost))
         else -> null
     }
 

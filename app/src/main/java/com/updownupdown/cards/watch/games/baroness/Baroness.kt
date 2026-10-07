@@ -17,9 +17,10 @@ import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.WearGamePreview
 import kotlin.random.Random
@@ -40,20 +41,12 @@ object Baroness : Game<BaronessState> {
     override val credit = ArtCredit("Portrait of the Baroness of Bernus", "Philipp Veit", "1838", "Wikimedia Commons", "https://commons.wikimedia.org/wiki/File:Portrait_of_the_Baroness_of_Bernus_(SM_1798).png")
     override val accent = R.color.game_baroness
     override val accentPale = R.color.game_baroness_pale
-    override val title = "Baroness"
+    override val title = R.string.baroness_title
     override val rating = Rating(difficulty = 50, complexity = 15, luck = 60)
     override val fourSuitColours = false
     override val stateSerializer: KSerializer<BaronessState> = BaronessState.serializer()
 
-    override val rules = listOf(
-        "## Objective",
-        "**Win** by discarding all 52 cards.",
-        "**Lose** when the stock is empty and no move is left.",
-        "## Gameplay",
-        "Tap a **King**, or two top cards that add up to **13**, to discard them. Aces are worth 1, Jacks 11, and Queens 12.",
-        "To fill an empty pile, tap a card, then the empty pile.",
-        "When stuck, tap **Deal** to deal one per pile.",
-    )
+    override val rules = R.array.baroness_rules
 
     override fun newGame(random: Random) = deal(BaronessState(List(PILES) { emptyList() }, shuffledDeck(random)))
 
@@ -106,13 +99,13 @@ object Baroness : Game<BaronessState> {
     }
 
     override fun outcome(state: BaronessState) = when {
-        state.stock.isEmpty() && state.piles.all { it.isEmpty() } -> Outcome(true, "All 52 discarded!")
-        state.stock.isEmpty() && !hasMove(state) -> Outcome(false, "No moves left")
+        state.stock.isEmpty() && state.piles.all { it.isEmpty() } -> Outcome(true, text(R.string.baroness_won))
+        state.stock.isEmpty() && !hasMove(state) -> Outcome(false, text(R.string.outcome_no_moves_left))
         else -> null
     }
 
     override fun actions(state: BaronessState) = listOf(
-        GameAction<BaronessState>("Deal (${state.stock.size})", enabled = state.stock.isNotEmpty()) { deal(it) },
+        GameAction<BaronessState>(text(R.string.action_deal, state.stock.size), enabled = state.stock.isNotEmpty()) { deal(it) },
     )
 
     @Composable

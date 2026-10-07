@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -47,6 +48,8 @@ import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.UiText
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.games.ouroboros.Ouroboros.MOST_STEP
 import com.updownupdown.cards.watch.ui.AppColors
@@ -54,13 +57,13 @@ import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalAmbient
 import com.updownupdown.cards.watch.ui.LocalBoardSize
 import com.updownupdown.cards.watch.ui.WearGamePreview
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.random.Random
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
 
 /** A card of the loop: [card] null for the Joker (the exit). */
 @Serializable
@@ -102,7 +105,7 @@ object Ouroboros : Game<OuroborosState> {
     override val credit = ArtCredit("Alchemical Serpent (Ouroboros)", "Unknown medieval illuminator", "1478", "Wikimedia Commons", "https://commons.wikimedia.org/wiki/File:Serpiente_alquimica.jpg")
     override val accent = R.color.game_ouroboros
     override val accentPale = R.color.game_ouroboros_pale
-    override val title = "Ouroboros"
+    override val title = R.string.ouroboros_title
     override val rating = Rating(difficulty = 40, complexity = 55, luck = 40)
     override val fourSuitColours = false
     override val stateSerializer: KSerializer<OuroborosState> = OuroborosState.serializer()
@@ -111,29 +114,10 @@ object Ouroboros : Game<OuroborosState> {
     override val boardFraction = 1f
     override val boardLift = 0f
 
-    override val scoreName = "Loot"
+    override val scoreName = R.string.ouroboros_loot
     override fun score(state: OuroborosState) = state.aces + state.trinkets
 
-    override val rules = listOf(
-        "## Objective",
-        "- Loot all four **jewels** (Aces) and escape alive by stepping onto the **exit** (Joker).",
-        "- Landing on a **trap** (J, Q, K) while it is face up means instant death.",
-        "- Collect **trinkets** (2 to 10) for extra points.",
-        "## The Loop",
-        "The dungeon is a loop of cards around the screen. Its **top card** is at the bottom. You explore by counting forward from the top card.",
-        "- Landing on a **face down** card is always safe and does nothing.",
-        "- Landing on a **face up** card triggers it: a jewel or trinket is collected; a trap kills you; the exit lets you out once you hold all four jewels.",
-        "- Card suits have no meaning.",
-        "## Actions",
-        "- **Look around:** tap the top card while it's face down to turn it and the next one up.",
-        "- **Pick:** tap either of the top two cards, face up, to pick it.",
-        "- **Explore:** with a number card picked, you can explore down the dungeon by a number of cards equal to its value. Tap the purple card to go there.",
-        "- **Mark a path:** with a number card picked, tap an empty path (one of the three maps) to set it aside there.",
-        "- **Return to a path:** tap a marked path to put its card back on top of the loop, picked.",
-        "## Tips",
-        "- **Mark paths whenever you can!** If the top two cards aren't number cards and you have no marked path, you are lost.",
-        "- Marking and returning paths, several times in a row, lets you change the top cards, to control how far you go and where you land.",
-    )
+    override val rules = R.array.ouroboros_rules
 
     private fun bad(card: LoopCard) = card.isJoker || card.isAce || card.isTrap
 
@@ -229,19 +213,19 @@ object Ouroboros : Game<OuroborosState> {
     override fun outcome(state: OuroborosState) = when {
         state.ending == Ending.Escaped -> Outcome(
             true,
-            "You got all four jewels and found the exit!"
+            text(R.string.ouroboros_won)
         )
 
-        state.ending == Ending.Trap -> Outcome(false, "You landed on a trap!")
+        state.ending == Ending.Trap -> Outcome(false, text(R.string.ouroboros_trap))
         stuck(state) -> Outcome(
             false,
-            if (state.aces + state.trinkets > 0) "Lost in the dungeon, with your loot." else "Lost in the dungeon, with no way out!"
+            text(if (state.aces + state.trinkets > 0) R.string.ouroboros_lost_with_loot else R.string.ouroboros_lost)
         )
 
         else -> null
     }
 
-    override fun status(state: OuroborosState): String? = null
+    override fun status(state: OuroborosState): UiText? = null
 
     /**
      * Where the loop starts and ends, in degrees clockwise from the right: the
@@ -369,8 +353,8 @@ object Ouroboros : Game<OuroborosState> {
                     Alignment.CenterHorizontally
                 ),
             ) {
-                Count("Jewels", state.aces, AppColors.JewelGlow)
-                Count("Trinkets", state.trinkets, AppColors.TrinketGlow)
+                Count(stringResource(R.string.ouroboros_jewels), state.aces, AppColors.JewelGlow)
+                Count(stringResource(R.string.ouroboros_trinkets), state.trinkets, AppColors.TrinketGlow)
             }
             CardTable(Modifier.size(board)) {
                 val count = state.deck.size

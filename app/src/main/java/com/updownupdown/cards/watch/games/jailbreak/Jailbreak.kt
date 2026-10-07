@@ -33,15 +33,16 @@ import com.updownupdown.cards.watch.cards.CardStyle
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.RoundScreen
 import com.updownupdown.cards.watch.cards.Selection
-import com.updownupdown.cards.watch.cards.pileEdge
 import com.updownupdown.cards.watch.cards.isRed
+import com.updownupdown.cards.watch.cards.pileEdge
 import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalAmbient
@@ -83,20 +84,12 @@ object Jailbreak : Game<JailbreakState> {
     override val credit = ArtCredit("Escape of the Duke of Beaufort, 1648", "Caspar Luyken", "1699", "Rijksmuseum", "https://www.rijksmuseum.nl/en/collection/object/Ontsnapping-van-de-hertog-van-Beaufort-1648--c1781418e042ecb22a0cb5c853c988a0")
     override val accent = R.color.game_jailbreak
     override val accentPale = R.color.game_jailbreak_pale
-    override val title = "Jailbreak"
+    override val title = R.string.jailbreak_title
     override val rating = Rating(difficulty = 40, complexity = 25, luck = 50)
     override val fourSuitColours = false
     override val stateSerializer: KSerializer<JailbreakState> = JailbreakState.serializer()
 
-    override val rules = listOf(
-        "## Objective",
-        "Free the Joker from the middle: empty one of the four **walls** (the piles above, below, left and right of the middle) while the middle is empty too.",
-        "**Lose** when no cards can be removed and none can be drawn.",
-        "## Gameplay",
-        "Tap cards to select them. Selected cards are discarded when the **total value of red and black cards** is the same.",
-        "When stuck, tap **Draw** to put a card in the middle.",
-        "The middle holds at most **three** cards.",
-    )
+    override val rules = R.array.jailbreak_rules
 
     override fun newGame(random: Random): JailbreakState {
         val deck = shuffledDeck(random).toMutableList()
@@ -145,13 +138,13 @@ object Jailbreak : Game<JailbreakState> {
     }
 
     override fun outcome(state: JailbreakState) = when {
-        state.joker.isEmpty() && state.piles.withIndex().any { (i, pile) -> isWall(i) && pile.isEmpty() } -> Outcome(true, "The Joker escaped!")
-        !canDraw(state) && !hasMatch(state) -> Outcome(false, "No moves remain")
+        state.joker.isEmpty() && state.piles.withIndex().any { (i, pile) -> isWall(i) && pile.isEmpty() } -> Outcome(true, text(R.string.jailbreak_won))
+        !canDraw(state) && !hasMatch(state) -> Outcome(false, text(R.string.outcome_no_moves_remain))
         else -> null
     }
 
     override fun actions(state: JailbreakState) = listOf(
-        GameAction<JailbreakState>("Draw (${state.stock.size})", enabled = canDraw(state)) { draw(it) ?: it },
+        GameAction<JailbreakState>(text(R.string.action_draw, state.stock.size), enabled = canDraw(state)) { draw(it) ?: it },
     )
 
     private const val SIDE = 3

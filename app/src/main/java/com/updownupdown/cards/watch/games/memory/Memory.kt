@@ -13,8 +13,9 @@ import com.updownupdown.cards.watch.cards.fullDeck
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.WearGamePreview
 import kotlin.random.Random
@@ -49,18 +50,12 @@ object Memory : Game<MemoryState> {
     override val credit = ArtCredit("Remembrance of Italy", "Jean Baptiste Camille Corot", "1863", "Art Institute of Chicago", "https://www.artic.edu/artworks/43126")
     override val accent = R.color.game_memory
     override val accentPale = R.color.game_memory_pale
-    override val title = "Memory"
+    override val title = R.string.memory_title
     override val rating = Rating(difficulty = 15, complexity = 5, luck = 10)
     override val stateSerializer: KSerializer<MemoryState> = MemoryState.serializer()
     override val saveVersion = 2
 
-    override val rules = listOf(
-        "## Objective",
-        "Clear the board by finding all matching pairs.",
-        "## Matching",
-        "Tap a card to turn it over, then tap a second card.",
-        "A pair must match in **both rank and suit**.",
-    )
+    override val rules = R.array.memory_rules
 
     override fun newGame(random: Random): MemoryState {
         val pairs = fullDeck().shuffled(random).take(COLUMNS * ROWS / 2)
@@ -94,10 +89,10 @@ object Memory : Game<MemoryState> {
     override fun outcome(state: MemoryState): Outcome? {
         val left = state.cells.count { it != null }
         val done = left == 0 || left == 2 && isPair(state)
-        return if (done) Outcome(true, "Cleared in ${state.moves} moves") else null
+        return if (done) Outcome(true, text(R.string.memory_won, state.moves)) else null
     }
 
-    override val scoreName = "Moves"
+    override val scoreName = R.string.score_moves
     override val lowScoreWins = true
     override fun score(state: MemoryState) = state.moves
 

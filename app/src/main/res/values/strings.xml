@@ -1,4 +1,64 @@
 <resources>
-    <string name="app_name">Solitarius</string>
+    <string name="app_name" translatable="false">Solitarius</string>
     <string name="complication_label">Continue game</string>
+
+    <string name="percent">%1$d%%</string>
+    <string name="top">Top</string>
+    <string name="stats">Stats</string>
+    <string name="settings">Settings</string>
+    <string name="continue_playing">Continue Playing</string>
+    <string name="all_games">All Games</string>
+    <string name="stat_won">Won</string>
+    <string name="stat_lost">Lost</string>
+    <string name="stat_win_percent" formatted="false">Win %</string>
+    <string name="stat_best_streak">Best Streak</string>
+    <string name="stat_played">Played</string>
+    <string name="result_score">%1$s: %2$d</string>
+    <string name="result_record">Won: %1$d  •  Lost: %2$d</string>
+    <string name="undo">Undo</string>
+    <string name="reset_hint">Double-tap to reset game</string>
+    <string name="reset_description">Reset. Double-tap to deal a new game</string>
+    <string name="home">Home</string>
+    <string name="play_again">Play Again</string>
+    <string name="time">Time</string>
+    <string name="result_new_best">%1$s  •  NEW BEST!</string>
+    <string name="result_best">%1$s  •  Best: %2$s</string>
+    <string name="another_fact">Another card fact</string>
+    <string name="unpin">Unpin</string>
+    <string name="pin">Pin to the top</string>
+    <string name="pinned">Pinned</string>
+    <string name="ratings">Ratings</string>
+    <string name="rating_difficulty">Difficulty</string>
+    <string name="rating_complexity">Complexity</string>
+    <string name="rating_luck">Luck</string>
+    <string name="stat_best_score">Best %1$s</string>
+    <string name="stat_fewest_score">Fewest %1$s</string>
+    <string name="stat_fastest">Fastest</string>
+    <string name="artwork">Artwork</string>
+    <string name="view_on_phone">View on Phone</string>
+    <string name="haptics">Haptics</string>
+    <string name="haptics_off">Off in watch settings</string>
+    <string name="suit_colours">Suit Colours</string>
+    <string name="hide">Hide</string>
+    <string name="suit_colours_auto">Auto</string>
+    <string name="suit_colours_two">Two</string>
+    <string name="suit_colours_four">Four</string>
+    <string name="stat_completed">Completed</string>
+    <string name="most_played">Most Played</string>
+    <string name="stats_empty">Finish a game to see it here.</string>
+    <string name="stat_fastest_time">Fastest %1$s</string>
+    <string name="stat_best_score_value">%1$s %2$d</string>
+    <string name="play_game">Play %1$s</string>
+    <string name="play">Play</string>
+    <string name="continue_game">Continue %1$s</string>
+    <string name="continue_short">Continue</string>
+
+    <!-- Shared by several games -->
+    <string name="action_deal">Deal (%1$d)</string>
+    <string name="action_draw">Draw (%1$d)</string>
+    <string name="outcome_no_moves_left">No moves left</string>
+    <string name="outcome_no_moves_remain">No moves remain</string>
+    <string name="stock_count">Stock: %1$d</string>
+    <string name="score_moves">Moves</string>
+    <string name="score_score">Score</string>
 </resources>

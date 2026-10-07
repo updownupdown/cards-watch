@@ -1,7 +1,9 @@
 package com.updownupdown.cards.watch.game
 
+import androidx.annotation.ArrayRes
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,7 +25,10 @@ import kotlin.random.Random
 interface Game<S : Any> {
     /** Stable id: saved games are stored under it, so never change it. */
     val id: String
-    val title: String
+
+    /** The game's name, in strings.xml. */
+    @get:StringRes
+    val title: Int
 
     /** The game's picture as a small square, for the tile and complication. */
     @get:DrawableRes
@@ -48,8 +53,9 @@ interface Game<S : Any> {
     @get:ColorRes
     val accentPale: Int
 
-    /** Rules text: "## " starts a heading, "- " a bullet, **text** is bold. */
-    val rules: List<String>
+    /** Rules text, a string array in games.xml: "## " starts a heading, "- " a bullet, **text** is bold. */
+    @get:ArrayRes
+    val rules: Int
 
     val stateSerializer: KSerializer<S>
 
@@ -84,7 +90,8 @@ interface Game<S : Any> {
      * What the game's score counts ("Score", "Moves"), or null when a win
      * always scores the same and there's nothing to keep the best of.
      */
-    val scoreName: String? get() = null
+    @get:StringRes
+    val scoreName: Int? get() = null
 
     /** Whether a lower score is the better one (moves). */
     val lowScoreWins: Boolean get() = false
@@ -96,7 +103,7 @@ interface Game<S : Any> {
     fun outcome(state: S): Outcome?
 
     /** Short text for the bottom of the screen, such as the move count. */
-    fun status(state: S): String? = null
+    fun status(state: S): UiText? = null
 
     /** Buttons for the bottom of the screen (one or two), such as "Deal". */
     fun actions(state: S): List<GameAction<S>> = emptyList()
@@ -111,7 +118,7 @@ interface Game<S : Any> {
     /** The crescent under the board: [actions], or else [status]. */
     @Composable
     fun Bottom(state: S, play: (S) -> Unit, feedback: Feedback, size: DpSize) {
-        BottomActions(actions(state), status(state), state, play, feedback, size)
+        BottomActions(actions(state), status(state)?.resolve(), state, play, feedback, size)
     }
 }
 
@@ -124,11 +131,11 @@ data class Rating(val difficulty: Int, val complexity: Int, val luck: Int)
  */
 data class ArtCredit(val title: String, val artist: String, val date: String?, val source: String, val link: String)
 
-data class Outcome(val won: Boolean, val message: String)
+data class Outcome(val won: Boolean, val message: UiText)
 
 /** @param color the button's color, when it isn't the usual one. */
 class GameAction<S>(
-    val label: String,
+    val label: UiText,
     val enabled: Boolean = true,
     val color: Color? = null,
     val perform: (S) -> S,

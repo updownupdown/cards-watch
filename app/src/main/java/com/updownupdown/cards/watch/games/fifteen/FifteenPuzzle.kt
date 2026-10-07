@@ -12,8 +12,9 @@ import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.WearGamePreview
@@ -42,22 +43,11 @@ object FifteenPuzzle : Game<FifteenState> {
     override val credit = ArtCredit("Solving a Puzzle", "Okumura Masanobu", "Early to mid-18th century", "Art Institute of Chicago", "https://www.artic.edu/artworks/21405")
     override val accent = R.color.game_fifteen_puzzle
     override val accentPale = R.color.game_fifteen_puzzle_pale
-    override val title = "Fifteen Puzzle"
+    override val title = R.string.fifteen_puzzle_title
     override val rating = Rating(difficulty = 30, complexity = 10, luck = 0)
     override val stateSerializer: KSerializer<FifteenState> = FifteenState.serializer()
 
-    override val rules = listOf(
-        "## Objective",
-        "Arrange each row from Ace to 4, by suit:",
-        "- **Hearts**",
-        "- **Clubs**",
-        "- **Diamonds**",
-        "- **Spades** (there is no 4 of Spades)",
-        "## Gameplay",
-        "Tap a card above, below, left or right of the gap to slide it into the gap.",
-        "Cards turn green when they are in their place.",
-        "Every puzzle is shuffled with legal moves, so it can always be solved.",
-    )
+    override val rules = R.array.fifteen_puzzle_rules
 
     fun neighbours(index: Int): List<Int> {
         val row = index / SIZE
@@ -98,9 +88,9 @@ object FifteenPuzzle : Game<FifteenState> {
     fun isSolved(state: FifteenState) = state.cells == SOLVED
 
     override fun outcome(state: FifteenState) =
-        if (isSolved(state)) Outcome(won = true, message = "Solved in ${state.moves} moves") else null
+        if (isSolved(state)) Outcome(won = true, message = text(R.string.fifteen_puzzle_won, state.moves)) else null
 
-    override val scoreName = "Moves"
+    override val scoreName = R.string.score_moves
     override val lowScoreWins = true
     override fun score(state: FifteenState) = state.moves
 

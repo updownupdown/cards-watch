@@ -7,8 +7,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollScope
-import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.ScrollableDefaults
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,6 +43,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
@@ -65,6 +66,7 @@ import com.updownupdown.cards.watch.game.GameSession
 import com.updownupdown.cards.watch.game.GameStats
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.formatTime
+import com.updownupdown.cards.watch.game.resolve
 import kotlin.math.max
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -261,13 +263,13 @@ private fun <S : Any> GameScreenContent(
                         val best = statsBefore.bestTimeMs
                         ResultScreen(
                             outcome = outcome,
-                            score = session.score?.let { "${game.scoreName}: $it" },
+                            score = session.score?.let { score -> game.scoreName?.let { stringResource(R.string.result_score, stringResource(it), score) } },
                             time = formatTime(time),
                             best = when {
                                 outcome.won && (best == null || time < best) -> null
                                 else -> best?.let(::formatTime) ?: "–"
                             },
-                            record = "Won: ${stats.won}  •  Lost: ${stats.lost}",
+                            record = stringResource(R.string.result_record, stats.won, stats.lost),
                             onNewGame = { haptics.move(); session.newGame() },
                             onHome = { haptics.press(); onHome() },
                         )
@@ -295,7 +297,7 @@ private fun <S : Any> GameScreenContent(
                             toBoard()
                         },
                     )
-                    ListButton("Undo", Modifier.weight(1f).height(ACTIONS_HEIGHT), enabled = session.canUndo) {
+                    ListButton(stringResource(R.string.undo), Modifier.weight(1f).height(ACTIONS_HEIGHT), enabled = session.canUndo) {
                         if (session.undo()) haptics.move() else haptics.reject()
                         toBoard()
                     }
@@ -304,7 +306,7 @@ private fun <S : Any> GameScreenContent(
                 Box(Modifier.fillMaxWidth().height(RULES_TOP), contentAlignment = Alignment.Center) {
                     if (hint) {
                         Text(
-                            text = "Double-tap to reset game",
+                            text = stringResource(R.string.reset_hint),
                             style = MaterialTheme.typography.labelSmall,
                             color = LocalGameAccent.current,
                         )
@@ -328,7 +330,7 @@ private fun ResetButton(size: Dp, onTap: () -> Unit, onDoubleTap: () -> Unit) {
             .pointerInput(Unit) { detectTapGestures(onTap = { onTap() }, onDoubleTap = { onDoubleTap() }) },
         contentAlignment = Alignment.Center,
     ) {
-        Icon(painterResource(R.drawable.ic_reset), contentDescription = "Reset. Double-tap to deal a new game", tint = AppColors.ListButtonText, modifier = Modifier.size(size * 0.5f))
+        Icon(painterResource(R.drawable.ic_reset), contentDescription = stringResource(R.string.reset_description), tint = AppColors.ListButtonText, modifier = Modifier.size(size * 0.5f))
     }
 }
 
@@ -377,7 +379,7 @@ private fun ResultScreen(
         ) {
             LaunchedEffect(Unit) { focus.requestFocus() }
             Text(
-                text = outcome.message,
+                text = outcome.message.resolve(),
                 style = MaterialTheme.typography.bodyMedium,
                 color = colour,
                 textAlign = TextAlign.Center,
@@ -386,19 +388,19 @@ private fun ResultScreen(
             score?.let { Text(it, style = detail, color = AppColors.TextMuted, modifier = Modifier.padding(top = 2.dp)) }
             Row(Modifier.padding(vertical = RESULT_GAP), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 GameButton(
-                    label = "Home",
+                    label = stringResource(R.string.home),
                     onClick = onHome,
                     width = RESULT_BUTTON,
                     height = RESULT_BUTTON,
                     color = colour,
                     icon = { Icon(painterResource(R.drawable.ic_home), contentDescription = null, tint = AppColors.GameButtonText, modifier = Modifier.size(RESULT_BUTTON * 0.5f)) },
                 )
-                GameButton("Play Again", onNewGame, width = playWidth, height = RESULT_BUTTON, color = colour)
+                GameButton(stringResource(R.string.play_again), onNewGame, width = playWidth, height = RESULT_BUTTON, color = colour)
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(painterResource(R.drawable.ic_recent), contentDescription = "Time", tint = AppColors.TextMuted, modifier = Modifier.padding(end = 4.dp).size(14.dp))
+                Icon(painterResource(R.drawable.ic_recent), contentDescription = stringResource(R.string.time), tint = AppColors.TextMuted, modifier = Modifier.padding(end = 4.dp).size(14.dp))
                 Text(
-                    text = "$time  •  " + (if (best == null) "NEW BEST!" else "Best: $best"),
+                    text = if (best == null) stringResource(R.string.result_new_best, time) else stringResource(R.string.result_best, time, best),
                     style = detail,
                     color = if (best == null) colour else AppColors.TextMuted,
                 )

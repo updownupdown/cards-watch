@@ -42,8 +42,8 @@ class ContinueComplicationService : SuspendingComplicationDataSourceService() {
         val intent = Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         if (game != null) intent.putExtra(EXTRA_GAME, game.id)
         val tap = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-        val label = PlainComplicationText.Builder(if (game != null) "Continue ${game.title}" else "Play").build()
-        val name = PlainComplicationText.Builder("Play").build()
+        val label = PlainComplicationText.Builder(if (game != null) getString(R.string.continue_game, getString(game.title)) else getString(R.string.play)).build()
+        val name = PlainComplicationText.Builder(getString(R.string.play)).build()
         val spade = MonochromaticImage.Builder(Icon.createWithResource(this, R.drawable.ic_spade_mono)).build()
         return when (type) {
             ComplicationType.MONOCHROMATIC_IMAGE ->

@@ -32,8 +32,9 @@ import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalBoardScroll
@@ -66,7 +67,7 @@ object Accordion : Game<AccordionState> {
     override val credit = ArtCredit("Pierre Mac Orlan", "Jules Pascin", "1924", "Wikimedia Commons", "https://commons.wikimedia.org/wiki/File:Pierre_Mac_Orlan_MET_DT4183.jpg")
     override val accent = R.color.game_accordion
     override val accentPale = R.color.game_accordion_pale
-    override val title = "Accordion"
+    override val title = R.string.accordion_title
     override val rating = Rating(difficulty = 95, complexity = 15, luck = 20)
     override val stateSerializer: KSerializer<AccordionState> = AccordionState.serializer()
 
@@ -75,14 +76,7 @@ object Accordion : Game<AccordionState> {
     override val boardFraction = 0.72f
     override val boardLift = 0f
 
-    override val rules = listOf(
-        "## Objective",
-        "**Win** by consolidate all 52 cards into a single pile.",
-        "**Lose** when no card can move.",
-        "## Gameplay",
-        "A card can be consolidated onto the card **one or three spaces before it** when their they share a **rank or suit**.",
-        "The cards wrap left to right, top to bottom.",
-    )
+    override val rules = R.array.accordion_rules
 
     override fun newGame(random: Random) = AccordionState(shuffledDeck(random))
 
@@ -105,8 +99,8 @@ object Accordion : Game<AccordionState> {
         state.piles.indices.any { from -> REACH.any { canMove(state, from, from - it) } }
 
     override fun outcome(state: AccordionState) = when {
-        state.piles.size == 1 -> Outcome(true, "Squeezed into one pile!")
-        !hasMove(state) -> Outcome(false, "Stuck with ${state.piles.size} piles")
+        state.piles.size == 1 -> Outcome(true, text(R.string.accordion_won))
+        !hasMove(state) -> Outcome(false, text(R.string.accordion_lost, state.piles.size))
         else -> null
     }
 

@@ -17,8 +17,9 @@ import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.WearGamePreview
@@ -55,7 +56,7 @@ object Nestor : Game<NestorState> {
     override val credit = ArtCredit("The Triumph of Time over Fame", "South Netherlandish", "ca. 1500–1530", "The Metropolitan Museum of Art", "https://www.metmuseum.org/art/collection/search/467828")
     override val accent = R.color.game_nestor
     override val accentPale = R.color.game_nestor_pale
-    override val title = "Nestor"
+    override val title = R.string.nestor_title
     override val rating = Rating(difficulty = 70, complexity = 15, luck = 55)
     override val fourSuitColours = false
     override val stateSerializer: KSerializer<NestorState> = NestorState.serializer()
@@ -64,14 +65,7 @@ object Nestor : Game<NestorState> {
     override val boardFraction = 0.8f
     override val boardLift = -0.09f
 
-    override val rules = listOf(
-        "## Objective",
-        "**Win** by pairing off all 32 cards.",
-        "## Gameplay",
-        "Tap two free cards of the **same rank** to discard them.",
-        "Only the top card of a column, or the two reserve cards, can be used.",
-        "Only **Aces to 8s** are used.",
-    )
+    override val rules = R.array.nestor_rules
 
     override fun newGame(random: Random): NestorState {
         val deck = RANKS.flatMap { rank -> Suit.entries.map { Card(rank, it) } }
@@ -115,8 +109,8 @@ object Nestor : Game<NestorState> {
     }
 
     override fun outcome(state: NestorState) = when {
-        cleared(state) -> Outcome(true, "All paired off!")
-        moves(state).isEmpty() -> Outcome(false, "No pairs left")
+        cleared(state) -> Outcome(true, text(R.string.nestor_won))
+        moves(state).isEmpty() -> Outcome(false, text(R.string.nestor_lost))
         else -> null
     }
 

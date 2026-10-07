@@ -1,7 +1,7 @@
 # Solitarius for Wear OS
 
 Playing-card games for round Wear OS watches (Kotlin, Compose for Wear OS,
-Material 3). English only. No audio: feedback is haptic, through `ui/Haptics`.
+Material 3). No audio: feedback is haptic, through `ui/Haptics`.
 
 ## Layout
 
@@ -30,7 +30,7 @@ In a game the screen stays on for 10 s after the last touch (`MainActivity`).
 The home screen has the last games played under "Continue Playing" (three,
 one or none: a setting), then every game, those pinned (by holding one)
 first, then Stats and Settings side by side as icon buttons, a card fact
-(`ui/CardFacts.kt`) and a Top button at the foot.
+(`res/values/card_facts.xml`) and a Top button at the foot.
 Each button opens its own screen, swiped away like a game: `StatsScreen`
 (stats across every game, and each game played, by title, which opens it) and `SettingsScreen`
 (Haptics, Suit Colours, Continue Playing). The app starts
@@ -119,6 +119,24 @@ keeps the undo history; `SaveStore` saves each game after every move.
   `BottomButton`, or two side by side) or `status`;
   override `Bottom` for anything else. State that isn't worth an undo step
   (picked cards) is excluded with `isUndoStep`.
+
+## Text
+
+All text is in string resources, in English for now, ready for the phone
+app's languages.
+`res/values/strings.xml` holds the screens' text and what several games
+share ("Deal (%1$d)"), `games.xml` each game's title, rules (a string array)
+and its own messages and labels, and `card_facts.xml` the card facts: the
+phone's `src/data/card-facts.ts`, the same facts in the same order, so keep
+the two lists alike.
+
+- `Game.title` and `scoreName` are string ids, `rules` an array id.
+- The rules' functions, which have no `Context`, give `outcome`, `status`
+  and `GameAction.label` as a `UiText` (`text(R.string.x, args)`), looked up
+  where it's drawn (`resolve()`). Boards call `stringResource`.
+- Capitals go through `upper()`, and lists of games are sorted with
+  `sortedByTitle`, both by the watch's language.
+- No text in Kotlin but what isn't words: numbers, and keys.
 
 ## Saved games
 

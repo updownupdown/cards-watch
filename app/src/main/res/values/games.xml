@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Each game's title and rules. Rules: "## " starts a heading, "- " a bullet, **text** is bold. -->
+<resources>
+    <string name="accordion_title">Accordion</string>
+    <string-array name="accordion_rules">
+        <item>## Objective</item>
+        <item>**Win** by consolidate all 52 cards into a single pile.</item>
+        <item>**Lose** when no card can move.</item>
+        <item>## Gameplay</item>
+        <item>A card can be consolidated onto the card **one or three spaces before it** when their they share a **rank or suit**.</item>
+        <item>The cards wrap left to right, top to bottom.</item>
+    </string-array>
+    <string name="accordion_won">Squeezed into one pile!</string>
+    <string name="accordion_lost">Stuck with %1$d piles</string>
+
+    <string name="aces_up_title">Aces Up</string>
+    <string-array name="aces_up_rules">
+        <item>## Objective</item>
+        <item>Discard the whole deck except the four Aces (one per pile).</item>
+        <item>## Gameplay</item>
+        <item>Tap a card to discard it when another pile shows a **higher card of the same suit**.</item>
+        <item>**Aces are high** and can never be discarded.</item>
+        <item>When a pile is empty, tap any other top card to move it there.</item>
+        <item>When you\'re stuck, tap **Deal** for one more card on each pile.</item>
+    </string-array>
+    <string name="aces_up_won">Four Aces up!</string>
+
+    <string name="augury_title">Augury</string>
+    <string-array name="augury_rules">
+        <item>## Objective</item>
+        <item>Work out the **hidden law** well enough to make **eight correct guesses in a row**. The arc at the left fills with each.</item>
+        <item>## Gameplay</item>
+        <item>Each game has a secret law about which cards may follow the last card(s) on the path.</item>
+        <item>- Tap a card in your hand if you think it fits the law. If it does, it joins the path; if not, it lies greyed out beside the last card.</item>
+        <item>- If you think no card in your hand fits, tap the crossed-out card. If you\'re right, you get a new hand; if a card did fit, it is played for you (shown in red), and your run of correct guesses is reset.</item>
+        <item>For all laws: A = 1, Jacks = 11, Queens = 12, Kings = 13.</item>
+        <item>## Laws</item>
+        <item>- Must be the same colour</item>
+        <item>- Must alternate colour</item>
+        <item>- Must be the same suit or rank</item>
+        <item>- Must be a different suit</item>
+        <item>- Must alternate between odd and even ranks</item>
+        <item>- Must be higher rank; anything can follow J, Q or K</item>
+        <item>- Must be within two ranks</item>
+        <item>- Must be within two ranks (Ace and King are neighbours)</item>
+        <item>- Must be at least three ranks apart</item>
+        <item>- Must alternate between high (8–K) and low (A–7)</item>
+        <item>- Must alternate between court and number cards</item>
+        <item>- Must be lower rank; anything can follow an Ace</item>
+        <item>- Odds must follow odds, evens must follow evens</item>
+        <item>- Must follow suits in order: spades, hearts, diamonds, clubs</item>
+        <item>- Same suit as the last must be higher; the other suit of its colour must be lower; the other colour can follow anything</item>
+        <item>- Red cards must be 8 or higher; black cards must be 7 or lower</item>
+    </string-array>
+    <!-- Augury's laws, as they follow "The law:" when a game ends -->
+    <string name="augury_law_alternate_colours">must alternate colour</string>
+    <string name="augury_law_suit_or_rank">must be the same suit or rank</string>
+    <string name="augury_law_odd_even">must alternate between odd and even ranks</string>
+    <string name="augury_law_higher_until_court">must be a higher rank; anything can follow a J, Q or K</string>
+    <string name="augury_law_within_two">must be within two ranks</string>
+    <string name="augury_law_same_colour">must be the same colour</string>
+    <string name="augury_law_different_suit">must be a different suit</string>
+    <string name="augury_law_high_low_alternate">must alternate between high (8–K) and low (A–7)</string>
+    <string name="augury_law_court_alternate">must alternate between court and number cards</string>
+    <string name="augury_law_lower_until_ace">must be a lower rank; anything can follow an Ace</string>
+    <string name="augury_law_far_apart">must be at least three ranks apart</string>
+    <string name="augury_law_parity_lock">odds must follow odds, evens must follow evens</string>
+    <string name="augury_law_within_two_wrap">must be within two ranks (Ace and King are neighbours)</string>
+    <string name="augury_law_suit_sequence">must follow the suits in order: spades, hearts, diamonds, clubs</string>
+    <string name="augury_law_same_suit_ascender">the same suit must be higher, the other suit of its colour lower; the other colour can follow anything</string>
+    <string name="augury_law_red_high_black_low">red cards must be 8 or higher, black cards 7 or lower</string>
+    <string name="augury_the_law">The law: %1$s</string>
+    <string name="augury_none_fit">None fit</string>
+
+    <string name="baroness_title">Baroness</string>
+    <string-array name="baroness_rules">
+        <item>## Objective</item>
+        <item>**Win** by discarding all 52 cards.</item>
+        <item>**Lose** when the stock is empty and no move is left.</item>
+        <item>## Gameplay</item>
+        <item>Tap a **King**, or two top cards that add up to **13**, to discard them. Aces are worth 1, Jacks 11, and Queens 12.</item>
+        <item>To fill an empty pile, tap a card, then the empty pile.</item>
+        <item>When stuck, tap **Deal** to deal one per pile.</item>
+    </string-array>
+    <string name="baroness_won">All 52 discarded!</string>
+
+    <string name="beehive_title">Beehive</string>
+    <string-array name="beehive_rules">
+        <item>## Objective</item>
+        <item>Clear all 52 cards by gathering sets of four cards of the same rank.</item>
+        <item>## Gameplay</item>
+        <item>The six piles in the middle hold one rank each. A set of four is cleared at once.</item>
+        <item>The **beehive** is on the left; the **waste** runs down the right. The stock is not shown.</item>
+        <item>Tap the beehive or the waste to move its top card onto a pile of the same rank, or else into an empty pile.</item>
+        <item>Tap a pile to join it to another pile of the same rank.</item>
+        <item>Tap **Draw** to turn up three cards from the stock onto the waste. When the stock runs out, **Recycle** turns the waste back over, and draws again.</item>
+    </string-array>
+    <string name="beehive_won">The hive is empty!</string>
+    <string name="beehive_recycle">Recycle</string>
+
+    <string name="clock_title">Clock Solitaire</string>
+    <string-array name="clock_rules">
+        <item>## Objective</item>
+        <item>Turn every card face up, sorting all 52 to their hours, before all four Kings come up.</item>
+        <item>## Gameplay</item>
+        <item>Tap the middle pile to turn up its top card.</item>
+        <item>Then tap the pile that card belongs to: Aces at 1 o\'clock, numbers at their hour, Jacks at 11, Queens at 12 and Kings in the middle.</item>
+    </string-array>
+    <string name="clock_won">Every card is home</string>
+    <string name="clock_lost">The fourth King came up</string>
+
+    <string name="dominion_title">Dominion</string>
+    <string-array name="dominion_rules">
+        <item>## Objective</item>
+        <item>**Win** by reducing all fifteen cards to a single card on the board.</item>
+        <item>**Lose** when no conquest is possible, or when one of the cards on the board has no possible match left.</item>
+        <item>## Gameplay</item>
+        <item>Tap a card, then tap a card of the **same rank or suit** next to it (diagonals count) to conquer it.</item>
+        <item>A card may also conquer a card further along the same row or column when every space between them is empty.</item>
+        <item>Each deal uses three of the four suits, and every card has at least one match to begin with.</item>
+    </string-array>
+    <string name="dominion_won">One card rules them all!</string>
+    <string name="dominion_isolated">A card can\'t be conquered</string>
+    <string name="dominion_stuck">No conquests left</string>
+
+    <string name="ebb_and_flow_title">Ebb &amp; Flow</string>
+    <string-array name="ebb_and_flow_rules">
+        <item>## Objective</item>
+        <item>Play all **52 cards** onto the four piles.</item>
+        <item>## Gameplay</item>
+        <item>Play cards onto the rising (first two) or falling (last two) piles, using cards of the same rank or higher/lower.</item>
+        <item>Any card can start an empty pile. Aces are worth 1.</item>
+        <item>A card **one rank back and in the same suit** can also be played.</item>
+        <item>If your hand has 5 cards or less, you can **draw** to fill your hand back up to seven.</item>
+    </string-array>
+    <string name="ebb_and_flow_won">Every card played!</string>
+    <string name="ebb_and_flow_lost">Stuck with %1$d cards left</string>
+
+    <string name="elevens_title">Elevens</string>
+    <string-array name="elevens_rules">
+        <item>## Objective</item>
+        <item>Win by clearing the whole deck, in pairs that total **11**, or in royal **Jack-Queen-King** triplets.</item>
+        <item>## Gameplay</item>
+        <item>Tap two cards that total 11: **A and 10, 2 and 9, 3 and 8, 4 and 7, 5 and 6**.</item>
+        <item>For face cards, tap one Jack, one Queen and one King, which will be removed together.</item>
+    </string-array>
+    <string name="elevens_won">The whole deck cleared!</string>
+    <string name="elevens_lost">No pair or royal triplet left</string>
+
+    <string name="fifteen_puzzle_title">Fifteen Puzzle</string>
+    <string-array name="fifteen_puzzle_rules">
+        <item>## Objective</item>
+        <item>Arrange each row from Ace to 4, by suit:</item>
+        <item>- **Hearts**</item>
+        <item>- **Clubs**</item>
+        <item>- **Diamonds**</item>
+        <item>- **Spades** (there is no 4 of Spades)</item>
+        <item>## Gameplay</item>
+        <item>Tap a card above, below, left or right of the gap to slide it into the gap.</item>
+        <item>Cards turn green when they are in their place.</item>
+        <item>Every puzzle is shuffled with legal moves, so it can always be solved.</item>
+    </string-array>
+    <string name="fifteen_puzzle_won">Solved in %1$d moves</string>
+
+    <string name="fortunes_call_title">Fortune\'s Call</string>
+    <string-array name="fortunes_call_rules">
+        <item>## Objective</item>
+        <item>Score 20 points by making correct guesses before making three wrong calls.</item>
+        <item>## Gameplay</item>
+        <item>Predict the colour of the face-down card, or its rank relative to the face up card.</item>
+        <item>Correct **Red** or **Black** guesses score 1 point.</item>
+        <item>Correct **Higher** or **Lower** guesses score 2 points.</item>
+        <item>Equal ranks are neither higher nor lower.</item>
+    </string-array>
+    <string name="fortunes_call_red">Red</string>
+    <string name="fortunes_call_black">Black</string>
+    <string name="fortunes_call_higher">Higher</string>
+    <string name="fortunes_call_lower">Lower</string>
+    <string name="fortunes_call_red_letter">R</string>
+    <string name="fortunes_call_black_letter">B</string>
+    <string name="fortunes_call_won">You reached %1$d points!</string>
+    <string name="fortunes_call_misses">Three misses</string>
+    <string name="fortunes_call_out">Out of cards</string>
+
+    <string name="tower_of_hanoi_title">Tower of Hanoi</string>
+    <string-array name="tower_of_hanoi_rules">
+        <item>## Objective</item>
+        <item>Build one pile ordered from **9** to **Ace**.</item>
+        <item>## Gameplay</item>
+        <item>Tap a pile to pick up its top card, then tap another pile to move it there.</item>
+        <item>A card can be moved to an empty pile, or on a card of **higher rank**.</item>
+        <item>There is no losing: keep moving until the tower is built.</item>
+    </string-array>
+    <string name="tower_of_hanoi_won">Built in %1$d moves</string>
+
+    <string name="jailbreak_title">Jailbreak</string>
+    <string-array name="jailbreak_rules">
+        <item>## Objective</item>
+        <item>Free the Joker from the middle: empty one of the four **walls** (the piles above, below, left and right of the middle) while the middle is empty too.</item>
+        <item>**Lose** when no cards can be removed and none can be drawn.</item>
+        <item>## Gameplay</item>
+        <item>Tap cards to select them. Selected cards are discarded when the **total value of red and black cards** is the same.</item>
+        <item>When stuck, tap **Draw** to put a card in the middle.</item>
+        <item>The middle holds at most **three** cards.</item>
+    </string-array>
+    <string name="jailbreak_won">The Joker escaped!</string>
+
+    <string name="lights_out_title">Lights Out</string>
+    <string-array name="lights_out_rules">
+        <item>## Objective</item>
+        <item>Turn all 20 cards face down.</item>
+        <item>## Gameplay</item>
+        <item>Tapping a card turns over that card, and orthogonal cards.</item>
+        <item>Every deal can be solved.</item>
+    </string-array>
+    <string name="lights_out_won">Lights out in %1$d moves</string>
+
+    <string name="little_windmill_title">Little Windmill</string>
+    <string-array name="little_windmill_rules">
+        <item>## Objective</item>
+        <item>Move all 52 cards to the four corner foundations.</item>
+        <item>## Foundations</item>
+        <item>An **Ace** is taken from the deck to start the first corner. The other three Aces start the other corners as they come up.</item>
+        <item>Build each foundation **up by suit**, from Ace to King.</item>
+        <item>## The Cross</item>
+        <item>Five cards are dealt to the cross. Build its piles **down, regardless of suit**. Nothing goes on an Ace.</item>
+        <item>Any available card may fill an empty space in the cross.</item>
+        <item>## Draw and Waste</item>
+        <item>Tap **Draw** to turn the stock one card at a time onto the **waste**, at the left. There is no redeal.</item>
+    </string-array>
+    <string name="little_windmill_won">Every suit is home!</string>
+
+    <string name="lycan_title">Lycan</string>
+    <string-array name="lycan_rules">
+        <item>## Objective</item>
+        <item>Empty the **Wolf\'s hand** (top) each round, and race the Wolf to **100 points**.</item>
+        <item>## Capturing</item>
+        <item>Tap your cards (bottom) and the Wolf\'s cards to pick a capture. The next card to be drawn is on the pile at the left.</item>
+        <item>- **Perfect:** one of your cards takes a Wolf card of the same rank. You draw the next card.</item>
+        <item>- **Sum:** two or more of your cards add up to one Wolf card. You draw the next card.</item>
+        <item>- **Split:** one of your cards equals several Wolf cards added up. The Wolf draws the next card.</item>
+        <item>- **Over:** one of your cards takes a lower Wolf card. The Wolf draws the difference in cards.</item>
+        <item>You can **Fold** at any time to end the round. It can be advantageous to fold early, to limit the Wolf\'s score.</item>
+        <item>## Scoring</item>
+        <item>Empty the Wolf\'s hand to score the value of the cards left in your hand.</item>
+        <item>Otherwise, the Wolf scores the value of the cards left in its hand.</item>
+        <item>This is an addictive, but very difficult game.</item>
+    </string-array>
+    <string name="lycan_perfect">Perfect</string>
+    <string name="lycan_sum">Sum</string>
+    <string name="lycan_split">Split</string>
+    <string name="lycan_over">Over</string>
+    <string name="lycan_over_by">Over +%1$d</string>
+    <string name="lycan_select">Select</string>
+    <string name="lycan_wolf">Wolf</string>
+    <string name="lycan_you">You</string>
+    <string name="lycan_fold">Fold</string>
+    <string name="lycan_won">You beat the Wolf %1$d to %2$d</string>
+    <string name="lycan_lost">The Wolf wins %1$d to %2$d</string>
+
+    <string name="memory_title">Memory</string>
+    <string-array name="memory_rules">
+        <item>## Objective</item>
+        <item>Clear the board by finding all matching pairs.</item>
+        <item>## Matching</item>
+        <item>Tap a card to turn it over, then tap a second card.</item>
+        <item>A pair must match in **both rank and suit**.</item>
+    </string-array>
+    <string name="memory_won">Cleared in %1$d moves</string>
+
+    <string name="nestor_title">Nestor</string>
+    <string-array name="nestor_rules">
+        <item>## Objective</item>
+        <item>**Win** by pairing off all 32 cards.</item>
+        <item>## Gameplay</item>
+        <item>Tap two free cards of the **same rank** to discard them.</item>
+        <item>Only the top card of a column, or the two reserve cards, can be used.</item>
+        <item>Only **Aces to 8s** are used.</item>
+    </string-array>
+    <string name="nestor_won">All paired off!</string>
+    <string name="nestor_lost">No pairs left</string>
+
+    <string name="ouroboros_title">Ouroboros</string>
+    <string-array name="ouroboros_rules">
+        <item>## Objective</item>
+        <item>- Loot all four **jewels** (Aces) and escape alive by stepping onto the **exit** (Joker).</item>
+        <item>- Landing on a **trap** (J, Q, K) while it is face up means instant death.</item>
+        <item>- Collect **trinkets** (2 to 10) for extra points.</item>
+        <item>## The Loop</item>
+        <item>The dungeon is a loop of cards around the screen. Its **top card** is at the bottom. You explore by counting forward from the top card.</item>
+        <item>- Landing on a **face down** card is always safe and does nothing.</item>
+        <item>- Landing on a **face up** card triggers it: a jewel or trinket is collected; a trap kills you; the exit lets you out once you hold all four jewels.</item>
+        <item>- Card suits have no meaning.</item>
+        <item>## Actions</item>
+        <item>- **Look around:** tap the top card while it\'s face down to turn it and the next one up.</item>
+        <item>- **Pick:** tap either of the top two cards, face up, to pick it.</item>
+        <item>- **Explore:** with a number card picked, you can explore down the dungeon by a number of cards equal to its value. Tap the purple card to go there.</item>
+        <item>- **Mark a path:** with a number card picked, tap an empty path (one of the three maps) to set it aside there.</item>
+        <item>- **Return to a path:** tap a marked path to put its card back on top of the loop, picked.</item>
+        <item>## Tips</item>
+        <item>- **Mark paths whenever you can!** If the top two cards aren\'t number cards and you have no marked path, you are lost.</item>
+        <item>- Marking and returning paths, several times in a row, lets you change the top cards, to control how far you go and where you land.</item>
+    </string-array>
+    <string name="ouroboros_loot">Loot</string>
+    <string name="ouroboros_won">You got all four jewels and found the exit!</string>
+    <string name="ouroboros_trap">You landed on a trap!</string>
+    <string name="ouroboros_lost_with_loot">Lost in the dungeon, with your loot.</string>
+    <string name="ouroboros_lost">Lost in the dungeon, with no way out!</string>
+    <string name="ouroboros_jewels">Jewels</string>
+    <string name="ouroboros_trinkets">Trinkets</string>
+
+    <string name="ozanams_square_title">Ozanam\'s Square</string>
+    <string-array name="ozanams_square_rules">
+        <item>## Objective</item>
+        <item>Fill the square so that each **row, column and long diagonal** holds **one card of each rank and one of each suit**.</item>
+        <item>## Gameplay</item>
+        <item>- The cards to place lie in a pile for each suit, at the right. Tap a pile to pick its top card; tap it again for the next card of that suit.</item>
+        <item>- Then tap an empty space to place it. Cards dealt into place (shown in black) can\'t be moved.</item>
+        <item>- Cards you place can be moved to another space, swapped, or sent back by tapping their pile.</item>
+        <item>- A card that repeats a rank or suit in one of its lines is marked in red.</item>
+        <item>- Every deal has **exactly one** solution.</item>
+    </string-array>
+    <string name="ozanams_square_won">The square is complete!</string>
+
+    <string name="rogue_run_title">Rogue Run</string>
+    <string-array name="rogue_run_rules">
+        <item>## Objective</item>
+        <item>Get through every room before your health runs out.</item>
+        <item>## Cards Types</item>
+        <item>- **Black cards are monsters.** Fighting one costs health equal to its value (J: 11, Q: 12, K: 13, A: 14).</item>
+        <item>- **Diamonds are weapons.** A weapon takes its value off each monster\'s damage. After it kills a monster it can only fight monsters of **equal or lower** value than the last one it killed.</item>
+        <item>- **Hearts are potions** and heal you by their value, up to 20.</item>
+        <item>## Rooms</item>
+        <item>- Tap a room card, and confirm/choose its action. You can double tap to act on non-monster cards.</item>
+        <item>- With a monster picked, **Fist** fights that monster barehanded, while **Wpn** uses the equipped weapon for lower damage, if available.</item>
+        <item>- Resolve any three cards of a room to move on; the fourth stays for the next room.</item>
+        <item>- With no card picked, **Run** allows you to puts the whole room at the bottom of the dungeon. You can\'t run from two rooms in a row.</item>
+        <item>## Scoring</item>
+        <item>Your score is equal to your health left, plus a bonus when you finish with an unused potion while at full health.</item>
+    </string-array>
+    <string name="rogue_run_lost">Slain in room %1$d</string>
+    <string name="rogue_run_won">Escaped!</string>
+    <string name="rogue_run_run">Run</string>
+    <string name="rogue_run_heal">Heal +%1$d</string>
+    <string name="rogue_run_equip">Equip</string>
+    <string name="rogue_run_fist">Fist −%1$d</string>
+    <string name="rogue_run_weapon">Wpn −%1$d</string>
+    <string name="rogue_run_health">HP: %1$d</string>
+    <string name="rogue_run_room">Rm: %1$d</string>
+    <string name="rogue_run_deck">Dk: %1$d</string>
+
+    <string name="royal_marriage_title">Royal Marriage</string>
+    <string-array name="royal_marriage_rules">
+        <item>## Objective</item>
+        <item>Discard every card except the **Queen of Hearts** and **King of Hearts**, which must end up side by side.</item>
+        <item>## Deal</item>
+        <item>All 52 cards lie in one line, read left to right and then down: the Queen of Hearts first, the King of Hearts last.</item>
+        <item>## Discarding</item>
+        <item>- One card, or two side by side, can be discarded if the cards either side of them match in **rank or suit**.</item>
+        <item>- A longer run can go only if every card in it is of the **same suit**, and the cards either side match in rank or suit.</item>
+        <item>- Tap the card or cards to remove, then **Discard**. Double-tap a single card to discard it.</item>
+    </string-array>
+    <string name="royal_marriage_won">The Queen and King are wed!</string>
+    <string name="royal_marriage_lost">No legal moves remain</string>
+    <string name="royal_marriage_discard">Discard</string>
+
+    <string name="ten_twenty_thirty_title">Ten-Twenty-Thirty</string>
+    <string-array name="ten_twenty_thirty_rules">
+        <item>## Objective</item>
+        <item>**Win** by discarding all 52 cards.</item>
+        <item>## Gameplay</item>
+        <item>All 52 cards are dealt face up in one line, read left to right and then down.</item>
+        <item>Cards count their face value; Jacks, Queens and Kings count **10**.</item>
+        <item>Any **two or more adjacent cards** in the line that total **10, 20 or 30** can be discarded.</item>
+    </string-array>
+    <string name="ten_twenty_thirty_won">Every card counted out!</string>
+    <string name="ten_twenty_thirty_lost">No run adds up</string>
+
+    <string name="triple_stack_title">Triple Stack</string>
+    <string-array name="triple_stack_rules">
+        <item>## Objective</item>
+        <item>**Win** by using up every ingredient to serve sandwiches.</item>
+        <item>**Lose** when no sandwich can be made while ingredients remain.</item>
+        <item>## Serving</item>
+        <item>Tap three cards with **equally spaced ranks**, then **Serve**. Aces, Jacks, Queens and Kings are 1, 11, 12 and 13.</item>
+        <item>Ranks wrap from King to Ace, so for example: 9 / Q / 2 makes a valid sandwich.</item>
+        <item>## Refills</item>
+        <item>After serving, the number of ingredients that refill your hand depends on the quality of the sandwich served:</item>
+        <item>- Four for a sandwich make from one suit</item>
+        <item>- Three for a sandwich made from one color</item>
+        <item>- Two for any other</item>
+    </string-array>
+    <string name="triple_stack_won">Every ingredient served!</string>
+    <string name="triple_stack_lost">No sandwich left</string>
+    <string name="triple_stack_serve">Serve (%1$d)</string>
+    <string name="triple_stack_ingredients">Ingredients: %1$d</string>
+</resources>
