@@ -4,10 +4,10 @@
     <string name="accordion_title">Accordion</string>
     <string-array name="accordion_rules">
         <item>## Objective</item>
-        <item>**Win** by consolidate all 52 cards into a single pile.</item>
+        <item>**Win** by consolidating all 52 cards into a single pile.</item>
         <item>**Lose** when no card can move.</item>
         <item>## Gameplay</item>
-        <item>A card can be consolidated onto the card **one or three spaces before it** when their they share a **rank or suit**.</item>
+        <item>A card can be consolidated onto the card **one or three spaces before it** when they share a **rank or suit**.</item>
         <item>The cards wrap left to right, top to bottom.</item>
     </string-array>
     <string name="accordion_won">Squeezed into one pile!</string>
@@ -326,7 +326,7 @@
     <string-array name="rogue_run_rules">
         <item>## Objective</item>
         <item>Get through every room before your health runs out.</item>
-        <item>## Cards Types</item>
+        <item>## Card Types</item>
         <item>- **Black cards are monsters.** Fighting one costs health equal to its value (J: 11, Q: 12, K: 13, A: 14).</item>
         <item>- **Diamonds are weapons.** A weapon takes its value off each monster\'s damage. After it kills a monster it can only fight monsters of **equal or lower** value than the last one it killed.</item>
         <item>- **Hearts are potions** and heal you by their value, up to 20.</item>
@@ -334,7 +334,7 @@
         <item>- Tap a room card, and confirm/choose its action. You can double tap to act on non-monster cards.</item>
         <item>- With a monster picked, **Fist** fights that monster barehanded, while **Wpn** uses the equipped weapon for lower damage, if available.</item>
         <item>- Resolve any three cards of a room to move on; the fourth stays for the next room.</item>
-        <item>- With no card picked, **Run** allows you to puts the whole room at the bottom of the dungeon. You can\'t run from two rooms in a row.</item>
+        <item>- With no card picked, **Run** puts the whole room at the bottom of the dungeon. You can\'t run from two rooms in a row.</item>
         <item>## Scoring</item>
         <item>Your score is equal to your health left, plus a bonus when you finish with an unused potion while at full health.</item>
     </string-array>
@@ -386,7 +386,7 @@
         <item>Ranks wrap from King to Ace, so for example: 9 / Q / 2 makes a valid sandwich.</item>
         <item>## Refills</item>
         <item>After serving, the number of ingredients that refill your hand depends on the quality of the sandwich served:</item>
-        <item>- Four for a sandwich make from one suit</item>
+        <item>- Four for a sandwich made from one suit</item>
         <item>- Three for a sandwich made from one color</item>
         <item>- Two for any other</item>
     </string-array>
