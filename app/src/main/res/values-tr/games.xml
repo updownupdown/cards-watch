@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accordion_title">Akordeon</string>
+    <string-array name="accordion_rules">
+        <item>## Amaç</item>
+        <item>**Kazanmak** için 52 kartın hepsini tek bir yığında topla.</item>
+        <item>Hiçbir kart hareket edemediğinde **kaybedersin**.</item>
+        <item>## Oynanış</item>
+        <item>Bir kart, **değer ya da takım** olarak eşleşiyorsa **bir ya da üç önceki** kartın üstüne konabilir.</item>
+        <item>Kartlar soldan sağa, yukarıdan aşağıya sıralanır.</item>
+    </string-array>
+    <string name="accordion_won">Tek yığına sığdı!</string>
+    <string name="accordion_lost">Sıkıştın: %1$d yığın kaldı</string>
+    <string name="aces_up_title">Aslar yukarı</string>
+    <string-array name="aces_up_rules">
+        <item>## Amaç</item>
+        <item>Dört As dışındaki bütün desteyi ıskartaya at (her yığında bir As).</item>
+        <item>## Oynanış</item>
+        <item>Başka bir yığında **aynı takımdan daha yüksek bir kart** görünüyorsa bir kartı ıskartaya atmak için ona dokun.</item>
+        <item>**As en yüksek karttır** ve asla ıskartaya atılamaz.</item>
+        <item>Bir yığın boşaldığında, başka bir yığının üst kartını oraya taşımak için ona dokun.</item>
+        <item>Sıkıştığında her yığına bir kart daha dağıtmak için **Dağıt** düğmesine dokun.</item>
+    </string-array>
+    <string name="aces_up_won">Dört As yukarıda!</string>
+    <string name="augury_title">Kehanet</string>
+    <string-array name="augury_rules">
+        <item>## Amaç</item>
+        <item>**Gizli kuralı**, **art arda sekiz doğru tahmin** yapacak kadar iyi çöz. Soldaki yay her doğru tahminle dolar.</item>
+        <item>## Oynanış</item>
+        <item>Her oyunun, yoldaki son kart(lar)dan sonra hangi kartların gelebileceğine dair gizli bir kuralı vardır.</item>
+        <item>- Kurala uyduğunu düşündüğün eldeki bir karta dokun. Uyuyorsa yola katılır; uymuyorsa son kartın yanında gri olarak durur.</item>
+        <item>- Elindeki hiçbir kartın uymadığını düşünüyorsan üstü çizili karta dokun. Haklıysan yeni bir el alırsın; uyan bir kart varsa senin yerine oynanır (kırmızıyla gösterilir) ve doğru tahmin serin sıfırlanır.</item>
+        <item>Tüm kurallar için: A = 1, Vale = 11, Kız = 12, Papaz = 13.</item>
+        <item>## Kurallar</item>
+        <item>- Aynı renkte olmalı</item>
+        <item>- Renkler sırayla değişmeli</item>
+        <item>- Aynı takımdan ya da aynı değerde olmalı</item>
+        <item>- Farklı takımdan olmalı</item>
+        <item>- Tek ve çift değerler sırayla gelmeli</item>
+        <item>- Daha yüksek değerde olmalı; Vale, Kız ya da Papaz\'dan sonra her şey gelebilir</item>
+        <item>- En fazla iki değer uzakta olmalı</item>
+        <item>- En fazla iki değer uzakta olmalı (As ile Papaz komşudur)</item>
+        <item>- En az üç değer uzakta olmalı</item>
+        <item>- Yüksek (8–K) ile düşük (A–7) sırayla gelmeli</item>
+        <item>- Resimli kartlarla sayı kartları sırayla gelmeli</item>
+        <item>- Daha düşük değerde olmalı; As\'tan sonra her şey gelebilir</item>
+        <item>- Tekten sonra tek, çiftten sonra çift gelmeli</item>
+        <item>- Takımlar sırayla gelmeli: maça, kupa, karo, sinek</item>
+        <item>- Son kartla aynı takım daha yüksek, aynı renkteki diğer takım daha düşük olmalı; diğer renk her şeyden sonra gelebilir</item>
+        <item>- Kırmızı kartlar 8 veya üstü, siyah kartlar 7 veya altı olmalı</item>
+    </string-array>
+    <string name="augury_law_alternate_colours">renkler sırayla değişmeli</string>
+    <string name="augury_law_suit_or_rank">aynı takımdan ya da aynı değerde olmalı</string>
+    <string name="augury_law_odd_even">tek ve çift değerler sırayla gelmeli</string>
+    <string name="augury_law_higher_until_court">daha yüksek değerde olmalı; Vale, Kız ya da Papaz\'dan sonra her şey gelebilir</string>
+    <string name="augury_law_within_two">en fazla iki değer uzakta olmalı</string>
+    <string name="augury_law_same_colour">aynı renkte olmalı</string>
+    <string name="augury_law_different_suit">farklı takımdan olmalı</string>
+    <string name="augury_law_high_low_alternate">yüksek (8–K) ile düşük (A–7) sırayla gelmeli</string>
+    <string name="augury_law_court_alternate">resimli kartlarla sayı kartları sırayla gelmeli</string>
+    <string name="augury_law_lower_until_ace">daha düşük değerde olmalı; As\'tan sonra her şey gelebilir</string>
+    <string name="augury_law_far_apart">en az üç değer uzakta olmalı</string>
+    <string name="augury_law_parity_lock">tekten sonra tek, çiftten sonra çift gelmeli</string>
+    <string name="augury_law_within_two_wrap">en fazla iki değer uzakta olmalı (As ile Papaz komşudur)</string>
+    <string name="augury_law_suit_sequence">takımlar sırayla gelmeli: maça, kupa, karo, sinek</string>
+    <string name="augury_law_same_suit_ascender">aynı takım daha yüksek, aynı renkteki diğer takım daha düşük olmalı; diğer renk her şeyden sonra gelebilir</string>
+    <string name="augury_law_red_high_black_low">kırmızı kartlar 8 veya üstü, siyah kartlar 7 veya altı olmalı</string>
+    <string name="augury_the_law">Kural: %1$s</string>
+    <string name="augury_none_fit">Uyan yok</string>
+    <string name="baroness_title">Barones</string>
+    <string-array name="baroness_rules">
+        <item>## Amaç</item>
+        <item>**Kazanmak** için 52 kartın hepsini ıskartaya at.</item>
+        <item>Deste boşken hamle kalmadığında **kaybedersin**.</item>
+        <item>## Oynanış</item>
+        <item>Bir **Papaz** ya da toplamı **13** eden iki üst kartı ıskartaya atmak için onlara dokun. As 1, Vale 11, Kız 12 değerindedir.</item>
+        <item>Boş bir yığını doldurmak için bir karta, sonra boş yığına dokun.</item>
+        <item>Sıkıştığında her yığına bir kart dağıtmak için **Dağıt** düğmesine dokun.</item>
+    </string-array>
+    <string name="baroness_won">52 kartın hepsi atıldı!</string>
+    <string name="beehive_title">Arı Kovanı</string>
+    <string-array name="beehive_rules">
+        <item>## Amaç</item>
+        <item>Aynı değerdeki dört kartı bir araya getirerek 52 kartın hepsini kaldır.</item>
+        <item>## Oynanış</item>
+        <item>Ortadaki altı yığının her biri tek bir değer tutar. Dört kart tamamlanınca hemen kalkar.</item>
+        <item>**Kovan** solda; **açık deste** sağda aşağı doğru iner. Deste gösterilmez.</item>
+        <item>Kovanın ya da açık destenin üst kartını aynı değerdeki bir yığına, yoksa boş bir yığına taşımak için ona dokun.</item>
+        <item>Bir yığını aynı değerdeki başka bir yığına katmak için ona dokun.</item>
+        <item>Desteden açık desteye üç kart açmak için **Çek** düğmesine dokun. Deste bitince **Yenile** açık desteyi ters çevirir ve yeniden çeker.</item>
+    </string-array>
+    <string name="beehive_won">Kovan boşaldı!</string>
+    <string name="beehive_recycle">Yenile</string>
+    <string name="clock_title">Saat pasyansı</string>
+    <string-array name="clock_rules">
+        <item>## Amaç</item>
+        <item>Dört Papaz da çıkmadan önce her kartı açarak 52 kartın hepsini kendi saatine yerleştir.</item>
+        <item>## Oynanış</item>
+        <item>Üst kartını açmak için ortadaki yığına dokun.</item>
+        <item>Sonra o kartın ait olduğu yığına dokun: As saat 1\'de, sayılar kendi saatlerinde, Vale 11\'de, Kız 12\'de, Papaz ortada.</item>
+    </string-array>
+    <string name="clock_won">Her kart yerinde</string>
+    <string name="clock_lost">Dördüncü Papaz çıktı</string>
+    <string name="dominion_title">Egemenlik</string>
+    <string-array name="dominion_rules">
+        <item>## Amaç</item>
+        <item>**Kazanmak** için masadaki on beş kartı tek bir karta indir.</item>
+        <item>Hiçbir fetih mümkün olmadığında ya da masadaki kartlardan birinin eşleşebileceği kart kalmadığında **kaybedersin**.</item>
+        <item>## Oynanış</item>
+        <item>Bir karta, sonra yanındaki **aynı değerde ya da aynı takımdan** bir karta (çaprazlar da sayılır) dokunarak onu fethet.</item>
+        <item>Bir kart, aradaki bütün yerler boşsa aynı satırda ya da sütunda daha uzaktaki bir kartı da fethedebilir.</item>
+        <item>Her dağıtımda dört takımdan üçü kullanılır ve her kartın başta en az bir eşi vardır.</item>
+    </string-array>
+    <string name="dominion_won">Tek kart hepsine hükmediyor!</string>
+    <string name="dominion_isolated">Bir kart fethedilemiyor</string>
+    <string name="dominion_stuck">Fetih kalmadı</string>
+    <string name="ebb_and_flow_title">Med ve Cezir</string>
+    <string-array name="ebb_and_flow_rules">
+        <item>## Amaç</item>
+        <item>**52 kartın** hepsini dört yığına oyna.</item>
+        <item>## Oynanış</item>
+        <item>Artan (ilk iki) yığınlara aynı ya da daha yüksek, azalan (son iki) yığınlara aynı ya da daha düşük değerde kart oyna.</item>
+        <item>Boş bir yığına herhangi bir kartla başlanabilir. As 1 değerindedir.</item>
+        <item>**Aynı takımdan bir değer geri** bir kart da oynanabilir.</item>
+        <item>Elinde 5 ya da daha az kart varsa **Çek** ile elini yediye tamamlayabilirsin.</item>
+    </string-array>
+    <string name="ebb_and_flow_won">Her kart oynandı!</string>
+    <string name="ebb_and_flow_lost">Sıkıştın: %1$d kart kaldı</string>
+    <string name="elevens_title">On birler</string>
+    <string-array name="elevens_rules">
+        <item>## Amaç</item>
+        <item>Bütün desteyi toplamı **11** olan çiftler ya da **Vale-Kız-Papaz** kraliyet üçlüleri halinde temizleyerek kazan.</item>
+        <item>## Oynanış</item>
+        <item>Toplamı 11 olan iki karta dokun: **A ve 10, 2 ve 9, 3 ve 8, 4 ve 7, 5 ve 6**.</item>
+        <item>Resimli kartlar için bir Vale, bir Kız ve bir Papaz\'a dokun; birlikte kalkarlar.</item>
+    </string-array>
+    <string name="elevens_won">Bütün deste temizlendi!</string>
+    <string name="elevens_lost">Çift ya da kraliyet üçlüsü kalmadı</string>
+    <string name="fifteen_puzzle_title">On beş bulmacası</string>
+    <string-array name="fifteen_puzzle_rules">
+        <item>## Amaç</item>
+        <item>Her satırı As\'tan 4\'e, takıma göre diz:</item>
+        <item>- **Kupa**</item>
+        <item>- **Sinek**</item>
+        <item>- **Karo**</item>
+        <item>- **Maça** (maça 4 yoktur)</item>
+        <item>## Oynanış</item>
+        <item>Boşluğun üstündeki, altındaki, solundaki ya da sağındaki bir kartı boşluğa kaydırmak için ona dokun.</item>
+        <item>Yerine oturan kartlar yeşile döner.</item>
+        <item>Her bulmaca kurallı hamlelerle karıştırılır, bu yüzden her zaman çözülebilir.</item>
+    </string-array>
+    <string name="fifteen_puzzle_won">%1$d hamlede çözüldü</string>
+    <string name="fortunes_call_title">Kaderin çağrısı</string>
+    <string-array name="fortunes_call_rules">
+        <item>## Amaç</item>
+        <item>Üç yanlış tahmin yapmadan doğru tahminlerle 20 puan topla.</item>
+        <item>## Oynanış</item>
+        <item>Kapalı kartın rengini ya da değerinin açık karta göre yüksek mi düşük mü olduğunu tahmin et.</item>
+        <item>Doğru **Kırmızı** ya da **Siyah** tahmini 1 puan kazandırır.</item>
+        <item>Doğru **Yüksek** ya da **Düşük** tahmini 2 puan kazandırır.</item>
+        <item>Eşit değerler ne yüksek ne düşük sayılır.</item>
+    </string-array>
+    <string name="fortunes_call_red">Kırmızı</string>
+    <string name="fortunes_call_black">Siyah</string>
+    <string name="fortunes_call_higher">Yüksek</string>
+    <string name="fortunes_call_lower">Düşük</string>
+    <string name="fortunes_call_red_letter">K</string>
+    <string name="fortunes_call_black_letter">S</string>
+    <string name="fortunes_call_won">%1$d puana ulaştın!</string>
+    <string name="fortunes_call_misses">Üç ıska</string>
+    <string name="fortunes_call_out">Kart kalmadı</string>
+    <string name="tower_of_hanoi_title">Hanoi kulesi</string>
+    <string-array name="tower_of_hanoi_rules">
+        <item>## Amaç</item>
+        <item>**9**\'dan **As**\'a sıralı tek bir yığın kur.</item>
+        <item>## Oynanış</item>
+        <item>Üst kartını almak için bir yığına, sonra onu oraya taşımak için başka bir yığına dokun.</item>
+        <item>Bir kart boş bir yığına ya da **daha yüksek değerde** bir kartın üstüne taşınabilir.</item>
+        <item>Kaybetmek yok: kule kurulana kadar taşımaya devam et.</item>
+    </string-array>
+    <string name="tower_of_hanoi_won">%1$d hamlede kuruldu</string>
+    <string name="jailbreak_title">Hapisten Kaçış</string>
+    <string-array name="jailbreak_rules">
+        <item>## Amaç</item>
+        <item>Joker\'i ortadan kurtar: ortası da boşken dört **duvardan** birini (ortanın üstündeki, altındaki, solundaki ve sağındaki yığınlar) boşalt.</item>
+        <item>Hiçbir kart kaldırılamadığında ve çekilemediğinde **kaybedersin**.</item>
+        <item>## Oynanış</item>
+        <item>Kartları seçmek için onlara dokun. **Kırmızı ve siyah kartların toplam değeri** eşit olunca seçilen kartlar ıskartaya gider.</item>
+        <item>Sıkıştığında ortaya bir kart koymak için **Çek** düğmesine dokun.</item>
+        <item>Ortada en fazla **üç** kart durabilir.</item>
+    </string-array>
+    <string name="jailbreak_won">Joker kaçtı!</string>
+    <string name="lights_out_title">Işıkları söndür</string>
+    <string-array name="lights_out_rules">
+        <item>## Amaç</item>
+        <item>20 kartın hepsini kapalı hale getir.</item>
+        <item>## Oynanış</item>
+        <item>Bir karta dokunmak o kartı ve hemen üstündeki, altındaki ve yanlarındaki kartları çevirir.</item>
+        <item>Her dağıtım çözülebilir.</item>
+    </string-array>
+    <string name="lights_out_won">%1$d hamlede ışıklar söndü</string>
+    <string name="little_windmill_title">Küçük yel değirmeni</string>
+    <string-array name="little_windmill_rules">
+        <item>## Amaç</item>
+        <item>52 kartın hepsini dört köşe temeline taşı.</item>
+        <item>## Temeller</item>
+        <item>İlk köşeyi başlatmak için desteden bir **As** alınır. Diğer üç As açıldıkça öbür köşeleri başlatır.</item>
+        <item>Her temeli As\'tan Papaz\'a **takıma göre artan sırayla** diz.</item>
+        <item>## Haç</item>
+        <item>Haça beş kart dağıtılır. Yığınlarını **takıma bakmadan azalan sırayla** diz. As\'ın üstüne hiçbir şey konmaz.</item>
+        <item>Kullanılabilir herhangi bir kart haçtaki boş bir yeri doldurabilir.</item>
+        <item>## Çekme ve açık deste</item>
+        <item>Desteyi soldaki **açık desteye** birer birer açmak için **Çek** düğmesine dokun. Yeniden dağıtma yoktur.</item>
+    </string-array>
+    <string name="little_windmill_won">Her takım yerinde!</string>
+    <string name="lycan_title">Kurt adam</string>
+    <string-array name="lycan_rules">
+        <item>## Amaç</item>
+        <item>Her turda **Kurt\'un elini** (üstte) boşalt ve **100 puana** ulaşmak için Kurt\'la yarış.</item>
+        <item>## Alma</item>
+        <item>Bir alma seçmek için kendi kartlarına (altta) ve Kurt\'un kartlarına dokun. Çekilecek sonraki kart soldaki yığındadır.</item>
+        <item>- **Eşit:** kartlarından biri aynı değerdeki bir Kurt kartını alır. Sonraki kartı sen çekersin.</item>
+        <item>- **Toplam:** iki ya da daha fazla kartının toplamı bir Kurt kartına eşittir. Sonraki kartı sen çekersin.</item>
+        <item>- **Bölme:** kartlarından biri birkaç Kurt kartının toplamına eşittir. Sonraki kartı Kurt çeker.</item>
+        <item>- **Aşma:** kartlarından biri daha düşük bir Kurt kartını alır. Kurt aradaki fark kadar kart çeker.</item>
+        <item>Turu bitirmek için istediğin zaman **Çekil** diyebilirsin. Kurt\'un puanını sınırlamak için erken çekilmek avantajlı olabilir.</item>
+        <item>## Puanlama</item>
+        <item>Kurt\'un elini boşaltırsan elinde kalan kartların değeri kadar puan alırsın.</item>
+        <item>Aksi halde Kurt, kendi elinde kalan kartların değeri kadar puan alır.</item>
+        <item>Bağımlılık yapan ama çok zor bir oyun.</item>
+    </string-array>
+    <string name="lycan_perfect">Eşit</string>
+    <string name="lycan_sum">Toplam</string>
+    <string name="lycan_split">Bölme</string>
+    <string name="lycan_over">Aşma</string>
+    <string name="lycan_over_by">Aşma +%1$d</string>
+    <string name="lycan_select">Seç</string>
+    <string name="lycan_wolf">Kurt</string>
+    <string name="lycan_you">Sen</string>
+    <string name="lycan_fold">Çekil</string>
+    <string name="lycan_won">Kurt\'u %1$d-%2$d yendin</string>
+    <string name="lycan_lost">Kurt %1$d-%2$d kazandı</string>
+    <string name="memory_title">Hafıza</string>
+    <string-array name="memory_rules">
+        <item>## Amaç</item>
+        <item>Bütün eş çiftleri bularak masayı temizle.</item>
+        <item>## Eşleştirme</item>
+        <item>Bir kartı çevirmek için ona, sonra ikinci bir karta dokun.</item>
+        <item>Bir çift hem **değer hem takım** olarak eşleşmelidir.</item>
+    </string-array>
+    <string name="memory_won">%1$d hamlede temizlendi</string>
+    <string name="nestor_title">Nestor</string>
+    <string-array name="nestor_rules">
+        <item>## Amaç</item>
+        <item>**Kazanmak** için 32 kartın hepsini çiftler halinde at.</item>
+        <item>## Oynanış</item>
+        <item>Iskartaya atmak için **aynı değerde** iki serbest karta dokun.</item>
+        <item>Yalnızca bir sütunun en üst kartı ya da iki yedek kart kullanılabilir.</item>
+        <item>Yalnızca **As\'tan 8\'e** kadar kartlar kullanılır.</item>
+    </string-array>
+    <string name="nestor_won">Hepsi eşleşti!</string>
+    <string name="nestor_lost">Çift kalmadı</string>
+    <string name="ouroboros_title">Ouroboros</string>
+    <string-array name="ouroboros_rules">
+        <item>## Amaç</item>
+        <item>- Dört **mücevherin** (Aslar) hepsini ganimet olarak al ve **çıkışa** (Joker) basarak sağ kurtul.</item>
+        <item>- Açıkken bir **tuzağa** (J, Q, K) basmak anında ölüm demektir.</item>
+        <item>- Ek puan için **biblo** (2\'den 10\'a) topla.</item>
+        <item>## Döngü</item>
+        <item>Zindan, ekranın çevresinde dönen bir kart döngüsüdür. **Üst kartı** en alttadır. Üst karttan ileri sayarak keşfedersin.</item>
+        <item>- **Kapalı** bir karta basmak her zaman güvenlidir ve hiçbir şey yapmaz.</item>
+        <item>- **Açık** bir karta basmak onu tetikler: mücevher ya da biblo toplanır; tuzak seni öldürür; dört mücevherin hepsi sendeyse çıkış seni dışarı çıkarır.</item>
+        <item>- Kart takımlarının bir anlamı yoktur.</item>
+        <item>## Eylemler</item>
+        <item>- **Etrafa bak:** üst kart kapalıyken ona dokunarak onu ve sonrakini aç.</item>
+        <item>- **Seç:** üstteki iki açık karttan birine dokunarak onu seç.</item>
+        <item>- **Keşfet:** bir sayı kartı seçiliyken zindanda değeri kadar kart ilerleyebilirsin. Oraya gitmek için mor karta dokun.</item>
+        <item>- **Yolu işaretle:** bir sayı kartı seçiliyken onu bir kenara koymak için boş bir yola (üç haritadan biri) dokun.</item>
+        <item>- **Yola dön:** işaretli bir yola dokunarak kartını seçili halde döngünün üstüne geri koy.</item>
+        <item>## İpuçları</item>
+        <item>- **Fırsat buldukça yol işaretle!** Üstteki iki kart sayı kartı değilse ve işaretli yolun yoksa kaybolursun.</item>
+        <item>- Yolları art arda birkaç kez işaretleyip onlara geri dönmek üst kartları değiştirir; böylece ne kadar ilerleyeceğini ve nereye basacağını kontrol edersin.</item>
+    </string-array>
+    <string name="ouroboros_loot">Ganimet</string>
+    <string name="ouroboros_won">Dört mücevheri de aldın ve çıkışı buldun!</string>
+    <string name="ouroboros_trap">Bir tuzağa bastın!</string>
+    <string name="ouroboros_lost_with_loot">Ganimetinle birlikte zindanda kayboldun.</string>
+    <string name="ouroboros_lost">Zindanda çıkışsız kayboldun!</string>
+    <string name="ouroboros_jewels">Mücevherler</string>
+    <string name="ouroboros_trinkets">Biblolar</string>
+    <string name="ozanams_square_title">Ozanam Karesi</string>
+    <string-array name="ozanams_square_rules">
+        <item>## Amaç</item>
+        <item>Kareyi, her **satır, sütun ve uzun köşegende** **her değerden bir ve her takımdan bir kart** olacak şekilde doldur.</item>
+        <item>## Oynanış</item>
+        <item>- Yerleştirilecek kartlar sağda, her takım için ayrı bir yığında durur. Üst kartını seçmek için bir yığına dokun; o takımın sonraki kartı için yeniden dokun.</item>
+        <item>- Sonra yerleştirmek için boş bir yere dokun. Yerine dağıtılmış kartlar (siyahla gösterilir) taşınamaz.</item>
+        <item>- Yerleştirdiğin kartlar başka bir yere taşınabilir, yer değiştirebilir ya da yığınlarına dokunarak geri gönderilebilir.</item>
+        <item>- Çizgilerinden birinde bir değeri ya da takımı tekrarlayan kart kırmızıyla işaretlenir.</item>
+        <item>- Her dağıtımın **tam olarak bir** çözümü vardır.</item>
+    </string-array>
+    <string name="ozanams_square_won">Kare tamamlandı!</string>
+    <string name="rogue_run_title">Haydut kaçışı</string>
+    <string-array name="rogue_run_rules">
+        <item>## Amaç</item>
+        <item>Canın bitmeden bütün odaları geç.</item>
+        <item>## Kart türleri</item>
+        <item>- **Siyah kartlar canavardır.** Biriyle dövüşmek değeri kadar cana mal olur (J: 11, Q: 12, K: 13, A: 14).</item>
+        <item>- **Karolar silahtır.** Silah, her canavarın hasarını kendi değeri kadar azaltır. Bir canavarı öldürdükten sonra yalnızca son öldürdüğüne **eşit ya da daha düşük** değerli canavarlarla dövüşebilir.</item>
+        <item>- **Kupalar iksirdir**; değerleri kadar, en fazla 20\'ye kadar iyileştirir.</item>
+        <item>## Odalar</item>
+        <item>- Bir oda kartına dokun ve eylemini onayla/seç. Canavar olmayan kartlarda eylem için iki kez dokunabilirsin.</item>
+        <item>- Bir canavar seçiliyken **Yumruk** onunla çıplak elle dövüşür; **Slh** ise varsa kuşanılmış silahı kullanarak daha az hasar alır.</item>
+        <item>- Sonrakine geçmek için bir odanın herhangi üç kartını çöz; dördüncüsü sonraki odaya kalır.</item>
+        <item>- Hiçbir kart seçili değilken **Kaç** bütün odayı zindanın dibine koyar. Art arda iki odadan kaçamazsın.</item>
+        <item>## Puanlama</item>
+        <item>Puanın kalan canına eşittir; canın tamken kullanılmamış bir iksirle bitirirsen bonus alırsın.</item>
+    </string-array>
+    <string name="rogue_run_lost">%1$d. odada öldün</string>
+    <string name="rogue_run_won">Kaçtın!</string>
+    <string name="rogue_run_run">Kaç</string>
+    <string name="rogue_run_heal">Şifa +%1$d</string>
+    <string name="rogue_run_equip">Kuşan</string>
+    <string name="rogue_run_fist">Yumruk −%1$d</string>
+    <string name="rogue_run_weapon">Slh −%1$d</string>
+    <string name="rogue_run_health">Can: %1$d</string>
+    <string name="rogue_run_room">Oda: %1$d</string>
+    <string name="rogue_run_deck">Dst: %1$d</string>
+    <string name="royal_marriage_title">Kraliyet evliliği</string>
+    <string-array name="royal_marriage_rules">
+        <item>## Amaç</item>
+        <item>**Kupa Kızı** ve **kupa Papazı** dışındaki bütün kartları ıskartaya at; bu ikisi sonunda yan yana gelmeli.</item>
+        <item>## Dağıtım</item>
+        <item>52 kartın hepsi soldan sağa, sonra aşağı okunan tek bir sırada durur: kupa Kızı en başta, kupa Papazı en sonda.</item>
+        <item>## Iskartaya atma</item>
+        <item>- İki yanındaki kartlar **değer ya da takım** olarak eşleşiyorsa tek bir kart ya da yan yana iki kart atılabilir.</item>
+        <item>- Daha uzun bir dizi ancak içindeki her kart **aynı takımdan** ise ve iki yanındaki kartlar değer ya da takım olarak eşleşiyorsa atılabilir.</item>
+        <item>- Çıkarılacak kartlara dokun, sonra **Iskarta** düğmesine dokun. Tek bir kartı atmak için ona iki kez dokun.</item>
+    </string-array>
+    <string name="royal_marriage_won">Kız ile Papaz evlendi!</string>
+    <string name="royal_marriage_lost">Kurallı hamle kalmadı</string>
+    <string name="royal_marriage_discard">Iskarta</string>
+    <string name="ten_twenty_thirty_title">On-Yirmi-Otuz</string>
+    <string-array name="ten_twenty_thirty_rules">
+        <item>## Amaç</item>
+        <item>**Kazanmak** için 52 kartın hepsini ıskartaya at.</item>
+        <item>## Oynanış</item>
+        <item>52 kartın hepsi soldan sağa, sonra aşağı okunan tek bir sırada açık dağıtılır.</item>
+        <item>Kartlar üstlerindeki değer kadar sayılır; Vale, Kız ve Papaz **10** sayılır.</item>
+        <item>Sırada toplamı **10, 20 ya da 30** olan **yan yana iki ya da daha fazla kart** ıskartaya atılabilir.</item>
+    </string-array>
+    <string name="ten_twenty_thirty_won">Her kart sayılıp atıldı!</string>
+    <string name="ten_twenty_thirty_lost">Toplamı tutan dizi yok</string>
+    <string name="triple_stack_title">Üçlü yığın</string>
+    <string-array name="triple_stack_rules">
+        <item>## Amaç</item>
+        <item>**Kazanmak** için bütün malzemeleri sandviç servis ederek bitir.</item>
+        <item>Malzeme varken hiç sandviç yapılamazsa **kaybedersin**.</item>
+        <item>## Servis</item>
+        <item>**Eşit aralıklı değerlerde** üç karta dokun, sonra **Servis** düğmesine dokun. As, Vale, Kız ve Papaz 1, 11, 12 ve 13 değerindedir.</item>
+        <item>Değerler Papaz\'dan As\'a döner; örneğin 9 / Q / 2 geçerli bir sandviçtir.</item>
+        <item>## Yenileme</item>
+        <item>Servisten sonra elini yenileyen malzeme sayısı, servis edilen sandviçin kalitesine bağlıdır:</item>
+        <item>- Tek takımdan sandviç için dört</item>
+        <item>- Tek renkten sandviç için üç</item>
+        <item>- Diğerleri için iki</item>
+    </string-array>
+    <string name="triple_stack_won">Her malzeme servis edildi!</string>
+    <string name="triple_stack_lost">Sandviç kalmadı</string>
+    <string name="triple_stack_serve">Servis (%1$d)</string>
+    <string name="triple_stack_ingredients">Malzeme: %1$d</string>
+</resources>

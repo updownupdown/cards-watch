@@ -293,7 +293,15 @@ object Lycan : Game<LycanState> {
     @Composable
     private fun Score(name: String, score: Int, width: Dp) {
         Column(Modifier.width(width), horizontalAlignment = Alignment.CenterHorizontally) {
-            BoardText(name)
+            // One line, shrinking for a long name (Serigala).
+            val label = MaterialTheme.typography.labelSmall
+            BasicText(
+                text = name,
+                style = label.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                maxLines = 1,
+                softWrap = false,
+                autoSize = TextAutoSize.StepBased(minFontSize = label.fontSize * 0.6f, maxFontSize = label.fontSize),
+            )
             val style = scoreStyle(Color.White)
             // Shrinks by up to 15%, so a long score keeps the cell's width.
             BasicText(

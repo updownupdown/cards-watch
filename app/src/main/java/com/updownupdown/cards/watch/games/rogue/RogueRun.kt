@@ -509,6 +509,7 @@ object RogueRun : Game<RogueState> {
                         text = stringResource(R.string.rogue_run_health, state.health),
                         style = health.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                         maxLines = 1,
+                        softWrap = false,
                         autoSize = TextAutoSize.StepBased(
                             minFontSize = MaterialTheme.typography.labelMedium.fontSize,
                             maxFontSize = health.fontSize

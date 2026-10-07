@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accordion_title">Acordeão</string>
+    <string-array name="accordion_rules">
+        <item>## Objetivo</item>
+        <item>**Vença** juntando as 52 cartas numa só pilha.</item>
+        <item>**Perca** quando nenhuma carta puder ser movida.</item>
+        <item>## Como jogar</item>
+        <item>Uma carta pode ir para a carta **uma ou três posições antes dela** quando as duas forem do **mesmo valor ou naipe**.</item>
+        <item>As cartas seguem da esquerda para a direita, de cima para baixo.</item>
+    </string-array>
+    <string name="accordion_won">Tudo numa só pilha!</string>
+    <string name="accordion_lost">Travado com %1$d pilhas</string>
+    <string name="aces_up_title">Ases no topo</string>
+    <string-array name="aces_up_rules">
+        <item>## Objetivo</item>
+        <item>Descarte o baralho inteiro, menos os quatro Ases (um em cada pilha).</item>
+        <item>## Como jogar</item>
+        <item>Toque numa carta para descartá-la quando outra pilha mostrar uma **carta mais alta do mesmo naipe**.</item>
+        <item>**Os Ases são altos** e nunca podem ser descartados.</item>
+        <item>Quando uma pilha estiver vazia, toque em qualquer outra carta do topo para movê-la para lá.</item>
+        <item>Quando travar, toque em **Distribuir** para pôr mais uma carta em cada pilha.</item>
+    </string-array>
+    <string name="aces_up_won">Quatro Ases no topo!</string>
+    <string name="augury_title">Augúrio</string>
+    <string-array name="augury_rules">
+        <item>## Objetivo</item>
+        <item>Desvende a **lei oculta** o suficiente para acertar **oito palpites seguidos**. O arco à esquerda cresce a cada acerto.</item>
+        <item>## Como jogar</item>
+        <item>Cada partida tem uma lei secreta sobre quais cartas podem seguir a(s) última(s) carta(s) do caminho.</item>
+        <item>- Toque numa carta da sua mão se achar que ela segue a lei. Se seguir, ela entra no caminho; se não, fica acinzentada ao lado da última carta.</item>
+        <item>- Se achar que nenhuma carta da sua mão serve, toque na carta riscada. Se acertar, você recebe uma mão nova; se alguma carta servia, ela é jogada por você (mostrada em vermelho) e sua sequência de acertos é zerada.</item>
+        <item>Para todas as leis: A = 1, Valetes = 11, Damas = 12, Reis = 13.</item>
+        <item>## Leis</item>
+        <item>- Deve ser da mesma cor</item>
+        <item>- Deve alternar a cor</item>
+        <item>- Deve ser do mesmo naipe ou valor</item>
+        <item>- Deve ser de outro naipe</item>
+        <item>- Deve alternar entre valores ímpares e pares</item>
+        <item>- Deve ser de valor mais alto; qualquer uma pode seguir J, Q ou K</item>
+        <item>- Deve estar a no máximo dois valores</item>
+        <item>- Deve estar a no máximo dois valores (Ás e Rei são vizinhos)</item>
+        <item>- Deve estar a pelo menos três valores de distância</item>
+        <item>- Deve alternar entre alta (8–K) e baixa (A–7)</item>
+        <item>- Deve alternar entre figuras e cartas numéricas</item>
+        <item>- Deve ser de valor mais baixo; qualquer uma pode seguir um Ás</item>
+        <item>- Ímpar deve seguir ímpar, par deve seguir par</item>
+        <item>- Deve seguir os naipes em ordem: espadas, copas, ouros, paus</item>
+        <item>- Do mesmo naipe da última, deve ser mais alta; do outro naipe da mesma cor, mais baixa; a outra cor pode seguir qualquer carta</item>
+        <item>- As vermelhas devem ser 8 ou mais; as pretas, 7 ou menos</item>
+    </string-array>
+    <string name="augury_law_alternate_colours">deve alternar a cor</string>
+    <string name="augury_law_suit_or_rank">deve ser do mesmo naipe ou valor</string>
+    <string name="augury_law_odd_even">deve alternar entre valores ímpares e pares</string>
+    <string name="augury_law_higher_until_court">deve ser de valor mais alto; qualquer uma pode seguir J, Q ou K</string>
+    <string name="augury_law_within_two">deve estar a no máximo dois valores</string>
+    <string name="augury_law_same_colour">deve ser da mesma cor</string>
+    <string name="augury_law_different_suit">deve ser de outro naipe</string>
+    <string name="augury_law_high_low_alternate">deve alternar entre alta (8–K) e baixa (A–7)</string>
+    <string name="augury_law_court_alternate">deve alternar entre figuras e cartas numéricas</string>
+    <string name="augury_law_lower_until_ace">deve ser de valor mais baixo; qualquer uma pode seguir um Ás</string>
+    <string name="augury_law_far_apart">deve estar a pelo menos três valores de distância</string>
+    <string name="augury_law_parity_lock">ímpar deve seguir ímpar, par deve seguir par</string>
+    <string name="augury_law_within_two_wrap">deve estar a no máximo dois valores (Ás e Rei são vizinhos)</string>
+    <string name="augury_law_suit_sequence">deve seguir os naipes em ordem: espadas, copas, ouros, paus</string>
+    <string name="augury_law_same_suit_ascender">do mesmo naipe, mais alta; do outro naipe da mesma cor, mais baixa; a outra cor pode seguir qualquer carta</string>
+    <string name="augury_law_red_high_black_low">as vermelhas devem ser 8 ou mais; as pretas, 7 ou menos</string>
+    <string name="augury_the_law">A lei: %1$s</string>
+    <string name="augury_none_fit">Nenhuma serve</string>
+    <string name="baroness_title">Baronesa</string>
+    <string-array name="baroness_rules">
+        <item>## Objetivo</item>
+        <item>**Vença** descartando as 52 cartas.</item>
+        <item>**Perca** quando o monte acabar e não houver mais jogadas.</item>
+        <item>## Como jogar</item>
+        <item>Toque num **Rei**, ou em duas cartas do topo que somem **13**, para descartá-las. Ases valem 1, Valetes 11 e Damas 12.</item>
+        <item>Para preencher uma pilha vazia, toque numa carta e depois na pilha vazia.</item>
+        <item>Quando travar, toque em **Distribuir** para pôr uma carta em cada pilha.</item>
+    </string-array>
+    <string name="baroness_won">As 52 descartadas!</string>
+    <string name="beehive_title">A Colmeia</string>
+    <string-array name="beehive_rules">
+        <item>## Objetivo</item>
+        <item>Retire as 52 cartas formando grupos de quatro cartas do mesmo valor.</item>
+        <item>## Como jogar</item>
+        <item>As seis pilhas do meio guardam um valor cada. Um grupo de quatro sai de uma vez.</item>
+        <item>A **colmeia** fica à esquerda; o **descarte** desce pela direita. O monte não aparece.</item>
+        <item>Toque na colmeia ou no descarte para mover a carta do topo para uma pilha do mesmo valor, ou senão para uma pilha vazia.</item>
+        <item>Toque numa pilha para juntá-la a outra pilha do mesmo valor.</item>
+        <item>Toque em **Comprar** para virar três cartas do monte para o descarte. Quando o monte acabar, **Revirar** devolve o descarte ao monte e compra de novo.</item>
+    </string-array>
+    <string name="beehive_won">A colmeia está vazia!</string>
+    <string name="beehive_recycle">Revirar</string>
+    <string name="clock_title">Paciência do relógio</string>
+    <string-array name="clock_rules">
+        <item>## Objetivo</item>
+        <item>Vire todas as cartas para cima, levando as 52 às suas horas, antes que os quatro Reis apareçam.</item>
+        <item>## Como jogar</item>
+        <item>Toque na pilha do meio para virar a carta do topo.</item>
+        <item>Depois toque na pilha a que essa carta pertence: Ases à 1 hora, números na sua hora, Valetes às 11, Damas às 12 e Reis no meio.</item>
+    </string-array>
+    <string name="clock_won">Todas as cartas no lugar</string>
+    <string name="clock_lost">O quarto Rei apareceu</string>
+    <string name="dominion_title">Domínio</string>
+    <string-array name="dominion_rules">
+        <item>## Objetivo</item>
+        <item>**Vença** reduzindo as quinze cartas a uma só carta na mesa.</item>
+        <item>**Perca** quando nenhuma conquista for possível, ou quando uma das cartas na mesa não tiver mais nenhuma correspondência possível.</item>
+        <item>## Como jogar</item>
+        <item>Toque numa carta e depois numa carta vizinha do **mesmo valor ou naipe** (diagonais contam) para conquistá-la.</item>
+        <item>Uma carta também pode conquistar uma carta mais distante na mesma linha ou coluna, se todos os espaços entre elas estiverem vazios.</item>
+        <item>Cada distribuição usa três dos quatro naipes, e toda carta começa com pelo menos uma correspondência.</item>
+    </string-array>
+    <string name="dominion_won">Uma carta domina todas!</string>
+    <string name="dominion_isolated">Uma carta não pode ser conquistada</string>
+    <string name="dominion_stuck">Não há mais conquistas</string>
+    <string name="ebb_and_flow_title">Fluxo e Refluxo</string>
+    <string-array name="ebb_and_flow_rules">
+        <item>## Objetivo</item>
+        <item>Jogue as **52 cartas** nas quatro pilhas.</item>
+        <item>## Como jogar</item>
+        <item>Jogue cartas nas pilhas crescentes (as duas primeiras) ou decrescentes (as duas últimas), com cartas do mesmo valor ou mais altas/mais baixas.</item>
+        <item>Qualquer carta pode iniciar uma pilha vazia. Ases valem 1.</item>
+        <item>Uma carta **um valor atrás, do mesmo naipe,** também pode ser jogada.</item>
+        <item>Se sua mão tiver 5 cartas ou menos, você pode **comprar** para completá-la de novo até sete.</item>
+    </string-array>
+    <string name="ebb_and_flow_won">Todas as cartas jogadas!</string>
+    <string name="ebb_and_flow_lost">Travado com %1$d cartas restantes</string>
+    <string name="elevens_title">Onze</string>
+    <string-array name="elevens_rules">
+        <item>## Objetivo</item>
+        <item>Vença retirando o baralho inteiro, em pares que somam **11**, ou em trios reais de **Valete, Dama e Rei**.</item>
+        <item>## Como jogar</item>
+        <item>Toque em duas cartas que somem 11: **A e 10, 2 e 9, 3 e 8, 4 e 7, 5 e 6**.</item>
+        <item>Para as figuras, toque num Valete, numa Dama e num Rei, que saem juntos.</item>
+    </string-array>
+    <string name="elevens_won">O baralho inteiro retirado!</string>
+    <string name="elevens_lost">Não há mais pares nem trios reais</string>
+    <string name="fifteen_puzzle_title">Jogo do 15</string>
+    <string-array name="fifteen_puzzle_rules">
+        <item>## Objetivo</item>
+        <item>Ordene cada linha do Ás ao 4, por naipe:</item>
+        <item>- **Copas**</item>
+        <item>- **Paus**</item>
+        <item>- **Ouros**</item>
+        <item>- **Espadas** (não há 4 de espadas)</item>
+        <item>## Como jogar</item>
+        <item>Toque numa carta acima, abaixo, à esquerda ou à direita do espaço vazio para deslizá-la até ele.</item>
+        <item>As cartas ficam verdes quando estão no lugar certo.</item>
+        <item>Todo quebra-cabeça é embaralhado com jogadas válidas, então sempre tem solução.</item>
+    </string-array>
+    <string name="fifteen_puzzle_won">Resolvido em %1$d jogadas</string>
+    <string name="fortunes_call_title">O chamado da sorte</string>
+    <string-array name="fortunes_call_rules">
+        <item>## Objetivo</item>
+        <item>Faça 20 pontos acertando previsões antes de errar três.</item>
+        <item>## Como jogar</item>
+        <item>Preveja a cor da carta virada para baixo, ou o valor dela em relação à carta virada para cima.</item>
+        <item>Acertar **Vermelho** ou **Preto** vale 1 ponto.</item>
+        <item>Acertar **Maior** ou **Menor** vale 2 pontos.</item>
+        <item>Valores iguais não são nem maiores nem menores.</item>
+    </string-array>
+    <string name="fortunes_call_red">Vermelho</string>
+    <string name="fortunes_call_black">Preto</string>
+    <string name="fortunes_call_higher">Maior</string>
+    <string name="fortunes_call_lower">Menor</string>
+    <string name="fortunes_call_red_letter">V</string>
+    <string name="fortunes_call_black_letter">P</string>
+    <string name="fortunes_call_won">Você chegou a %1$d pontos!</string>
+    <string name="fortunes_call_misses">Três erros</string>
+    <string name="fortunes_call_out">Acabaram as cartas</string>
+    <string name="tower_of_hanoi_title">Torre de Hanói</string>
+    <string-array name="tower_of_hanoi_rules">
+        <item>## Objetivo</item>
+        <item>Monte uma só pilha ordenada do **9** ao **Ás**.</item>
+        <item>## Como jogar</item>
+        <item>Toque numa pilha para pegar a carta do topo e depois em outra pilha para movê-la para lá.</item>
+        <item>Uma carta pode ir para uma pilha vazia ou sobre uma carta de **valor mais alto**.</item>
+        <item>Não dá para perder: continue movendo até a torre ficar pronta.</item>
+    </string-array>
+    <string name="tower_of_hanoi_won">Pronta em %1$d jogadas</string>
+    <string name="jailbreak_title">Fuga da Prisão</string>
+    <string-array name="jailbreak_rules">
+        <item>## Objetivo</item>
+        <item>Liberte o Coringa do meio: esvazie uma das quatro **paredes** (as pilhas acima, abaixo, à esquerda e à direita do meio) enquanto o meio também estiver vazio.</item>
+        <item>**Perca** quando nenhuma carta puder ser retirada nem comprada.</item>
+        <item>## Como jogar</item>
+        <item>Toque nas cartas para selecioná-las. As cartas selecionadas são descartadas quando o **valor total das cartas vermelhas e pretas** for igual.</item>
+        <item>Quando travar, toque em **Comprar** para pôr uma carta no meio.</item>
+        <item>O meio guarda no máximo **três** cartas.</item>
+    </string-array>
+    <string name="jailbreak_won">O Coringa escapou!</string>
+    <string name="lights_out_title">Luzes apagadas</string>
+    <string-array name="lights_out_rules">
+        <item>## Objetivo</item>
+        <item>Vire as 20 cartas para baixo.</item>
+        <item>## Como jogar</item>
+        <item>Tocar numa carta vira essa carta e as cartas vizinhas na horizontal e na vertical.</item>
+        <item>Toda distribuição tem solução.</item>
+    </string-array>
+    <string name="lights_out_won">Luzes apagadas em %1$d jogadas</string>
+    <string name="little_windmill_title">Pequeno moinho</string>
+    <string-array name="little_windmill_rules">
+        <item>## Objetivo</item>
+        <item>Leve as 52 cartas para as quatro fundações dos cantos.</item>
+        <item>## Fundações</item>
+        <item>Um **Ás** é tirado do baralho para iniciar o primeiro canto. Os outros três Ases iniciam os outros cantos à medida que aparecem.</item>
+        <item>Construa cada fundação **por naipe em ordem crescente**, do Ás ao Rei.</item>
+        <item>## A cruz</item>
+        <item>Cinco cartas são distribuídas na cruz. Construa as pilhas dela **em ordem decrescente, independentemente do naipe**. Nada pode ir sobre um Ás.</item>
+        <item>Qualquer carta disponível pode preencher um espaço vazio na cruz.</item>
+        <item>## Monte e descarte</item>
+        <item>Toque em **Comprar** para virar o monte uma carta de cada vez para o **descarte**, à esquerda. Não há redistribuição.</item>
+    </string-array>
+    <string name="little_windmill_won">Todos os naipes no lugar!</string>
+    <string name="lycan_title">Licantropo</string>
+    <string-array name="lycan_rules">
+        <item>## Objetivo</item>
+        <item>Esvazie a **mão do Lobo** (em cima) a cada rodada e dispute com o Lobo quem chega primeiro a **100 pontos**.</item>
+        <item>## Capturar</item>
+        <item>Toque nas suas cartas (embaixo) e nas cartas do Lobo para escolher uma captura. A próxima carta a ser comprada fica na pilha à esquerda.</item>
+        <item>- **Igual:** uma das suas cartas pega uma carta do Lobo do mesmo valor. Você compra a próxima carta.</item>
+        <item>- **Soma:** duas ou mais das suas cartas somam uma carta do Lobo. Você compra a próxima carta.</item>
+        <item>- **Divisão:** uma das suas cartas é igual à soma de várias cartas do Lobo. O Lobo compra a próxima carta.</item>
+        <item>- **Superação:** uma das suas cartas pega uma carta do Lobo de valor menor. O Lobo compra a diferença em cartas.</item>
+        <item>Você pode **Parar** a qualquer momento para encerrar a rodada. Parar cedo pode valer a pena, para limitar a pontuação do Lobo.</item>
+        <item>## Pontuação</item>
+        <item>Esvazie a mão do Lobo para marcar o valor das cartas que sobraram na sua mão.</item>
+        <item>Caso contrário, o Lobo marca o valor das cartas que sobraram na mão dele.</item>
+        <item>Este jogo vicia, mas é muito difícil.</item>
+    </string-array>
+    <string name="lycan_perfect">Igual</string>
+    <string name="lycan_sum">Soma</string>
+    <string name="lycan_split">Divisão</string>
+    <string name="lycan_over">Superação</string>
+    <string name="lycan_over_by">Superação +%1$d</string>
+    <string name="lycan_select">Escolher</string>
+    <string name="lycan_wolf">Lobo</string>
+    <string name="lycan_you">Você</string>
+    <string name="lycan_fold">Parar</string>
+    <string name="lycan_won">Você venceu o Lobo por %1$d a %2$d</string>
+    <string name="lycan_lost">O Lobo venceu por %1$d a %2$d</string>
+    <string name="memory_title">Jogo da memória</string>
+    <string-array name="memory_rules">
+        <item>## Objetivo</item>
+        <item>Limpe a mesa encontrando todos os pares.</item>
+        <item>## Pares</item>
+        <item>Toque numa carta para virá-la e depois numa segunda carta.</item>
+        <item>Um par precisa ter **o mesmo valor e o mesmo naipe**.</item>
+    </string-array>
+    <string name="memory_won">Limpa em %1$d jogadas</string>
+    <string name="nestor_title">Nestor</string>
+    <string-array name="nestor_rules">
+        <item>## Objetivo</item>
+        <item>**Vença** formando pares com as 32 cartas.</item>
+        <item>## Como jogar</item>
+        <item>Toque em duas cartas livres do **mesmo valor** para descartá-las.</item>
+        <item>Só a carta do topo de uma coluna, ou as duas cartas da reserva, podem ser usadas.</item>
+        <item>Só são usadas cartas do **Ás ao 8**.</item>
+    </string-array>
+    <string name="nestor_won">Todos os pares formados!</string>
+    <string name="nestor_lost">Não há mais pares</string>
+    <string name="ouroboros_title">Ouroboros</string>
+    <string-array name="ouroboros_rules">
+        <item>## Objetivo</item>
+        <item>- Roube as quatro **joias** (Ases) e fuja com vida parando na **saída** (Coringa).</item>
+        <item>- Parar numa **armadilha** (J, Q, K) virada para cima significa morte instantânea.</item>
+        <item>- Colete **bugigangas** (2 a 10) para ganhar pontos extras.</item>
+        <item>## O círculo</item>
+        <item>A masmorra é um círculo de cartas em volta da tela. A **carta do topo** fica embaixo. Você explora contando para a frente a partir da carta do topo.</item>
+        <item>- Parar numa carta **virada para baixo** é sempre seguro e não faz nada.</item>
+        <item>- Parar numa carta **virada para cima** a ativa: uma joia ou bugiganga é coletada; uma armadilha mata você; a saída deixa você sair quando tiver as quatro joias.</item>
+        <item>- Os naipes das cartas não têm significado.</item>
+        <item>## Ações</item>
+        <item>- **Olhar em volta:** toque na carta do topo enquanto estiver virada para baixo para virá-la junto com a seguinte.</item>
+        <item>- **Escolher:** toque numa das duas primeiras cartas, virada para cima, para escolhê-la.</item>
+        <item>- **Explorar:** com uma carta numérica escolhida, você pode avançar pela masmorra tantas cartas quanto o valor dela. Toque na carta roxa para ir até lá.</item>
+        <item>- **Marcar caminho:** com uma carta numérica escolhida, toque num caminho vazio (um dos três mapas) para guardá-la ali.</item>
+        <item>- **Voltar ao caminho:** toque num caminho marcado para devolver a carta dele ao topo do círculo, já escolhida.</item>
+        <item>## Dicas</item>
+        <item>- **Marque caminhos sempre que puder!** Se as duas primeiras cartas não forem numéricas e você não tiver nenhum caminho marcado, você está perdido.</item>
+        <item>- Marcar caminhos e voltar a eles, várias vezes seguidas, permite mudar as cartas do topo para controlar até onde você vai e onde para.</item>
+    </string-array>
+    <string name="ouroboros_loot">Tesouro</string>
+    <string name="ouroboros_won">Você pegou as quatro joias e achou a saída!</string>
+    <string name="ouroboros_trap">Você caiu numa armadilha!</string>
+    <string name="ouroboros_lost_with_loot">Perdido na masmorra, com o seu tesouro.</string>
+    <string name="ouroboros_lost">Perdido na masmorra, sem saída!</string>
+    <string name="ouroboros_jewels">Joias</string>
+    <string name="ouroboros_trinkets">Bugigangas</string>
+    <string name="ozanams_square_title">Quadrado de Ozanam</string>
+    <string-array name="ozanams_square_rules">
+        <item>## Objetivo</item>
+        <item>Preencha o quadrado de modo que cada **linha, coluna e diagonal maior** tenha **uma carta de cada valor e uma de cada naipe**.</item>
+        <item>## Como jogar</item>
+        <item>- As cartas a colocar ficam numa pilha para cada naipe, à direita. Toque numa pilha para pegar a carta do topo; toque de novo para a próxima carta desse naipe.</item>
+        <item>- Depois toque num espaço vazio para colocá-la. As cartas que já começam no lugar (mostradas em preto) não podem ser movidas.</item>
+        <item>- As cartas que você colocar podem ser movidas para outro espaço, trocadas de lugar ou devolvidas tocando na pilha delas.</item>
+        <item>- Uma carta que repete um valor ou naipe em uma de suas linhas fica marcada em vermelho.</item>
+        <item>- Cada distribuição tem **exatamente uma** solução.</item>
+    </string-array>
+    <string name="ozanams_square_won">O quadrado está completo!</string>
+    <string name="rogue_run_title">A fuga do ladino</string>
+    <string-array name="rogue_run_rules">
+        <item>## Objetivo</item>
+        <item>Atravesse todas as salas antes que sua vida acabe.</item>
+        <item>## Tipos de carta</item>
+        <item>- **Cartas pretas são monstros.** Lutar contra um custa vida igual ao valor dele (J: 11, Q: 12, K: 13, A: 14).</item>
+        <item>- **Ouros são armas.** Uma arma tira o valor dela do dano de cada monstro. Depois de matar um monstro, ela só pode lutar contra monstros de valor **igual ou menor** que o último que matou.</item>
+        <item>- **Copas são poções** e curam você no valor delas, até 20.</item>
+        <item>## Salas</item>
+        <item>- Toque numa carta da sala e confirme ou escolha a ação. Você pode tocar duas vezes para agir em cartas que não são monstros.</item>
+        <item>- Com um monstro escolhido, **Soco** luta contra ele de mãos vazias, e **Arm** usa a arma equipada para sofrer menos dano, se houver uma.</item>
+        <item>- Resolva três cartas quaisquer de uma sala para avançar; a quarta fica para a sala seguinte.</item>
+        <item>- Sem nenhuma carta escolhida, **Fugir** manda a sala inteira para o fundo da masmorra. Você não pode fugir de duas salas seguidas.</item>
+        <item>## Pontuação</item>
+        <item>Sua pontuação é a vida que sobrou, mais um bônus se você terminar com uma poção não usada e a vida cheia.</item>
+    </string-array>
+    <string name="rogue_run_lost">Morto na sala %1$d</string>
+    <string name="rogue_run_won">Você escapou!</string>
+    <string name="rogue_run_run">Fugir</string>
+    <string name="rogue_run_heal">Curar +%1$d</string>
+    <string name="rogue_run_equip">Equipar</string>
+    <string name="rogue_run_fist">Soco −%1$d</string>
+    <string name="rogue_run_weapon">Arm −%1$d</string>
+    <string name="rogue_run_health">PV: %1$d</string>
+    <string name="rogue_run_room">Sl: %1$d</string>
+    <string name="rogue_run_deck">Mt: %1$d</string>
+    <string name="royal_marriage_title">Casamento real</string>
+    <string-array name="royal_marriage_rules">
+        <item>## Objetivo</item>
+        <item>Descarte todas as cartas, menos a **Dama de copas** e o **Rei de copas**, que devem terminar lado a lado.</item>
+        <item>## Distribuição</item>
+        <item>As 52 cartas ficam numa só linha, lida da esquerda para a direita e depois para baixo: a Dama de copas primeiro, o Rei de copas por último.</item>
+        <item>## Descarte</item>
+        <item>- Uma carta, ou duas lado a lado, podem ser descartadas se as cartas de cada lado delas forem do mesmo **valor ou naipe**.</item>
+        <item>- Uma sequência mais longa só pode sair se todas as cartas dela forem do **mesmo naipe** e as cartas de cada lado forem do mesmo valor ou naipe.</item>
+        <item>- Toque na carta ou nas cartas a remover e depois em **Descartar**. Toque duas vezes numa carta sozinha para descartá-la.</item>
+    </string-array>
+    <string name="royal_marriage_won">A Dama e o Rei se casaram!</string>
+    <string name="royal_marriage_lost">Não há mais jogadas válidas</string>
+    <string name="royal_marriage_discard">Descartar</string>
+    <string name="ten_twenty_thirty_title">Dez-Vinte-Trinta</string>
+    <string-array name="ten_twenty_thirty_rules">
+        <item>## Objetivo</item>
+        <item>**Vença** descartando as 52 cartas.</item>
+        <item>## Como jogar</item>
+        <item>As 52 cartas são distribuídas viradas para cima numa só linha, lida da esquerda para a direita e depois para baixo.</item>
+        <item>As cartas valem o número delas; Valetes, Damas e Reis valem **10**.</item>
+        <item>Quaisquer **duas ou mais cartas vizinhas** na linha que somem **10, 20 ou 30** podem ser descartadas.</item>
+    </string-array>
+    <string name="ten_twenty_thirty_won">Todas as cartas contadas!</string>
+    <string name="ten_twenty_thirty_lost">Nenhuma sequência fecha a soma</string>
+    <string name="triple_stack_title">Pilha tripla</string>
+    <string-array name="triple_stack_rules">
+        <item>## Objetivo</item>
+        <item>**Vença** usando todos os ingredientes para servir sanduíches.</item>
+        <item>**Perca** quando nenhum sanduíche puder ser feito e ainda restarem ingredientes.</item>
+        <item>## Servir</item>
+        <item>Toque em três cartas com **valores em intervalos iguais** e depois em **Servir**. Ases, Valetes, Damas e Reis valem 1, 11, 12 e 13.</item>
+        <item>Os valores dão a volta do Rei ao Ás, então, por exemplo, 9 / Q / 2 forma um sanduíche válido.</item>
+        <item>## Reposição</item>
+        <item>Depois de servir, o número de ingredientes que repõem sua mão depende da qualidade do sanduíche servido:</item>
+        <item>- Quatro para um sanduíche de um só naipe</item>
+        <item>- Três para um sanduíche de uma só cor</item>
+        <item>- Dois para os outros</item>
+    </string-array>
+    <string name="triple_stack_won">Todos os ingredientes servidos!</string>
+    <string name="triple_stack_lost">Não há mais sanduíches</string>
+    <string name="triple_stack_serve">Servir (%1$d)</string>
+    <string name="triple_stack_ingredients">Ingredientes: %1$d</string>
+</resources>

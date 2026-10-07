@@ -200,7 +200,16 @@ fun GameRules(
                     .padding(BOX_PADDING),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                ratings.forEach { (name, value) -> RatingMeter(name, value, ratingName, nameWidth, accent) }
+                // The bars keep at least a third of the row: names too long for the rest (a long
+                // language) all shrink alike.
+                BoxWithConstraints {
+                    val room = maxWidth * 2 / 3 - RATING_GAP
+                    val scale = minOf(1f, room / nameWidth)
+                    val style = if (scale < 1f) ratingName.copy(fontSize = ratingName.fontSize * scale, letterSpacing = ratingName.letterSpacing * scale) else ratingName
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        ratings.forEach { (name, value) -> RatingMeter(name, value, style, minOf(nameWidth, room), accent) }
+                    }
+                }
             }
 
             Heading(stringResource(R.string.stats), accent, edge)
@@ -252,7 +261,7 @@ fun GameRules(
 @Composable
 private fun Heading(text: String, color: Color, edge: Modifier, top: Dp = HEADING_TOP) {
     Text(
-        text = text.uppercase(),
+        text = text.upper(),
         style = MaterialTheme.typography.titleSmall.copy(letterSpacing = HEADING_SPACING),
         color = color,
         modifier = Modifier.fillMaxWidth().padding(top = top, bottom = 2.dp).then(edge),
@@ -266,7 +275,7 @@ private fun Heading(text: String, color: Color, edge: Modifier, top: Dp = HEADIN
 @Composable
 private fun RatingMeter(name: String, value: Int, style: TextStyle, nameWidth: Dp, color: Color) {
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Text(name.uppercase(), style = style, maxLines = 1, softWrap = false, modifier = Modifier.width(nameWidth))
+        Text(name.upper(), style = style, maxLines = 1, softWrap = false, modifier = Modifier.width(nameWidth))
         Box(
             Modifier
                 .padding(start = RATING_GAP)

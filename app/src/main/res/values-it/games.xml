@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accordion_title">Fisarmonica</string>
+    <string-array name="accordion_rules">
+        <item>## Obiettivo</item>
+        <item>**Vinci** riunendo tutte le 52 carte in una sola pila.</item>
+        <item>**Perdi** quando nessuna carta può muoversi.</item>
+        <item>## Come si gioca</item>
+        <item>Una carta si può spostare sulla carta **una o tre posizioni prima** quando hanno lo stesso **valore o seme**.</item>
+        <item>Le carte si leggono da sinistra a destra, dall\'alto in basso.</item>
+    </string-array>
+    <string name="accordion_won">Tutto in una pila!</string>
+    <string name="accordion_lost">Bloccato con %1$d pile</string>
+    <string name="aces_up_title">Assi in alto</string>
+    <string-array name="aces_up_rules">
+        <item>## Obiettivo</item>
+        <item>Scarta tutto il mazzo tranne i quattro Assi (uno per pila).</item>
+        <item>## Come si gioca</item>
+        <item>Tocca una carta per scartarla quando un\'altra pila mostra una **carta più alta dello stesso seme**.</item>
+        <item>**Gli Assi sono alti** e non si possono mai scartare.</item>
+        <item>Quando una pila è vuota, tocca un\'altra carta in cima per spostarla lì.</item>
+        <item>Quando sei bloccato, tocca **Distribuisci** per un\'altra carta su ogni pila.</item>
+    </string-array>
+    <string name="aces_up_won">Quattro Assi in alto!</string>
+    <string name="augury_title">Auspicio</string>
+    <string-array name="augury_rules">
+        <item>## Obiettivo</item>
+        <item>Scopri la **legge nascosta** abbastanza bene da indovinare **otto volte di fila**. L\'arco a sinistra si riempie a ogni risposta giusta.</item>
+        <item>## Come si gioca</item>
+        <item>Ogni partita ha una legge segreta che stabilisce quali carte possono seguire l\'ultima carta (o le ultime carte) del percorso.</item>
+        <item>- Tocca una carta della tua mano se pensi che rispetti la legge. Se la rispetta, entra nel percorso; altrimenti resta in grigio accanto all\'ultima carta.</item>
+        <item>- Se pensi che nessuna carta della tua mano vada bene, tocca la carta barrata. Se hai ragione, ricevi una nuova mano; se una carta andava bene, viene giocata al posto tuo (mostrata in rosso) e la tua serie di risposte giuste si azzera.</item>
+        <item>Per tutte le leggi: A = 1, Fanti = 11, Donne = 12, Re = 13.</item>
+        <item>## Leggi</item>
+        <item>- Deve essere dello stesso colore</item>
+        <item>- Deve alternare il colore</item>
+        <item>- Deve avere lo stesso seme o lo stesso valore</item>
+        <item>- Deve essere di un altro seme</item>
+        <item>- Deve alternare valori dispari e pari</item>
+        <item>- Deve essere più alta; dopo J, Q o K va bene tutto</item>
+        <item>- Deve stare entro due valori</item>
+        <item>- Deve stare entro due valori (Asso e Re sono vicini)</item>
+        <item>- Deve distare almeno tre valori</item>
+        <item>- Deve alternare tra alta (8–K) e bassa (A–7)</item>
+        <item>- Deve alternare tra figure e carte numerali</item>
+        <item>- Deve essere più bassa; dopo un Asso va bene tutto</item>
+        <item>- Una dispari deve seguire una dispari, una pari deve seguire una pari</item>
+        <item>- Deve seguire i semi in ordine: picche, cuori, quadri, fiori</item>
+        <item>- Stesso seme dell\'ultima: più alta; altro seme dello stesso colore: più bassa; l\'altro colore può seguire qualsiasi carta</item>
+        <item>- Le rosse devono essere 8 o più; le nere, 7 o meno</item>
+    </string-array>
+    <string name="augury_law_alternate_colours">deve alternare il colore</string>
+    <string name="augury_law_suit_or_rank">deve avere lo stesso seme o lo stesso valore</string>
+    <string name="augury_law_odd_even">deve alternare valori dispari e pari</string>
+    <string name="augury_law_higher_until_court">deve essere più alta; dopo J, Q o K va bene tutto</string>
+    <string name="augury_law_within_two">deve stare entro due valori</string>
+    <string name="augury_law_same_colour">deve essere dello stesso colore</string>
+    <string name="augury_law_different_suit">deve essere di un altro seme</string>
+    <string name="augury_law_high_low_alternate">deve alternare tra alta (8–K) e bassa (A–7)</string>
+    <string name="augury_law_court_alternate">deve alternare tra figure e carte numerali</string>
+    <string name="augury_law_lower_until_ace">deve essere più bassa; dopo un Asso va bene tutto</string>
+    <string name="augury_law_far_apart">deve distare almeno tre valori</string>
+    <string name="augury_law_parity_lock">una dispari deve seguire una dispari, una pari una pari</string>
+    <string name="augury_law_within_two_wrap">deve stare entro due valori (Asso e Re sono vicini)</string>
+    <string name="augury_law_suit_sequence">deve seguire i semi in ordine: picche, cuori, quadri, fiori</string>
+    <string name="augury_law_same_suit_ascender">stesso seme: più alta; altro seme dello stesso colore: più bassa; l\'altro colore può seguire qualsiasi carta</string>
+    <string name="augury_law_red_high_black_low">le rosse devono essere 8 o più, le nere 7 o meno</string>
+    <string name="augury_the_law">La legge: %1$s</string>
+    <string name="augury_none_fit">Nessuna</string>
+    <string name="baroness_title">Baronessa</string>
+    <string-array name="baroness_rules">
+        <item>## Obiettivo</item>
+        <item>**Vinci** scartando tutte le 52 carte.</item>
+        <item>**Perdi** quando il mazzo è vuoto e non restano mosse.</item>
+        <item>## Come si gioca</item>
+        <item>Tocca un **Re**, o due carte in cima che sommano **13**, per scartarle. Gli Assi valgono 1, i Fanti 11 e le Donne 12.</item>
+        <item>Per riempire una pila vuota, tocca una carta, poi la pila vuota.</item>
+        <item>Quando sei bloccato, tocca **Distribuisci** per dare una carta a ogni pila.</item>
+    </string-array>
+    <string name="baroness_won">Tutte le 52 scartate!</string>
+    <string name="beehive_title">L\'alveare</string>
+    <string-array name="beehive_rules">
+        <item>## Obiettivo</item>
+        <item>Togli tutte le 52 carte formando gruppi di quattro carte dello stesso valore.</item>
+        <item>## Come si gioca</item>
+        <item>Le sei pile al centro contengono un valore ciascuna. Un gruppo di quattro viene tolto subito.</item>
+        <item>L\'**alveare** è a sinistra; il **pozzo** scende lungo la destra. Il mazzo non è mostrato.</item>
+        <item>Tocca l\'alveare o il pozzo per spostare la sua carta in cima su una pila dello stesso valore, o altrimenti su una pila vuota.</item>
+        <item>Tocca una pila per unirla a un\'altra pila dello stesso valore.</item>
+        <item>Tocca **Pesca** per girare tre carte dal mazzo sul pozzo. Quando il mazzo finisce, **Rigira** rimette il pozzo nel mazzo e pesca di nuovo.</item>
+    </string-array>
+    <string name="beehive_won">L\'alveare è vuoto!</string>
+    <string name="beehive_recycle">Rigira</string>
+    <string name="clock_title">Solitario dell\'orologio</string>
+    <string-array name="clock_rules">
+        <item>## Obiettivo</item>
+        <item>Scopri tutte le carte, mettendo tutte le 52 alla loro ora, prima che escano tutti e quattro i Re.</item>
+        <item>## Come si gioca</item>
+        <item>Tocca la pila centrale per scoprire la sua carta in cima.</item>
+        <item>Poi tocca la pila a cui appartiene quella carta: gli Assi all\'una, i numeri alla loro ora, i Fanti alle 11, le Donne alle 12 e i Re al centro.</item>
+    </string-array>
+    <string name="clock_won">Ogni carta è al suo posto</string>
+    <string name="clock_lost">È uscito il quarto Re</string>
+    <string name="dominion_title">Dominio</string>
+    <string-array name="dominion_rules">
+        <item>## Obiettivo</item>
+        <item>**Vinci** riducendo tutte e quindici le carte a una sola carta sul tavolo.</item>
+        <item>**Perdi** quando non è possibile nessuna conquista, o quando una delle carte sul tavolo non ha più corrispondenze possibili.</item>
+        <item>## Come si gioca</item>
+        <item>Tocca una carta, poi tocca una carta dello **stesso valore o seme** accanto a essa (anche in diagonale) per conquistarla.</item>
+        <item>Una carta può anche conquistare una carta più lontana sulla stessa riga o colonna, se tutti gli spazi tra loro sono vuoti.</item>
+        <item>Ogni distribuzione usa tre dei quattro semi, e all\'inizio ogni carta ha almeno una corrispondenza.</item>
+    </string-array>
+    <string name="dominion_won">Una carta domina su tutte!</string>
+    <string name="dominion_isolated">Una carta non si può conquistare</string>
+    <string name="dominion_stuck">Nessuna conquista rimasta</string>
+    <string name="ebb_and_flow_title">Flusso e Riflusso</string>
+    <string-array name="ebb_and_flow_rules">
+        <item>## Obiettivo</item>
+        <item>Gioca tutte le **52 carte** sulle quattro pile.</item>
+        <item>## Come si gioca</item>
+        <item>Gioca le carte sulle pile crescenti (le prime due) o decrescenti (le ultime due), con carte dello stesso valore o più alte/più basse.</item>
+        <item>Qualsiasi carta può iniziare una pila vuota. Gli Assi valgono 1.</item>
+        <item>Si può giocare anche una carta di **un valore indietro e dello stesso seme**.</item>
+        <item>Se hai 5 carte o meno in mano, puoi **pescare** per tornare a sette.</item>
+    </string-array>
+    <string name="ebb_and_flow_won">Tutte le carte giocate!</string>
+    <string name="ebb_and_flow_lost">Bloccato con %1$d carte rimaste</string>
+    <string name="elevens_title">Undici</string>
+    <string-array name="elevens_rules">
+        <item>## Obiettivo</item>
+        <item>Vinci togliendo tutto il mazzo, a coppie che sommano **11** o a tris reali **Fante-Donna-Re**.</item>
+        <item>## Come si gioca</item>
+        <item>Tocca due carte che sommano 11: **A e 10, 2 e 9, 3 e 8, 4 e 7, 5 e 6**.</item>
+        <item>Per le figure, tocca un Fante, una Donna e un Re, che verranno tolti insieme.</item>
+    </string-array>
+    <string name="elevens_won">Tutto il mazzo tolto!</string>
+    <string name="elevens_lost">Nessuna coppia né tris reale rimasto</string>
+    <string name="fifteen_puzzle_title">Gioco del quindici</string>
+    <string-array name="fifteen_puzzle_rules">
+        <item>## Obiettivo</item>
+        <item>Ordina ogni riga dall\'Asso al 4, per seme:</item>
+        <item>- **Cuori**</item>
+        <item>- **Fiori**</item>
+        <item>- **Quadri**</item>
+        <item>- **Picche** (non c\'è il 4 di picche)</item>
+        <item>## Come si gioca</item>
+        <item>Tocca una carta sopra, sotto, a sinistra o a destra dello spazio vuoto per farla scorrere lì.</item>
+        <item>Le carte diventano verdi quando sono al loro posto.</item>
+        <item>Ogni rompicapo è mescolato con mosse valide, quindi si può sempre risolvere.</item>
+    </string-array>
+    <string name="fifteen_puzzle_won">Risolto in %1$d mosse</string>
+    <string name="fortunes_call_title">Il richiamo della fortuna</string>
+    <string-array name="fortunes_call_rules">
+        <item>## Obiettivo</item>
+        <item>Fai 20 punti con previsioni giuste prima di sbagliarne tre.</item>
+        <item>## Come si gioca</item>
+        <item>Prevedi il colore della carta coperta, o il suo valore rispetto alla carta scoperta.</item>
+        <item>Indovinare **Rosso** o **Nero** vale 1 punto.</item>
+        <item>Indovinare **Più alta** o **Più bassa** vale 2 punti.</item>
+        <item>Valori uguali non sono né più alti né più bassi.</item>
+    </string-array>
+    <string name="fortunes_call_red">Rosso</string>
+    <string name="fortunes_call_black">Nero</string>
+    <string name="fortunes_call_higher">Più alta</string>
+    <string name="fortunes_call_lower">Più bassa</string>
+    <string name="fortunes_call_red_letter">R</string>
+    <string name="fortunes_call_black_letter">N</string>
+    <string name="fortunes_call_won">Hai raggiunto %1$d punti!</string>
+    <string name="fortunes_call_misses">Tre errori</string>
+    <string name="fortunes_call_out">Carte finite</string>
+    <string name="tower_of_hanoi_title">Torre di Hanoi</string>
+    <string-array name="tower_of_hanoi_rules">
+        <item>## Obiettivo</item>
+        <item>Costruisci una sola pila ordinata dal **9** all\'**Asso**.</item>
+        <item>## Come si gioca</item>
+        <item>Tocca una pila per prendere la sua carta in cima, poi tocca un\'altra pila per spostarla lì.</item>
+        <item>Una carta si può spostare su una pila vuota o su una carta di **valore più alto**.</item>
+        <item>Non si perde: continua a muovere finché la torre non è costruita.</item>
+    </string-array>
+    <string name="tower_of_hanoi_won">Costruita in %1$d mosse</string>
+    <string name="jailbreak_title">Evasione</string>
+    <string-array name="jailbreak_rules">
+        <item>## Obiettivo</item>
+        <item>Libera il Jolly dal centro: svuota uno dei quattro **muri** (le pile sopra, sotto, a sinistra e a destra del centro) mentre anche il centro è vuoto.</item>
+        <item>**Perdi** quando nessuna carta si può togliere e non se ne possono pescare.</item>
+        <item>## Come si gioca</item>
+        <item>Tocca le carte per selezionarle. Le carte selezionate vengono scartate quando il **valore totale delle carte rosse e nere** è uguale.</item>
+        <item>Quando sei bloccato, tocca **Pesca** per mettere una carta al centro.</item>
+        <item>Il centro contiene al massimo **tre** carte.</item>
+    </string-array>
+    <string name="jailbreak_won">Il Jolly è fuggito!</string>
+    <string name="lights_out_title">Luci spente</string>
+    <string-array name="lights_out_rules">
+        <item>## Obiettivo</item>
+        <item>Copri tutte le 20 carte.</item>
+        <item>## Come si gioca</item>
+        <item>Toccare una carta gira quella carta e le carte accanto in orizzontale e in verticale.</item>
+        <item>Ogni distribuzione si può risolvere.</item>
+    </string-array>
+    <string name="lights_out_won">Luci spente in %1$d mosse</string>
+    <string name="little_windmill_title">Piccolo mulino a vento</string>
+    <string-array name="little_windmill_rules">
+        <item>## Obiettivo</item>
+        <item>Porta tutte le 52 carte sulle quattro fondazioni d\'angolo.</item>
+        <item>## Fondazioni</item>
+        <item>Un **Asso** viene tolto dal mazzo per iniziare il primo angolo. Gli altri tre Assi iniziano gli altri angoli man mano che escono.</item>
+        <item>Costruisci ogni fondazione **in ordine crescente per seme**, dall\'Asso al Re.</item>
+        <item>## La croce</item>
+        <item>Cinque carte vengono distribuite sulla croce. Costruisci le sue pile **in ordine decrescente, indipendentemente dal seme**. Su un Asso non va niente.</item>
+        <item>Qualsiasi carta disponibile può riempire uno spazio vuoto della croce.</item>
+        <item>## Pesca e pozzo</item>
+        <item>Tocca **Pesca** per girare le carte del mazzo una alla volta sul **pozzo**, a sinistra. Non si ridistribuisce.</item>
+    </string-array>
+    <string name="little_windmill_won">Ogni seme è al suo posto!</string>
+    <string name="lycan_title">Licantropo</string>
+    <string-array name="lycan_rules">
+        <item>## Obiettivo</item>
+        <item>Svuota la **mano del Lupo** (in alto) a ogni round e sfida il Lupo nella corsa a **100 punti**.</item>
+        <item>## Catturare</item>
+        <item>Tocca le tue carte (in basso) e quelle del Lupo per scegliere una cattura. La prossima carta da pescare è sulla pila a sinistra.</item>
+        <item>- **Uguale:** una tua carta prende una carta del Lupo dello stesso valore. Peschi tu la prossima carta.</item>
+        <item>- **Somma:** due o più tue carte sommate danno una carta del Lupo. Peschi tu la prossima carta.</item>
+        <item>- **Divisione:** una tua carta è uguale alla somma di più carte del Lupo. Il Lupo pesca la prossima carta.</item>
+        <item>- **Sorpasso:** una tua carta prende una carta del Lupo più bassa. Il Lupo pesca tante carte quanta è la differenza.</item>
+        <item>Tocca **Lascia** in qualsiasi momento per chiudere il round. Lasciare presto può convenire, per limitare il punteggio del Lupo.</item>
+        <item>## Punteggio</item>
+        <item>Svuota la mano del Lupo per ottenere il valore delle carte rimaste nella tua mano.</item>
+        <item>Altrimenti, il Lupo ottiene il valore delle carte rimaste nella sua mano.</item>
+        <item>Questo gioco crea dipendenza, ma è molto difficile.</item>
+    </string-array>
+    <string name="lycan_perfect">Uguale</string>
+    <string name="lycan_sum">Somma</string>
+    <string name="lycan_split">Divisione</string>
+    <string name="lycan_over">Sorpasso</string>
+    <string name="lycan_over_by">Sorpasso +%1$d</string>
+    <string name="lycan_select">Scegli</string>
+    <string name="lycan_wolf">Lupo</string>
+    <string name="lycan_you">Tu</string>
+    <string name="lycan_fold">Lascia</string>
+    <string name="lycan_won">Hai battuto il Lupo %1$d a %2$d</string>
+    <string name="lycan_lost">Il Lupo vince %1$d a %2$d</string>
+    <string name="memory_title">Memory</string>
+    <string-array name="memory_rules">
+        <item>## Obiettivo</item>
+        <item>Svuota il tavolo trovando tutte le coppie.</item>
+        <item>## Abbinare</item>
+        <item>Tocca una carta per girarla, poi tocca una seconda carta.</item>
+        <item>Una coppia deve avere **lo stesso valore e lo stesso seme**.</item>
+    </string-array>
+    <string name="memory_won">Completato in %1$d mosse</string>
+    <string name="nestor_title">Nestore</string>
+    <string-array name="nestor_rules">
+        <item>## Obiettivo</item>
+        <item>**Vinci** accoppiando tutte le 32 carte.</item>
+        <item>## Come si gioca</item>
+        <item>Tocca due carte libere dello **stesso valore** per scartarle.</item>
+        <item>Si possono usare solo la carta in cima di una colonna o le due carte di riserva.</item>
+        <item>Si usano solo le carte **dall\'Asso all\'8**.</item>
+    </string-array>
+    <string name="nestor_won">Tutte accoppiate!</string>
+    <string name="nestor_lost">Nessuna coppia rimasta</string>
+    <string name="ouroboros_title">Uroboro</string>
+    <string-array name="ouroboros_rules">
+        <item>## Obiettivo</item>
+        <item>- Ruba tutti e quattro i **gioielli** (gli Assi) e fuggi vivo finendo sull\'**uscita** (il Jolly).</item>
+        <item>- Finire su una **trappola** (J, Q, K) mentre è scoperta significa morte istantanea.</item>
+        <item>- Raccogli **ninnoli** (dal 2 al 10) per ottenere punti in più.</item>
+        <item>## Il cerchio</item>
+        <item>Il dungeon è un cerchio di carte intorno allo schermo. La sua **prima carta** è in basso. Esplori contando in avanti dalla prima carta.</item>
+        <item>- Finire su una carta **coperta** è sempre sicuro e non fa niente.</item>
+        <item>- Finire su una carta **scoperta** la attiva: un gioiello o un ninnolo viene raccolto; una trappola ti uccide; l\'uscita ti fa uscire quando hai tutti e quattro i gioielli.</item>
+        <item>- I semi delle carte non hanno nessun significato.</item>
+        <item>## Azioni</item>
+        <item>- **Guardati intorno:** tocca la prima carta quando è coperta per scoprire lei e la successiva.</item>
+        <item>- **Scegli:** tocca una delle prime due carte, se è scoperta, per sceglierla.</item>
+        <item>- **Esplora:** con una carta numerica scelta, puoi avanzare nel dungeon di tante carte quanto il suo valore. Tocca la carta viola per andarci.</item>
+        <item>- **Segna il sentiero:** con una carta numerica scelta, tocca un sentiero vuoto (una delle tre mappe) per metterla da parte lì.</item>
+        <item>- **Torna al sentiero:** tocca un sentiero segnato per rimettere la sua carta in cima al cerchio, già scelta.</item>
+        <item>## Consigli</item>
+        <item>- **Segna i sentieri appena puoi!** Se le prime due carte non sono numeriche e non hai sentieri segnati, sei perduto.</item>
+        <item>- Segnare e riprendere sentieri più volte di fila ti permette di cambiare le prime carte, per decidere quanto avanzare e dove finire.</item>
+    </string-array>
+    <string name="ouroboros_loot">Bottino</string>
+    <string name="ouroboros_won">Hai preso tutti e quattro i gioielli e trovato l\'uscita!</string>
+    <string name="ouroboros_trap">Sei finito in una trappola!</string>
+    <string name="ouroboros_lost_with_loot">Perso nel dungeon, con il tuo bottino.</string>
+    <string name="ouroboros_lost">Perso nel dungeon, senza via d\'uscita!</string>
+    <string name="ouroboros_jewels">Gioielli</string>
+    <string name="ouroboros_trinkets">Ninnoli</string>
+    <string name="ozanams_square_title">Quadrato di Ozanam</string>
+    <string-array name="ozanams_square_rules">
+        <item>## Obiettivo</item>
+        <item>Riempi il quadrato in modo che ogni **riga, colonna e diagonale maggiore** contenga **una carta di ogni valore e una di ogni seme**.</item>
+        <item>## Come si gioca</item>
+        <item>- Le carte da piazzare sono in una pila per seme, a destra. Tocca una pila per prendere la sua carta in cima; toccala di nuovo per la carta successiva di quel seme.</item>
+        <item>- Poi tocca uno spazio vuoto per piazzarla. Le carte già al loro posto all\'inizio (mostrate in nero) non si possono spostare.</item>
+        <item>- Le carte che piazzi si possono spostare in un altro spazio, scambiare o rimandare indietro toccando la loro pila.</item>
+        <item>- Una carta che ripete un valore o un seme in una delle sue linee viene segnata in rosso.</item>
+        <item>- Ogni distribuzione ha **esattamente una** soluzione.</item>
+    </string-array>
+    <string name="ozanams_square_won">Il quadrato è completo!</string>
+    <string name="rogue_run_title">La fuga del furfante</string>
+    <string-array name="rogue_run_rules">
+        <item>## Obiettivo</item>
+        <item>Supera tutte le stanze prima di finire la salute.</item>
+        <item>## Tipi di carte</item>
+        <item>- **Le carte nere sono mostri.** Combatterne uno costa salute pari al suo valore (J: 11, Q: 12, K: 13, A: 14).</item>
+        <item>- **I quadri sono armi.** Un\'arma toglie il suo valore dai danni di ogni mostro. Dopo che ha ucciso un mostro, può combattere solo mostri di valore **uguale o inferiore** all\'ultimo che ha ucciso.</item>
+        <item>- **I cuori sono pozioni** e ti curano del loro valore, fino a 20.</item>
+        <item>## Stanze</item>
+        <item>- Tocca una carta della stanza e conferma o scegli la sua azione. Puoi toccare due volte per agire sulle carte che non sono mostri.</item>
+        <item>- Con un mostro scelto, **Pugno** lo combatte a mani nude, mentre **Arma** usa l\'arma equipaggiata per subire meno danni, se ce l\'hai.</item>
+        <item>- Risolvi tre carte qualsiasi di una stanza per andare avanti; la quarta resta per la stanza successiva.</item>
+        <item>- Senza carte scelte, **Fuggi** mette l\'intera stanza in fondo al dungeon. Non puoi fuggire da due stanze di fila.</item>
+        <item>## Punteggio</item>
+        <item>Il punteggio è pari alla salute rimasta, più un bonus se finisci con una pozione non usata e la salute al massimo.</item>
+    </string-array>
+    <string name="rogue_run_lost">Ucciso nella stanza %1$d</string>
+    <string name="rogue_run_won">Fuggito!</string>
+    <string name="rogue_run_run">Fuggi</string>
+    <string name="rogue_run_heal">Cura +%1$d</string>
+    <string name="rogue_run_equip">Impugna</string>
+    <string name="rogue_run_fist">Pugno −%1$d</string>
+    <string name="rogue_run_weapon">Arma −%1$d</string>
+    <string name="rogue_run_health">PV: %1$d</string>
+    <string name="rogue_run_room">St: %1$d</string>
+    <string name="rogue_run_deck">Mz: %1$d</string>
+    <string name="royal_marriage_title">Matrimonio reale</string>
+    <string-array name="royal_marriage_rules">
+        <item>## Obiettivo</item>
+        <item>Scarta tutte le carte tranne la **Donna di cuori** e il **Re di cuori**, che alla fine devono stare uno accanto all\'altra.</item>
+        <item>## Distribuzione</item>
+        <item>Tutte le 52 carte stanno su una sola fila, letta da sinistra a destra e poi verso il basso: prima la Donna di cuori, per ultimo il Re di cuori.</item>
+        <item>## Scartare</item>
+        <item>- Una carta, o due vicine, si possono scartare se le carte ai loro lati hanno lo stesso **valore o seme**.</item>
+        <item>- Una sequenza più lunga si può scartare solo se tutte le sue carte sono dello **stesso seme** e le carte ai lati hanno lo stesso valore o seme.</item>
+        <item>- Tocca la carta o le carte da togliere, poi **Scarta**. Tocca due volte una singola carta per scartarla.</item>
+    </string-array>
+    <string name="royal_marriage_won">La Donna e il Re sono sposi!</string>
+    <string name="royal_marriage_lost">Non restano mosse valide</string>
+    <string name="royal_marriage_discard">Scarta</string>
+    <string name="ten_twenty_thirty_title">Dieci-Venti-Trenta</string>
+    <string-array name="ten_twenty_thirty_rules">
+        <item>## Obiettivo</item>
+        <item>**Vinci** scartando tutte le 52 carte.</item>
+        <item>## Come si gioca</item>
+        <item>Tutte le 52 carte sono distribuite scoperte su una sola fila, letta da sinistra a destra e poi verso il basso.</item>
+        <item>Le carte valgono il loro numero; Fanti, Donne e Re valgono **10**.</item>
+        <item>Si possono scartare **due o più carte vicine** della fila che sommano **10, 20 o 30**.</item>
+    </string-array>
+    <string name="ten_twenty_thirty_won">Tutte le carte contate!</string>
+    <string name="ten_twenty_thirty_lost">Nessuna somma possibile</string>
+    <string name="triple_stack_title">Pila tripla</string>
+    <string-array name="triple_stack_rules">
+        <item>## Obiettivo</item>
+        <item>**Vinci** usando tutti gli ingredienti per servire panini.</item>
+        <item>**Perdi** quando non si può fare nessun panino e restano ingredienti.</item>
+        <item>## Servire</item>
+        <item>Tocca tre carte con **valori a intervalli uguali**, poi **Servi**. Assi, Fanti, Donne e Re valgono 1, 11, 12 e 13.</item>
+        <item>I valori sono circolari tra Re e Asso, quindi per esempio 9 / Q / 2 forma un panino valido.</item>
+        <item>## Rifornimento</item>
+        <item>Dopo aver servito, il numero di ingredienti che riforniscono la tua mano dipende dalla qualità del panino:</item>
+        <item>- Quattro per un panino di un solo seme</item>
+        <item>- Tre per un panino di un solo colore</item>
+        <item>- Due per tutti gli altri</item>
+    </string-array>
+    <string name="triple_stack_won">Tutti gli ingredienti serviti!</string>
+    <string name="triple_stack_lost">Nessun panino possibile</string>
+    <string name="triple_stack_serve">Servi (%1$d)</string>
+    <string name="triple_stack_ingredients">Ingredienti: %1$d</string>
+</resources>
