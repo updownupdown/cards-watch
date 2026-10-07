@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accordion_title">Akordeon</string>
+    <string-array name="accordion_rules">
+        <item>## Tujuan</item>
+        <item>**Menang** dengan menyatukan ke-52 kartu menjadi satu tumpukan.</item>
+        <item>**Kalah** jika tidak ada kartu yang bisa dipindah.</item>
+        <item>## Cara bermain</item>
+        <item>Kartu bisa ditumpuk ke kartu **satu atau tiga petak sebelumnya** jika keduanya sama **nilai atau jenis**.</item>
+        <item>Kartu berlanjut dari kiri ke kanan, dari atas ke bawah.</item>
+    </string-array>
+    <string name="accordion_won">Semua masuk satu tumpukan!</string>
+    <string name="accordion_lost">Buntu dengan %1$d tumpukan</string>
+    <string name="aces_up_title">As di atas</string>
+    <string-array name="aces_up_rules">
+        <item>## Tujuan</item>
+        <item>Buang seluruh dek kecuali keempat As (satu per tumpukan).</item>
+        <item>## Cara bermain</item>
+        <item>Ketuk kartu untuk membuangnya jika tumpukan lain menunjukkan **kartu lebih tinggi yang sejenis**.</item>
+        <item>**As tertinggi** dan tidak pernah bisa dibuang.</item>
+        <item>Jika ada tumpukan kosong, ketuk kartu teratas lain untuk memindahkannya ke sana.</item>
+        <item>Jika buntu, ketuk **Bagikan** untuk menambah satu kartu di setiap tumpukan.</item>
+    </string-array>
+    <string name="aces_up_won">Empat As di atas!</string>
+    <string name="augury_title">Pertanda</string>
+    <string-array name="augury_rules">
+        <item>## Tujuan</item>
+        <item>Pahami **hukum tersembunyi** cukup baik untuk **menebak benar delapan kali berturut-turut**. Busur di kiri terisi setiap kali kamu benar.</item>
+        <item>## Cara bermain</item>
+        <item>Setiap permainan punya hukum rahasia tentang kartu mana yang boleh menyusul kartu terakhir di jalur.</item>
+        <item>- Ketuk kartu di tanganmu jika menurutmu kartu itu cocok dengan hukum. Jika cocok, kartu itu masuk ke jalur; jika tidak, kartu itu diletakkan abu-abu di samping kartu terakhir.</item>
+        <item>- Jika menurutmu tidak ada kartu di tanganmu yang cocok, ketuk kartu yang dicoret. Jika benar, kamu mendapat tangan baru; jika ternyata ada kartu yang cocok, kartu itu dimainkan untukmu (ditandai merah), dan rangkaian tebakan benarmu diulang dari nol.</item>
+        <item>Untuk semua hukum: A = 1, Jack = 11, Queen = 12, King = 13.</item>
+        <item>## Hukum</item>
+        <item>- Harus sama warna</item>
+        <item>- Harus berselang warna</item>
+        <item>- Harus sama jenis atau sama nilai</item>
+        <item>- Harus berbeda jenis</item>
+        <item>- Harus berselang antara nilai ganjil dan genap</item>
+        <item>- Harus bernilai lebih tinggi; kartu apa pun boleh menyusul J, Q, atau K</item>
+        <item>- Selisih nilainya paling banyak dua</item>
+        <item>- Selisih nilainya paling banyak dua (As dan King bersebelahan)</item>
+        <item>- Selisih nilainya paling sedikit tiga</item>
+        <item>- Harus berselang antara tinggi (8–K) dan rendah (A–7)</item>
+        <item>- Harus berselang antara kartu bergambar dan kartu angka</item>
+        <item>- Harus bernilai lebih rendah; kartu apa pun boleh menyusul As</item>
+        <item>- Ganjil harus menyusul ganjil, genap harus menyusul genap</item>
+        <item>- Harus mengikuti urutan jenis: sekop, hati, wajik, keriting</item>
+        <item>- Jenis yang sama dengan kartu terakhir harus lebih tinggi; jenis lain yang sewarna harus lebih rendah; warna lain boleh menyusul apa saja</item>
+        <item>- Kartu merah harus bernilai 8 atau lebih; kartu hitam harus bernilai 7 atau kurang</item>
+    </string-array>
+    <string name="augury_law_alternate_colours">harus berselang warna</string>
+    <string name="augury_law_suit_or_rank">harus sama jenis atau sama nilai</string>
+    <string name="augury_law_odd_even">harus berselang antara nilai ganjil dan genap</string>
+    <string name="augury_law_higher_until_court">harus bernilai lebih tinggi; kartu apa pun boleh menyusul J, Q, atau K</string>
+    <string name="augury_law_within_two">selisih nilainya paling banyak dua</string>
+    <string name="augury_law_same_colour">harus sama warna</string>
+    <string name="augury_law_different_suit">harus berbeda jenis</string>
+    <string name="augury_law_high_low_alternate">harus berselang antara tinggi (8–K) dan rendah (A–7)</string>
+    <string name="augury_law_court_alternate">harus berselang antara kartu bergambar dan kartu angka</string>
+    <string name="augury_law_lower_until_ace">harus bernilai lebih rendah; kartu apa pun boleh menyusul As</string>
+    <string name="augury_law_far_apart">selisih nilainya paling sedikit tiga</string>
+    <string name="augury_law_parity_lock">ganjil harus menyusul ganjil, genap harus menyusul genap</string>
+    <string name="augury_law_within_two_wrap">selisih nilainya paling banyak dua (As dan King bersebelahan)</string>
+    <string name="augury_law_suit_sequence">harus mengikuti urutan jenis: sekop, hati, wajik, keriting</string>
+    <string name="augury_law_same_suit_ascender">jenis yang sama harus lebih tinggi, jenis lain yang sewarna lebih rendah; warna lain boleh menyusul apa saja</string>
+    <string name="augury_law_red_high_black_low">kartu merah harus 8 atau lebih, kartu hitam 7 atau kurang</string>
+    <string name="augury_the_law">Hukumnya: %1$s</string>
+    <string name="augury_none_fit">Tak cocok</string>
+    <string name="baroness_title">Baroness</string>
+    <string-array name="baroness_rules">
+        <item>## Tujuan</item>
+        <item>**Menang** dengan membuang ke-52 kartu.</item>
+        <item>**Kalah** jika dek sudah habis dan tidak ada langkah lagi.</item>
+        <item>## Cara bermain</item>
+        <item>Ketuk **King**, atau dua kartu teratas yang berjumlah **13**, untuk membuangnya. As bernilai 1, Jack 11, dan Queen 12.</item>
+        <item>Untuk mengisi tumpukan kosong, ketuk sebuah kartu, lalu tumpukan kosong itu.</item>
+        <item>Jika buntu, ketuk **Bagikan** untuk membagikan satu kartu per tumpukan.</item>
+    </string-array>
+    <string name="baroness_won">Ke-52 kartu terbuang!</string>
+    <string name="beehive_title">Sarang Lebah</string>
+    <string-array name="beehive_rules">
+        <item>## Tujuan</item>
+        <item>Singkirkan ke-52 kartu dengan mengumpulkan set empat kartu bernilai sama.</item>
+        <item>## Cara bermain</item>
+        <item>Enam tumpukan di tengah masing-masing memuat satu nilai. Set empat kartu langsung disingkirkan.</item>
+        <item>**Sarang lebah** ada di kiri; **tumpukan terbuka** memanjang di kanan. Dek tidak ditampilkan.</item>
+        <item>Ketuk sarang lebah atau tumpukan terbuka untuk memindahkan kartu teratasnya ke tumpukan bernilai sama, atau ke tumpukan kosong.</item>
+        <item>Ketuk tumpukan untuk menyatukannya dengan tumpukan lain yang bernilai sama.</item>
+        <item>Ketuk **Ambil** untuk membuka tiga kartu dari dek ke tumpukan terbuka. Jika dek habis, **Balik** membalik tumpukan terbuka kembali, lalu mengambil lagi.</item>
+    </string-array>
+    <string name="beehive_won">Sarangnya kosong!</string>
+    <string name="beehive_recycle">Balik</string>
+    <string name="clock_title">Solitaire jam</string>
+    <string-array name="clock_rules">
+        <item>## Tujuan</item>
+        <item>Buka setiap kartu dan urutkan ke-52 kartu ke jamnya sebelum keempat King muncul.</item>
+        <item>## Cara bermain</item>
+        <item>Ketuk tumpukan tengah untuk membuka kartu teratasnya.</item>
+        <item>Lalu ketuk tumpukan tempat kartu itu berada: As di jam 1, kartu angka di jamnya, Jack di jam 11, Queen di jam 12, dan King di tengah.</item>
+    </string-array>
+    <string name="clock_won">Semua kartu sudah di tempatnya</string>
+    <string name="clock_lost">King keempat muncul</string>
+    <string name="dominion_title">Dominion</string>
+    <string-array name="dominion_rules">
+        <item>## Tujuan</item>
+        <item>**Menang** dengan menyisakan kelima belas kartu menjadi satu kartu di meja.</item>
+        <item>**Kalah** jika tidak ada penaklukan yang mungkin, atau jika salah satu kartu di meja tidak punya pasangan lagi.</item>
+        <item>## Cara bermain</item>
+        <item>Ketuk sebuah kartu, lalu ketuk kartu **senilai atau sejenis** di sebelahnya (diagonal juga boleh) untuk menaklukkannya.</item>
+        <item>Kartu juga bisa menaklukkan kartu yang lebih jauh di baris atau kolom yang sama jika semua ruang di antaranya kosong.</item>
+        <item>Setiap pembagian memakai tiga dari empat jenis, dan setiap kartu punya setidaknya satu pasangan di awal.</item>
+    </string-array>
+    <string name="dominion_won">Satu kartu menguasai semuanya!</string>
+    <string name="dominion_isolated">Ada kartu yang tak bisa ditaklukkan</string>
+    <string name="dominion_stuck">Tidak ada penaklukan lagi</string>
+    <string name="ebb_and_flow_title">Pasang Surut</string>
+    <string-array name="ebb_and_flow_rules">
+        <item>## Tujuan</item>
+        <item>Mainkan ke-**52 kartu** ke empat tumpukan.</item>
+        <item>## Cara bermain</item>
+        <item>Mainkan kartu ke tumpukan naik (dua pertama) atau turun (dua terakhir), dengan kartu yang nilainya sama atau lebih tinggi/rendah.</item>
+        <item>Kartu apa pun boleh memulai tumpukan kosong. As bernilai 1.</item>
+        <item>Kartu yang **satu nilai mundur dengan jenis yang sama** juga boleh dimainkan.</item>
+        <item>Jika tanganmu berisi 5 kartu atau kurang, kamu boleh **mengambil** kartu sampai tanganmu kembali berisi tujuh.</item>
+    </string-array>
+    <string name="ebb_and_flow_won">Semua kartu dimainkan!</string>
+    <string name="ebb_and_flow_lost">Buntu dengan sisa %1$d kartu</string>
+    <string name="elevens_title">Sebelasan</string>
+    <string-array name="elevens_rules">
+        <item>## Tujuan</item>
+        <item>Menang dengan menghabiskan seluruh dek, berpasangan yang berjumlah **11**, atau bertiga **Jack-Queen-King**.</item>
+        <item>## Cara bermain</item>
+        <item>Ketuk dua kartu yang berjumlah 11: **A dan 10, 2 dan 9, 3 dan 8, 4 dan 7, 5 dan 6**.</item>
+        <item>Untuk kartu bergambar, ketuk satu Jack, satu Queen, dan satu King, yang akan disingkirkan bersama.</item>
+    </string-array>
+    <string name="elevens_won">Seluruh dek habis!</string>
+    <string name="elevens_lost">Tidak ada pasangan atau trio lagi</string>
+    <string name="fifteen_puzzle_title">Teka-teki lima belas</string>
+    <string-array name="fifteen_puzzle_rules">
+        <item>## Tujuan</item>
+        <item>Susun setiap baris dari As sampai 4, per jenis:</item>
+        <item>- **Hati**</item>
+        <item>- **Keriting**</item>
+        <item>- **Wajik**</item>
+        <item>- **Sekop** (tidak ada 4 sekop)</item>
+        <item>## Cara bermain</item>
+        <item>Ketuk kartu di atas, bawah, kiri, atau kanan celah untuk menggesernya ke celah itu.</item>
+        <item>Kartu menjadi hijau saat berada di tempatnya.</item>
+        <item>Setiap teka-teki diacak dengan langkah sah, jadi selalu bisa dipecahkan.</item>
+    </string-array>
+    <string name="fifteen_puzzle_won">Terpecahkan dalam %1$d langkah</string>
+    <string name="fortunes_call_title">Panggilan nasib</string>
+    <string-array name="fortunes_call_rules">
+        <item>## Tujuan</item>
+        <item>Raih 20 poin dengan menebak benar sebelum salah menebak tiga kali.</item>
+        <item>## Cara bermain</item>
+        <item>Tebak warna kartu tertutup, atau nilainya dibandingkan kartu yang terbuka.</item>
+        <item>Tebakan **Merah** atau **Hitam** yang benar bernilai 1 poin.</item>
+        <item>Tebakan **Lebih tinggi** atau **Lebih rendah** yang benar bernilai 2 poin.</item>
+        <item>Nilai yang sama tidak lebih tinggi maupun lebih rendah.</item>
+    </string-array>
+    <string name="fortunes_call_red">Merah</string>
+    <string name="fortunes_call_black">Hitam</string>
+    <string name="fortunes_call_higher">Lebih tinggi</string>
+    <string name="fortunes_call_lower">Lebih rendah</string>
+    <string name="fortunes_call_red_letter">M</string>
+    <string name="fortunes_call_black_letter">H</string>
+    <string name="fortunes_call_won">Kamu meraih %1$d poin!</string>
+    <string name="fortunes_call_misses">Tiga kali meleset</string>
+    <string name="fortunes_call_out">Kartu habis</string>
+    <string name="tower_of_hanoi_title">Menara Hanoi</string>
+    <string-array name="tower_of_hanoi_rules">
+        <item>## Tujuan</item>
+        <item>Bangun satu tumpukan berurutan dari **9** sampai **As**.</item>
+        <item>## Cara bermain</item>
+        <item>Ketuk tumpukan untuk mengambil kartu teratasnya, lalu ketuk tumpukan lain untuk memindahkannya ke sana.</item>
+        <item>Kartu bisa dipindah ke tumpukan kosong, atau ke kartu yang **nilainya lebih tinggi**.</item>
+        <item>Tidak ada kekalahan: terus pindahkan sampai menaranya jadi.</item>
+    </string-array>
+    <string name="tower_of_hanoi_won">Dibangun dalam %1$d langkah</string>
+    <string name="jailbreak_title">Kabur dari Penjara</string>
+    <string-array name="jailbreak_rules">
+        <item>## Tujuan</item>
+        <item>Bebaskan Joker dari tengah: kosongkan salah satu dari empat **dinding** (tumpukan di atas, bawah, kiri, dan kanan tengah) saat bagian tengah juga kosong.</item>
+        <item>**Kalah** jika tidak ada kartu yang bisa disingkirkan dan tidak ada yang bisa diambil.</item>
+        <item>## Cara bermain</item>
+        <item>Ketuk kartu untuk memilihnya. Kartu terpilih dibuang jika **jumlah nilai kartu merah dan hitam** sama.</item>
+        <item>Jika buntu, ketuk **Ambil** untuk menaruh kartu di tengah.</item>
+        <item>Bagian tengah memuat paling banyak **tiga** kartu.</item>
+    </string-array>
+    <string name="jailbreak_won">Joker berhasil kabur!</string>
+    <string name="lights_out_title">Lampu padam</string>
+    <string-array name="lights_out_rules">
+        <item>## Tujuan</item>
+        <item>Tutup ke-20 kartu.</item>
+        <item>## Cara bermain</item>
+        <item>Mengetuk kartu membalik kartu itu dan kartu di atas, bawah, kiri, dan kanannya.</item>
+        <item>Setiap pembagian bisa dipecahkan.</item>
+    </string-array>
+    <string name="lights_out_won">Lampu padam dalam %1$d langkah</string>
+    <string name="little_windmill_title">Kincir angin kecil</string>
+    <string-array name="little_windmill_rules">
+        <item>## Tujuan</item>
+        <item>Pindahkan ke-52 kartu ke empat fondasi sudut.</item>
+        <item>## Fondasi</item>
+        <item>Satu **As** diambil dari dek untuk memulai sudut pertama. Tiga As lainnya memulai sudut lainnya saat muncul.</item>
+        <item>Susun setiap fondasi **naik per jenis**, dari As sampai King.</item>
+        <item>## Salib</item>
+        <item>Lima kartu dibagikan ke salib. Susun tumpukannya **turun, apa pun jenisnya**. Tidak ada kartu yang boleh ditaruh di atas As.</item>
+        <item>Kartu tersedia mana pun boleh mengisi petak kosong di salib.</item>
+        <item>## Ambil dan tumpukan terbuka</item>
+        <item>Ketuk **Ambil** untuk membuka dek satu kartu setiap kali ke **tumpukan terbuka**, di kiri. Tidak ada bagi ulang.</item>
+    </string-array>
+    <string name="little_windmill_won">Semua jenis sudah di tempatnya!</string>
+    <string name="lycan_title">Manusia serigala</string>
+    <string-array name="lycan_rules">
+        <item>## Tujuan</item>
+        <item>Kosongkan **tangan Serigala** (atas) setiap ronde, dan berlomba dengan Serigala mencapai **100 poin**.</item>
+        <item>## Menangkap</item>
+        <item>Ketuk kartumu (bawah) dan kartu Serigala untuk memilih tangkapan. Kartu berikutnya yang diambil ada di tumpukan kiri.</item>
+        <item>- **Sama:** satu kartumu mengambil kartu Serigala yang senilai. Kamu mengambil kartu berikutnya.</item>
+        <item>- **Jumlah:** dua kartumu atau lebih berjumlah sama dengan satu kartu Serigala. Kamu mengambil kartu berikutnya.</item>
+        <item>- **Pecah:** satu kartumu sama dengan jumlah beberapa kartu Serigala. Serigala mengambil kartu berikutnya.</item>
+        <item>- **Lampaui:** satu kartumu mengambil kartu Serigala yang lebih rendah. Serigala mengambil kartu sebanyak selisihnya.</item>
+        <item>Kamu boleh **Mundur** kapan saja untuk mengakhiri ronde. Mundur lebih awal bisa menguntungkan, untuk membatasi skor Serigala.</item>
+        <item>## Skor</item>
+        <item>Kosongkan tangan Serigala untuk mendapat skor sebesar nilai kartu yang tersisa di tanganmu.</item>
+        <item>Jika tidak, Serigala mendapat skor sebesar nilai kartu yang tersisa di tangannya.</item>
+        <item>Permainan ini bikin ketagihan, tapi sangat sulit.</item>
+    </string-array>
+    <string name="lycan_perfect">Sama</string>
+    <string name="lycan_sum">Jumlah</string>
+    <string name="lycan_split">Pecah</string>
+    <string name="lycan_over">Lampaui</string>
+    <string name="lycan_over_by">Lampaui +%1$d</string>
+    <string name="lycan_select">Pilih</string>
+    <string name="lycan_wolf">Serigala</string>
+    <string name="lycan_you">Kamu</string>
+    <string name="lycan_fold">Mundur</string>
+    <string name="lycan_won">Kamu mengalahkan Serigala %1$d-%2$d</string>
+    <string name="lycan_lost">Serigala menang %1$d-%2$d</string>
+    <string name="memory_title">Memori</string>
+    <string-array name="memory_rules">
+        <item>## Tujuan</item>
+        <item>Kosongkan meja dengan menemukan semua pasangan.</item>
+        <item>## Mencocokkan</item>
+        <item>Ketuk kartu untuk membukanya, lalu ketuk kartu kedua.</item>
+        <item>Pasangan harus sama **nilai dan jenisnya**.</item>
+    </string-array>
+    <string name="memory_won">Selesai dalam %1$d langkah</string>
+    <string name="nestor_title">Nestor</string>
+    <string-array name="nestor_rules">
+        <item>## Tujuan</item>
+        <item>**Menang** dengan memasangkan ke-32 kartu.</item>
+        <item>## Cara bermain</item>
+        <item>Ketuk dua kartu bebas yang **senilai** untuk membuangnya.</item>
+        <item>Hanya kartu teratas kolom, atau dua kartu cadangan, yang bisa dipakai.</item>
+        <item>Hanya **As sampai 8** yang dipakai.</item>
+    </string-array>
+    <string name="nestor_won">Semua sudah berpasangan!</string>
+    <string name="nestor_lost">Tidak ada pasangan lagi</string>
+    <string name="ouroboros_title">Ouroboros</string>
+    <string-array name="ouroboros_rules">
+        <item>## Tujuan</item>
+        <item>- Jarah keempat **permata** (As) dan kabur hidup-hidup dengan melangkah ke **pintu keluar** (Joker).</item>
+        <item>- Mendarat di **perangkap** (J, Q, K) yang terbuka berarti mati seketika.</item>
+        <item>- Kumpulkan **pernak-pernik** (2 sampai 10) untuk poin tambahan.</item>
+        <item>## Lingkaran</item>
+        <item>Dungeon adalah lingkaran kartu di sekeliling layar. **Kartu teratasnya** ada di bawah. Kamu menjelajah dengan menghitung maju dari kartu teratas.</item>
+        <item>- Mendarat di kartu **tertutup** selalu aman dan tidak memicu apa pun.</item>
+        <item>- Mendarat di kartu **terbuka** memicunya: permata atau pernak-pernik dikumpulkan; perangkap membunuhmu; pintu keluar membiarkanmu keluar setelah kamu memegang keempat permata.</item>
+        <item>- Jenis kartu tidak punya arti.</item>
+        <item>## Tindakan</item>
+        <item>- **Lihat sekitar:** ketuk kartu teratas saat tertutup untuk membuka kartu itu dan kartu berikutnya.</item>
+        <item>- **Pilih:** ketuk salah satu dari dua kartu teratas yang terbuka untuk memilihnya.</item>
+        <item>- **Jelajahi:** dengan kartu angka terpilih, kamu bisa menjelajah ke depan sebanyak nilai kartu itu. Ketuk kartu ungu untuk ke sana.</item>
+        <item>- **Tandai jalan:** dengan kartu angka terpilih, ketuk jalan kosong (salah satu dari tiga peta) untuk menyimpannya di sana.</item>
+        <item>- **Kembali ke jalan:** ketuk jalan yang sudah ditandai untuk menaruh kartunya kembali di atas lingkaran, dalam keadaan terpilih.</item>
+        <item>## Tips</item>
+        <item>- **Tandai jalan setiap ada kesempatan!** Jika dua kartu teratas bukan kartu angka dan kamu tidak punya jalan yang ditandai, kamu tersesat.</item>
+        <item>- Menandai jalan dan kembali ke jalan beberapa kali berturut-turut bisa mengubah kartu teratas, untuk mengatur seberapa jauh kamu maju dan di mana kamu mendarat.</item>
+    </string-array>
+    <string name="ouroboros_loot">Jarahan</string>
+    <string name="ouroboros_won">Kamu mendapat keempat permata dan menemukan pintu keluar!</string>
+    <string name="ouroboros_trap">Kamu mendarat di perangkap!</string>
+    <string name="ouroboros_lost_with_loot">Tersesat di dungeon, bersama jarahanmu.</string>
+    <string name="ouroboros_lost">Tersesat di dungeon tanpa jalan keluar!</string>
+    <string name="ouroboros_jewels">Permata</string>
+    <string name="ouroboros_trinkets">Pernak-pernik</string>
+    <string name="ozanams_square_title">Persegi Ozanam</string>
+    <string-array name="ozanams_square_rules">
+        <item>## Tujuan</item>
+        <item>Isi persegi sehingga setiap **baris, kolom, dan diagonal panjang** berisi **satu kartu dari setiap nilai dan satu dari setiap jenis**.</item>
+        <item>## Cara bermain</item>
+        <item>- Kartu yang harus ditaruh ada di tumpukan per jenis, di kanan. Ketuk tumpukan untuk memilih kartu teratasnya; ketuk lagi untuk kartu berikutnya dari jenis itu.</item>
+        <item>- Lalu ketuk petak kosong untuk menaruhnya. Kartu yang sudah dibagikan ke tempatnya (berwarna hitam) tidak bisa dipindah.</item>
+        <item>- Kartu yang kamu taruh bisa dipindah ke petak lain, ditukar, atau dikembalikan dengan mengetuk tumpukannya.</item>
+        <item>- Kartu yang mengulang nilai atau jenis di salah satu garisnya ditandai merah.</item>
+        <item>- Setiap pembagian punya **tepat satu** solusi.</item>
+    </string-array>
+    <string name="ozanams_square_won">Perseginya lengkap!</string>
+    <string name="rogue_run_title">Pelarian bandit</string>
+    <string-array name="rogue_run_rules">
+        <item>## Tujuan</item>
+        <item>Lewati setiap ruangan sebelum nyawamu habis.</item>
+        <item>## Jenis kartu</item>
+        <item>- **Kartu hitam adalah monster.** Melawannya mengurangi nyawa sebesar nilainya (J: 11, Q: 12, K: 13, A: 14).</item>
+        <item>- **Wajik adalah senjata.** Senjata mengurangi kerusakan setiap monster sebesar nilainya. Setelah membunuh monster, senjata hanya bisa melawan monster yang nilainya **sama atau lebih rendah** dari monster terakhir yang dibunuhnya.</item>
+        <item>- **Hati adalah ramuan** dan memulihkanmu sebesar nilainya, hingga 20.</item>
+        <item>## Ruangan</item>
+        <item>- Ketuk kartu ruangan, lalu konfirmasi atau pilih tindakannya. Ketuk dua kali untuk langsung bertindak pada kartu selain monster.</item>
+        <item>- Dengan monster terpilih, **Tinju** melawannya dengan tangan kosong, sedangkan **Snj** memakai senjata yang dipegang untuk kerusakan lebih kecil, jika ada.</item>
+        <item>- Selesaikan tiga kartu mana saja di sebuah ruangan untuk maju; kartu keempat tetap untuk ruangan berikutnya.</item>
+        <item>- Tanpa kartu terpilih, **Kabur** menaruh seluruh ruangan di bawah dungeon. Kamu tidak bisa kabur dari dua ruangan berturut-turut.</item>
+        <item>## Skor</item>
+        <item>Skormu sama dengan sisa nyawamu, ditambah bonus jika kamu selesai dengan ramuan yang belum dipakai saat nyawa penuh.</item>
+    </string-array>
+    <string name="rogue_run_lost">Tewas di ruangan %1$d</string>
+    <string name="rogue_run_won">Berhasil kabur!</string>
+    <string name="rogue_run_run">Kabur</string>
+    <string name="rogue_run_heal">Pulih +%1$d</string>
+    <string name="rogue_run_equip">Pakai</string>
+    <string name="rogue_run_fist">Tinju −%1$d</string>
+    <string name="rogue_run_weapon">Snj −%1$d</string>
+    <string name="rogue_run_health">NY: %1$d</string>
+    <string name="rogue_run_room">Rg: %1$d</string>
+    <string name="rogue_run_deck">Dk: %1$d</string>
+    <string name="royal_marriage_title">Pernikahan kerajaan</string>
+    <string-array name="royal_marriage_rules">
+        <item>## Tujuan</item>
+        <item>Buang semua kartu kecuali **Queen hati** dan **King hati**, yang harus berakhir bersebelahan.</item>
+        <item>## Pembagian</item>
+        <item>Ke-52 kartu dijajarkan dalam satu barisan, dibaca dari kiri ke kanan lalu ke bawah: Queen hati pertama, King hati terakhir.</item>
+        <item>## Membuang</item>
+        <item>- Satu kartu, atau dua kartu yang bersebelahan, boleh dibuang jika kartu di kedua sisinya sama **nilai atau jenis**.</item>
+        <item>- Urutan yang lebih panjang hanya boleh dibuang jika setiap kartunya **sejenis**, dan kartu di kedua sisinya sama nilai atau jenis.</item>
+        <item>- Ketuk kartu yang akan disingkirkan, lalu **Buang**. Ketuk dua kali satu kartu untuk langsung membuangnya.</item>
+    </string-array>
+    <string name="royal_marriage_won">Queen dan King menikah!</string>
+    <string name="royal_marriage_lost">Tidak ada langkah sah lagi</string>
+    <string name="royal_marriage_discard">Buang</string>
+    <string name="ten_twenty_thirty_title">Sepuluh-Dua Puluh-Tiga Puluh</string>
+    <string-array name="ten_twenty_thirty_rules">
+        <item>## Tujuan</item>
+        <item>**Menang** dengan membuang ke-52 kartu.</item>
+        <item>## Cara bermain</item>
+        <item>Ke-52 kartu dibagikan terbuka dalam satu barisan, dibaca dari kiri ke kanan lalu ke bawah.</item>
+        <item>Kartu bernilai sesuai angkanya; Jack, Queen, dan King bernilai **10**.</item>
+        <item>**Dua kartu bersebelahan atau lebih** di barisan yang berjumlah **10, 20, atau 30** boleh dibuang.</item>
+    </string-array>
+    <string name="ten_twenty_thirty_won">Semua kartu terhitung habis!</string>
+    <string name="ten_twenty_thirty_lost">Tidak ada urutan yang pas</string>
+    <string name="triple_stack_title">Tumpukan tiga</string>
+    <string-array name="triple_stack_rules">
+        <item>## Tujuan</item>
+        <item>**Menang** dengan menghabiskan semua bahan untuk menyajikan roti lapis.</item>
+        <item>**Kalah** jika tidak ada roti lapis yang bisa dibuat padahal bahan masih tersisa.</item>
+        <item>## Menyajikan</item>
+        <item>Ketuk tiga kartu dengan **nilai berjarak sama**, lalu **Sajikan**. As, Jack, Queen, dan King bernilai 1, 11, 12, dan 13.</item>
+        <item>Nilai bersambung dari King ke As, jadi misalnya 9 / Q / 2 adalah roti lapis yang sah.</item>
+        <item>## Isi ulang</item>
+        <item>Setelah menyajikan, jumlah bahan yang mengisi ulang tanganmu bergantung pada kualitas roti lapisnya:</item>
+        <item>- Empat untuk roti lapis sejenis</item>
+        <item>- Tiga untuk roti lapis sewarna</item>
+        <item>- Dua untuk lainnya</item>
+    </string-array>
+    <string name="triple_stack_won">Semua bahan tersaji!</string>
+    <string name="triple_stack_lost">Tidak ada roti lapis lagi</string>
+    <string name="triple_stack_serve">Sajikan (%1$d)</string>
+    <string name="triple_stack_ingredients">Bahan: %1$d</string>
+</resources>

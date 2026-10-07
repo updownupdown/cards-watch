@@ -122,8 +122,16 @@ keeps the undo history; `SaveStore` saves each game after every move.
 
 ## Text
 
-All text is in string resources, in English for now, ready for the phone
-app's languages.
+All text is in string resources, in English (`values`) and the phone app's
+other languages (`values-fr`, `-es`, `-it`, `-pt`, `-tr`, `-in`).
+A change to the English means the same change in every language, which
+`TranslationsTest` checks for (every string, its arguments, its rules lines
+and their markdown). Translations follow the phone's glossaries
+(`src/locales/glossary/<lang>.json`) and its words for the same things; a
+game's title is exactly the phone's (`src/locales/<lang>/content/games.json`).
+Rules mention buttons by their labels, so the two agree. `LocaleScreenshotTest`
+renders the wordiest screens in each language: check new text fits there
+(buttons in the crescent, Lycan's Fold, Rogue Run's stats).
 `res/values/strings.xml` holds the screens' text and what several games
 share ("Deal (%1$d)"), `games.xml` each game's title, rules (a string array)
 and its own messages and labels, and `card_facts.xml` the card facts: the

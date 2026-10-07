@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accordion_title">Accordéon</string>
+    <string-array name="accordion_rules">
+        <item>## Objectif</item>
+        <item>**Gagnez** en réunissant les 52 cartes en une seule pile.</item>
+        <item>**Vous perdez** quand aucune carte ne peut bouger.</item>
+        <item>## Déroulement</item>
+        <item>Une carte peut être posée sur la carte située **une ou trois places avant elle** si elles ont le même **rang ou la même couleur**.</item>
+        <item>Les cartes se suivent de gauche à droite, puis de haut en bas.</item>
+    </string-array>
+    <string name="accordion_won">Tout tient en une pile !</string>
+    <string name="accordion_lost">Bloqué à %1$d piles</string>
+    <string name="aces_up_title">As en tête</string>
+    <string-array name="aces_up_rules">
+        <item>## Objectif</item>
+        <item>Défaussez tout le paquet sauf les quatre As (un par pile).</item>
+        <item>## Déroulement</item>
+        <item>Touchez une carte pour la défausser quand une autre pile montre une **carte plus haute de la même couleur**.</item>
+        <item>**Les As sont hauts** et ne peuvent jamais être défaussés.</item>
+        <item>Quand une pile est vide, touchez une autre carte du dessus pour l\'y déplacer.</item>
+        <item>Quand vous êtes bloqué, touchez **Distribuer** pour une carte de plus sur chaque pile.</item>
+    </string-array>
+    <string name="aces_up_won">Les quatre As en tête !</string>
+    <string name="augury_title">Augure</string>
+    <string-array name="augury_rules">
+        <item>## Objectif</item>
+        <item>Percez la **loi cachée** assez bien pour faire **huit bonnes réponses d\'affilée**. L\'arc à gauche se remplit à chacune.</item>
+        <item>## Déroulement</item>
+        <item>Chaque partie a une loi secrète qui décide quelles cartes peuvent suivre la ou les dernières cartes du chemin.</item>
+        <item>- Touchez une carte de votre main si vous pensez qu\'elle respecte la loi. Si c\'est le cas, elle rejoint le chemin ; sinon, elle reste grisée à côté de la dernière carte.</item>
+        <item>- Si vous pensez qu\'aucune carte de votre main ne convient, touchez la carte barrée. Si vous avez raison, vous recevez une nouvelle main ; si une carte convenait, elle est jouée à votre place (en rouge) et votre série de bonnes réponses repart de zéro.</item>
+        <item>Pour toutes les lois : A = 1, Valets = 11, Dames = 12, Rois = 13. L\'« enseigne » est pique, cœur, carreau ou trèfle ; la « couleur » est rouge ou noir.</item>
+        <item>## Lois</item>
+        <item>- Doit être de la même couleur</item>
+        <item>- Doit alterner les couleurs</item>
+        <item>- Doit être de la même enseigne ou du même rang</item>
+        <item>- Doit être d\'une autre enseigne</item>
+        <item>- Doit alterner rangs impairs et pairs</item>
+        <item>- Doit être de rang plus haut ; tout peut suivre J, Q ou K</item>
+        <item>- Doit être à deux rangs au plus</item>
+        <item>- Doit être à deux rangs au plus (l\'As et le Roi sont voisins)</item>
+        <item>- Doit être à au moins trois rangs d\'écart</item>
+        <item>- Doit alterner haute (8–K) et basse (A–7)</item>
+        <item>- Doit alterner figures et cartes numérales</item>
+        <item>- Doit être de rang plus bas ; tout peut suivre un As</item>
+        <item>- Une impaire doit suivre une impaire, une paire une paire</item>
+        <item>- Doit suivre les enseignes dans l\'ordre : pique, cœur, carreau, trèfle</item>
+        <item>- Même enseigne que la dernière : plus haute ; l\'autre enseigne de sa couleur : plus basse ; l\'autre couleur peut suivre n\'importe quoi</item>
+        <item>- Les cartes rouges doivent valoir 8 ou plus ; les noires, 7 ou moins</item>
+    </string-array>
+    <string name="augury_law_alternate_colours">doit alterner les couleurs</string>
+    <string name="augury_law_suit_or_rank">doit être de la même enseigne ou du même rang</string>
+    <string name="augury_law_odd_even">doit alterner rangs impairs et pairs</string>
+    <string name="augury_law_higher_until_court">doit être de rang plus haut ; tout peut suivre J, Q ou K</string>
+    <string name="augury_law_within_two">doit être à deux rangs au plus</string>
+    <string name="augury_law_same_colour">doit être de la même couleur</string>
+    <string name="augury_law_different_suit">doit être d\'une autre enseigne</string>
+    <string name="augury_law_high_low_alternate">doit alterner haute (8–K) et basse (A–7)</string>
+    <string name="augury_law_court_alternate">doit alterner figures et cartes numérales</string>
+    <string name="augury_law_lower_until_ace">doit être de rang plus bas ; tout peut suivre un As</string>
+    <string name="augury_law_far_apart">doit être à au moins trois rangs d\'écart</string>
+    <string name="augury_law_parity_lock">une impaire doit suivre une impaire, une paire une paire</string>
+    <string name="augury_law_within_two_wrap">doit être à deux rangs au plus (l\'As et le Roi sont voisins)</string>
+    <string name="augury_law_suit_sequence">doit suivre les enseignes dans l\'ordre : pique, cœur, carreau, trèfle</string>
+    <string name="augury_law_same_suit_ascender">même enseigne : plus haute ; l\'autre enseigne de sa couleur : plus basse ; l\'autre couleur peut suivre n\'importe quoi</string>
+    <string name="augury_law_red_high_black_low">les cartes rouges doivent valoir 8 ou plus, les noires 7 ou moins</string>
+    <string name="augury_the_law">La loi : %1$s</string>
+    <string name="augury_none_fit">Aucune ne va</string>
+    <string name="baroness_title">Baronne</string>
+    <string-array name="baroness_rules">
+        <item>## Objectif</item>
+        <item>**Gagnez** en défaussant les 52 cartes.</item>
+        <item>**Vous perdez** quand la pioche est vide et qu\'il ne reste aucun coup.</item>
+        <item>## Déroulement</item>
+        <item>Touchez un **Roi**, ou deux cartes du dessus qui totalisent **13**, pour les défausser. Les As valent 1, les Valets 11 et les Dames 12.</item>
+        <item>Pour remplir une pile vide, touchez une carte, puis la pile vide.</item>
+        <item>Quand vous êtes bloqué, touchez **Distribuer** pour donner une carte par pile.</item>
+    </string-array>
+    <string name="baroness_won">Les 52 cartes défaussées !</string>
+    <string name="beehive_title">La Ruche</string>
+    <string-array name="beehive_rules">
+        <item>## Objectif</item>
+        <item>Retirez les 52 cartes en réunissant des ensembles de quatre cartes de même rang.</item>
+        <item>## Déroulement</item>
+        <item>Les six piles du milieu contiennent chacune un seul rang. Un ensemble de quatre est retiré aussitôt.</item>
+        <item>La **ruche** est à gauche ; le **talon** descend à droite. La pioche n\'est pas affichée.</item>
+        <item>Touchez la ruche ou le talon pour déplacer sa carte du dessus sur une pile de même rang, ou sinon sur une pile vide.</item>
+        <item>Touchez une pile pour la réunir à une autre pile de même rang.</item>
+        <item>Touchez **Piocher** pour retourner trois cartes de la pioche sur le talon. Quand la pioche est épuisée, **Recycler** retourne le talon et pioche à nouveau.</item>
+    </string-array>
+    <string name="beehive_won">La ruche est vide !</string>
+    <string name="beehive_recycle">Recycler</string>
+    <string name="clock_title">Réussite de l\'horloge</string>
+    <string-array name="clock_rules">
+        <item>## Objectif</item>
+        <item>Retournez toutes les cartes face visible, en rangeant les 52 à leur heure, avant que les quatre Rois ne sortent.</item>
+        <item>## Déroulement</item>
+        <item>Touchez la pile du milieu pour retourner sa carte du dessus.</item>
+        <item>Touchez ensuite la pile de cette carte : les As à 1 heure, les cartes numérales à leur heure, les Valets à 11 heures, les Dames à 12 heures et les Rois au milieu.</item>
+    </string-array>
+    <string name="clock_won">Chaque carte est à sa place</string>
+    <string name="clock_lost">Le quatrième Roi est sorti</string>
+    <string name="dominion_title">Dominion</string>
+    <string-array name="dominion_rules">
+        <item>## Objectif</item>
+        <item>**Gagnez** en réduisant les quinze cartes à une seule carte sur le plateau.</item>
+        <item>**Vous perdez** quand aucune conquête n\'est possible, ou quand une carte du plateau n\'a plus aucune correspondance possible.</item>
+        <item>## Déroulement</item>
+        <item>Touchez une carte, puis une carte voisine de **même rang ou de même couleur** (diagonales comprises) pour la conquérir.</item>
+        <item>Une carte peut aussi conquérir une carte plus éloignée sur la même rangée ou colonne si toutes les cases entre elles sont vides.</item>
+        <item>Chaque donne utilise trois des quatre couleurs, et chaque carte a au moins une correspondance au départ.</item>
+    </string-array>
+    <string name="dominion_won">Une carte pour les gouverner toutes !</string>
+    <string name="dominion_isolated">Une carte ne peut être conquise</string>
+    <string name="dominion_stuck">Plus aucune conquête</string>
+    <string name="ebb_and_flow_title">Flux et reflux</string>
+    <string-array name="ebb_and_flow_rules">
+        <item>## Objectif</item>
+        <item>Jouez les **52 cartes** sur les quatre piles.</item>
+        <item>## Déroulement</item>
+        <item>Jouez les cartes sur les piles montantes (les deux premières) ou descendantes (les deux dernières), avec des cartes de même rang ou plus hautes/plus basses.</item>
+        <item>N\'importe quelle carte peut commencer une pile vide. Les As valent 1.</item>
+        <item>Une carte **d\'un rang en arrière et de la même couleur** peut aussi être jouée.</item>
+        <item>Si votre main a 5 cartes ou moins, vous pouvez **piocher** pour la compléter jusqu\'à sept.</item>
+    </string-array>
+    <string name="ebb_and_flow_won">Toutes les cartes jouées !</string>
+    <string name="ebb_and_flow_lost">Bloqué, %1$d cartes restantes</string>
+    <string name="elevens_title">Onze</string>
+    <string-array name="elevens_rules">
+        <item>## Objectif</item>
+        <item>Gagnez en vidant tout le paquet, par paires totalisant **11** ou par trios royaux **Valet-Dame-Roi**.</item>
+        <item>## Déroulement</item>
+        <item>Touchez deux cartes qui totalisent 11 : **A et 10, 2 et 9, 3 et 8, 4 et 7, 5 et 6**.</item>
+        <item>Pour les figures, touchez un Valet, une Dame et un Roi, qui seront retirés ensemble.</item>
+    </string-array>
+    <string name="elevens_won">Tout le paquet est vidé !</string>
+    <string name="elevens_lost">Plus aucune paire ni trio royal</string>
+    <string name="fifteen_puzzle_title">Taquin</string>
+    <string-array name="fifteen_puzzle_rules">
+        <item>## Objectif</item>
+        <item>Rangez chaque rangée de l\'As au 4, par couleur :</item>
+        <item>- **Cœurs**</item>
+        <item>- **Trèfles**</item>
+        <item>- **Carreaux**</item>
+        <item>- **Piques** (il n\'y a pas de 4 de pique)</item>
+        <item>## Déroulement</item>
+        <item>Touchez une carte au-dessus, au-dessous, à gauche ou à droite de la case vide pour l\'y faire glisser.</item>
+        <item>Les cartes deviennent vertes quand elles sont à leur place.</item>
+        <item>Chaque grille est mélangée par des coups valides : elle peut donc toujours être résolue.</item>
+    </string-array>
+    <string name="fifteen_puzzle_won">Résolu en %1$d coups</string>
+    <string name="fortunes_call_title">L\'Appel du destin</string>
+    <string-array name="fortunes_call_rules">
+        <item>## Objectif</item>
+        <item>Marquez 20 points en faisant de bonnes prédictions avant de vous tromper trois fois.</item>
+        <item>## Déroulement</item>
+        <item>Prédisez la couleur de la carte face cachée, ou son rang par rapport à la carte face visible.</item>
+        <item>Une bonne prédiction **Rouge** ou **Noir** rapporte 1 point.</item>
+        <item>Une bonne prédiction **Plus haut** ou **Plus bas** rapporte 2 points.</item>
+        <item>Des rangs égaux ne sont ni plus hauts ni plus bas.</item>
+    </string-array>
+    <string name="fortunes_call_red">Rouge</string>
+    <string name="fortunes_call_black">Noir</string>
+    <string name="fortunes_call_higher">Plus haut</string>
+    <string name="fortunes_call_lower">Plus bas</string>
+    <string name="fortunes_call_red_letter">R</string>
+    <string name="fortunes_call_black_letter">N</string>
+    <string name="fortunes_call_won">Vous avez atteint %1$d points !</string>
+    <string name="fortunes_call_misses">Trois erreurs</string>
+    <string name="fortunes_call_out">Plus de cartes</string>
+    <string name="tower_of_hanoi_title">Tours de Hanoï</string>
+    <string-array name="tower_of_hanoi_rules">
+        <item>## Objectif</item>
+        <item>Formez une seule pile ordonnée du **9** à l\'**As**.</item>
+        <item>## Déroulement</item>
+        <item>Touchez une pile pour prendre sa carte du dessus, puis une autre pile pour l\'y déplacer.</item>
+        <item>Une carte peut aller sur une pile vide ou sur une carte de **rang plus élevé**.</item>
+        <item>On ne peut pas perdre : continuez jusqu\'à ce que la tour soit construite.</item>
+    </string-array>
+    <string name="tower_of_hanoi_won">Construite en %1$d coups</string>
+    <string name="jailbreak_title">Évasion</string>
+    <string-array name="jailbreak_rules">
+        <item>## Objectif</item>
+        <item>Libérez le Joker du milieu : videz l\'un des quatre **murs** (les piles au-dessus, au-dessous, à gauche et à droite du milieu) alors que le milieu est vide lui aussi.</item>
+        <item>**Vous perdez** quand aucune carte ne peut être retirée ni piochée.</item>
+        <item>## Déroulement</item>
+        <item>Touchez des cartes pour les sélectionner. Les cartes sélectionnées sont défaussées quand la **valeur totale des cartes rouges et des cartes noires** est la même.</item>
+        <item>Quand vous êtes bloqué, touchez **Piocher** pour poser une carte au milieu.</item>
+        <item>Le milieu contient au plus **trois** cartes.</item>
+    </string-array>
+    <string name="jailbreak_won">Le Joker s\'est échappé !</string>
+    <string name="lights_out_title">Extinction des feux</string>
+    <string-array name="lights_out_rules">
+        <item>## Objectif</item>
+        <item>Retournez les 20 cartes face cachée.</item>
+        <item>## Déroulement</item>
+        <item>Toucher une carte la retourne, ainsi que ses voisines orthogonales.</item>
+        <item>Chaque donne peut être résolue.</item>
+    </string-array>
+    <string name="lights_out_won">Extinction en %1$d coups</string>
+    <string name="little_windmill_title">Petit Moulin à vent</string>
+    <string-array name="little_windmill_rules">
+        <item>## Objectif</item>
+        <item>Placez les 52 cartes sur les quatre fondations de coin.</item>
+        <item>## Fondations</item>
+        <item>Un **As** est tiré du paquet pour commencer le premier coin. Les trois autres As commencent les autres coins à mesure qu\'ils sortent.</item>
+        <item>Montez chaque fondation **par couleur**, de l\'As au Roi.</item>
+        <item>## La croix</item>
+        <item>Cinq cartes sont distribuées sur la croix. Descendez ses piles **sans tenir compte de la couleur**. Rien ne va sur un As.</item>
+        <item>N\'importe quelle carte disponible peut remplir une place vide de la croix.</item>
+        <item>## Pioche et talon</item>
+        <item>Touchez **Piocher** pour retourner la pioche une carte à la fois sur le **talon**, à gauche. Il n\'y a pas de redistribution.</item>
+    </string-array>
+    <string name="little_windmill_won">Chaque couleur est rangée !</string>
+    <string name="lycan_title">Lycanthrope</string>
+    <string-array name="lycan_rules">
+        <item>## Objectif</item>
+        <item>Videz la **main du Loup** (en haut) à chaque manche, et soyez le premier à **100 points**.</item>
+        <item>## Capturer</item>
+        <item>Touchez vos cartes (en bas) et celles du Loup pour choisir une capture. La prochaine carte à piocher est sur la pile à gauche.</item>
+        <item>- **Parfait :** l\'une de vos cartes prend une carte du Loup de même rang. Vous piochez la carte suivante.</item>
+        <item>- **Somme :** deux de vos cartes ou plus totalisent une carte du Loup. Vous piochez la carte suivante.</item>
+        <item>- **Division :** l\'une de vos cartes égale la somme de plusieurs cartes du Loup. Le Loup pioche la carte suivante.</item>
+        <item>- **Excès :** l\'une de vos cartes prend une carte du Loup plus basse. Le Loup pioche autant de cartes que la différence.</item>
+        <item>Touchez **Passer** à tout moment pour terminer la manche. Il peut être avantageux de passer tôt, pour limiter le score du Loup.</item>
+        <item>## Score</item>
+        <item>Videz la main du Loup pour marquer la valeur des cartes restant dans votre main.</item>
+        <item>Sinon, le Loup marque la valeur des cartes restant dans sa main.</item>
+        <item>Un jeu addictif, mais très difficile.</item>
+    </string-array>
+    <string name="lycan_perfect">Parfait</string>
+    <string name="lycan_sum">Somme</string>
+    <string name="lycan_split">Division</string>
+    <string name="lycan_over">Excès</string>
+    <string name="lycan_over_by">Excès +%1$d</string>
+    <string name="lycan_select">Choisir</string>
+    <string name="lycan_wolf">Loup</string>
+    <string name="lycan_you">Vous</string>
+    <string name="lycan_fold">Passer</string>
+    <string name="lycan_won">Vous battez le Loup %1$d à %2$d</string>
+    <string name="lycan_lost">Le Loup gagne %1$d à %2$d</string>
+    <string name="memory_title">Mémoire</string>
+    <string-array name="memory_rules">
+        <item>## Objectif</item>
+        <item>Videz le plateau en trouvant toutes les paires.</item>
+        <item>## Paires</item>
+        <item>Touchez une carte pour la retourner, puis touchez une deuxième carte.</item>
+        <item>Une paire doit correspondre **en rang et en couleur**.</item>
+    </string-array>
+    <string name="memory_won">Vidé en %1$d coups</string>
+    <string name="nestor_title">Nestor</string>
+    <string-array name="nestor_rules">
+        <item>## Objectif</item>
+        <item>**Gagnez** en appariant les 32 cartes.</item>
+        <item>## Déroulement</item>
+        <item>Touchez deux cartes libres de **même rang** pour les défausser.</item>
+        <item>Seules la carte du dessus d\'une colonne et les deux cartes de réserve peuvent être utilisées.</item>
+        <item>Seules les cartes de l\'**As au 8** sont utilisées.</item>
+    </string-array>
+    <string name="nestor_won">Tout est apparié !</string>
+    <string name="nestor_lost">Plus aucune paire</string>
+    <string name="ouroboros_title">Ouroboros</string>
+    <string-array name="ouroboros_rules">
+        <item>## Objectif</item>
+        <item>- Pillez les quatre **joyaux** (As) et sortez vivant en passant sur la **sortie** (Joker).</item>
+        <item>- Tomber sur un **piège** (J, Q, K) face visible entraîne une mort instantanée.</item>
+        <item>- Récupérez des **babioles** (2 à 10) pour des points supplémentaires.</item>
+        <item>## La boucle</item>
+        <item>Le donjon est une boucle de cartes autour de l\'écran. Sa **carte du dessus** est en bas. Vous explorez en comptant vers l\'avant à partir de la carte du dessus.</item>
+        <item>- Tomber sur une carte **face cachée** est toujours sans danger et ne fait rien.</item>
+        <item>- Tomber sur une carte **face visible** la déclenche : un joyau ou une babiole est récupéré ; un piège vous tue ; la sortie vous libère une fois les quatre joyaux en main.</item>
+        <item>- Les couleurs des cartes n\'ont aucune signification.</item>
+        <item>## Actions</item>
+        <item>- **Regarder autour :** touchez la carte du dessus quand elle est face cachée pour la retourner, ainsi que la suivante.</item>
+        <item>- **Choisir :** touchez l\'une des deux cartes du dessus, face visible, pour la choisir.</item>
+        <item>- **Explorer :** avec une carte numérale choisie, vous pouvez avancer dans le donjon d\'autant de cartes que sa valeur. Touchez la carte violette pour y aller.</item>
+        <item>- **Marquer le chemin :** avec une carte numérale choisie, touchez un chemin vide (l\'un des trois plans) pour l\'y mettre de côté.</item>
+        <item>- **Revenir au chemin :** touchez un chemin marqué pour remettre sa carte sur le dessus de la boucle, choisie.</item>
+        <item>## Conseils</item>
+        <item>- **Marquez des chemins dès que possible !** Si les deux cartes du dessus ne sont pas numérales et que vous n\'avez aucun chemin marqué, vous êtes perdu.</item>
+        <item>- Marquer des chemins et y revenir, plusieurs fois d\'affilée, permet de changer les cartes du dessus, pour contrôler jusqu\'où vous allez et où vous tombez.</item>
+    </string-array>
+    <string name="ouroboros_loot">Butin</string>
+    <string name="ouroboros_won">Vous avez les quatre joyaux et avez trouvé la sortie !</string>
+    <string name="ouroboros_trap">Vous êtes tombé dans un piège !</string>
+    <string name="ouroboros_lost_with_loot">Perdu dans le donjon, avec votre butin.</string>
+    <string name="ouroboros_lost">Perdu dans le donjon, sans issue !</string>
+    <string name="ouroboros_jewels">Joyaux</string>
+    <string name="ouroboros_trinkets">Babioles</string>
+    <string name="ozanams_square_title">Carré d\'Ozanam</string>
+    <string-array name="ozanams_square_rules">
+        <item>## Objectif</item>
+        <item>Remplissez le carré de sorte que chaque **ligne, colonne et grande diagonale** contienne **une carte de chaque rang et une de chaque couleur**.</item>
+        <item>## Déroulement</item>
+        <item>- Les cartes à placer forment une pile par couleur, à droite. Touchez une pile pour prendre sa carte du dessus ; touchez-la de nouveau pour la carte suivante de cette couleur.</item>
+        <item>- Touchez ensuite une case vide pour l\'y placer. Les cartes posées d\'office (en noir) ne peuvent pas être déplacées.</item>
+        <item>- Les cartes que vous placez peuvent être déplacées vers une autre case, échangées ou renvoyées en touchant leur pile.</item>
+        <item>- Une carte qui répète un rang ou une couleur dans l\'une de ses lignes est marquée en rouge.</item>
+        <item>- Chaque donne a **exactement une** solution.</item>
+    </string-array>
+    <string name="ozanams_square_won">Le carré est complet !</string>
+    <string name="rogue_run_title">La Fuite du voleur</string>
+    <string-array name="rogue_run_rules">
+        <item>## Objectif</item>
+        <item>Traversez chaque salle avant d\'être à court de santé.</item>
+        <item>## Types de cartes</item>
+        <item>- **Les cartes noires sont des monstres.** En combattre un coûte autant de santé que sa valeur (J : 11, Q : 12, K : 13, A : 14).</item>
+        <item>- **Les carreaux sont des armes.** Une arme retire sa valeur aux dégâts de chaque monstre. Après avoir tué un monstre, elle ne peut combattre que des monstres de valeur **égale ou inférieure** au dernier qu\'elle a tué.</item>
+        <item>- **Les cœurs sont des potions** et vous soignent de leur valeur, jusqu\'à 20.</item>
+        <item>## Salles</item>
+        <item>- Touchez une carte de la salle, puis confirmez ou choisissez son action. Touchez deux fois une carte qui n\'est pas un monstre pour agir directement.</item>
+        <item>- Avec un monstre choisi, **Poing** le combat à mains nues, tandis qu\'**Arme** utilise l\'arme équipée pour moins de dégâts, si vous en avez une.</item>
+        <item>- Résolvez trois cartes d\'une salle pour avancer ; la quatrième reste pour la salle suivante.</item>
+        <item>- Sans carte choisie, **Fuir** place toute la salle sous le donjon. Vous ne pouvez pas fuir deux salles d\'affilée.</item>
+        <item>## Score</item>
+        <item>Votre score est égal à votre santé restante, plus un bonus si vous finissez en pleine santé avec une potion inutilisée.</item>
+    </string-array>
+    <string name="rogue_run_lost">Tué dans la salle %1$d</string>
+    <string name="rogue_run_won">Évadé !</string>
+    <string name="rogue_run_run">Fuir</string>
+    <string name="rogue_run_heal">Soin +%1$d</string>
+    <string name="rogue_run_equip">Équiper</string>
+    <string name="rogue_run_fist">Poing −%1$d</string>
+    <string name="rogue_run_weapon">Arme −%1$d</string>
+    <string name="rogue_run_health">PV : %1$d</string>
+    <string name="rogue_run_room">Sa : %1$d</string>
+    <string name="rogue_run_deck">Pi : %1$d</string>
+    <string name="royal_marriage_title">Mariage royal</string>
+    <string-array name="royal_marriage_rules">
+        <item>## Objectif</item>
+        <item>Défaussez toutes les cartes sauf la **Dame de cœur** et le **Roi de cœur**, qui doivent finir côte à côte.</item>
+        <item>## Donne</item>
+        <item>Les 52 cartes forment une seule ligne, lue de gauche à droite puis vers le bas : la Dame de cœur en premier, le Roi de cœur en dernier.</item>
+        <item>## Défausser</item>
+        <item>- Une carte, ou deux côte à côte, peuvent être défaussées si les cartes de part et d\'autre sont de même **rang ou couleur**.</item>
+        <item>- Une séquence plus longue ne peut partir que si toutes ses cartes sont de la **même couleur**, et si les cartes de part et d\'autre sont de même rang ou couleur.</item>
+        <item>- Touchez la ou les cartes à retirer, puis **Défausser**. Touchez deux fois une carte seule pour la défausser.</item>
+    </string-array>
+    <string name="royal_marriage_won">La Dame et le Roi sont mariés !</string>
+    <string name="royal_marriage_lost">Plus aucun coup valide</string>
+    <string name="royal_marriage_discard">Défausser</string>
+    <string name="ten_twenty_thirty_title">Dix-Vingt-Trente</string>
+    <string-array name="ten_twenty_thirty_rules">
+        <item>## Objectif</item>
+        <item>**Gagnez** en défaussant les 52 cartes.</item>
+        <item>## Déroulement</item>
+        <item>Les 52 cartes sont distribuées face visible sur une seule ligne, lue de gauche à droite puis vers le bas.</item>
+        <item>Les cartes valent leur valeur faciale ; Valets, Dames et Rois valent **10**.</item>
+        <item>Deux **cartes adjacentes ou plus** de la ligne totalisant **10, 20 ou 30** peuvent être défaussées.</item>
+    </string-array>
+    <string name="ten_twenty_thirty_won">Toutes les cartes comptées !</string>
+    <string name="ten_twenty_thirty_lost">Aucune séquence ne fait le compte</string>
+    <string name="triple_stack_title">Triple pile</string>
+    <string-array name="triple_stack_rules">
+        <item>## Objectif</item>
+        <item>**Gagnez** en utilisant tous les ingrédients pour servir des sandwichs.</item>
+        <item>**Vous perdez** quand aucun sandwich n\'est possible alors qu\'il reste des ingrédients.</item>
+        <item>## Servir</item>
+        <item>Touchez trois cartes aux **rangs régulièrement espacés**, puis **Servir**. Les As, Valets, Dames et Rois valent 1, 11, 12 et 13.</item>
+        <item>Les rangs bouclent du Roi à l\'As : par exemple, 9 / Q / 2 forme un sandwich valide.</item>
+        <item>## Repiocher</item>
+        <item>Après le service, le nombre d\'ingrédients qui complètent votre main dépend de la qualité du sandwich servi :</item>
+        <item>- Quatre pour un sandwich d\'une même couleur (pique, cœur…)</item>
+        <item>- Trois pour un sandwich d\'une même teinte (rouge ou noir)</item>
+        <item>- Deux pour les autres</item>
+    </string-array>
+    <string name="triple_stack_won">Tous les ingrédients servis !</string>
+    <string name="triple_stack_lost">Plus aucun sandwich</string>
+    <string name="triple_stack_serve">Servir (%1$d)</string>
+    <string name="triple_stack_ingredients">Ingrédients : %1$d</string>
+</resources>
