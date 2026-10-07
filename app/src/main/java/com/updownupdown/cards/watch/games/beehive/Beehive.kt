@@ -19,16 +19,17 @@ import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.WearGamePreview
+import kotlin.random.Random
 import kotlinx.coroutines.delay
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /**
  * Piles list bottom to top. Only the beehive's top card is face up. The
@@ -56,21 +57,12 @@ object Beehive : Game<BeehiveState> {
     override val credit = ArtCredit("Gathering Honey, Tomb of Rekhmire", "Nina de Garis Davies", "ca. 1479–1425 BCE", "The Metropolitan Museum of Art", "https://www.metmuseum.org/art/collection/search/544626")
     override val accent = R.color.game_beehive
     override val accentPale = R.color.game_beehive_pale
-    override val title = "Beehive"
+    override val title = R.string.beehive_title
     override val rating = Rating(difficulty = 25, complexity = 20, luck = 50)
     override val fourSuitColours = false
     override val stateSerializer: KSerializer<BeehiveState> = BeehiveState.serializer()
 
-    override val rules = listOf(
-        "## Objective",
-        "Clear all 52 cards by gathering sets of four cards of the same rank.",
-        "## Gameplay",
-        "The six piles in the middle hold one rank each. A set of four is cleared at once.",
-        "The **beehive** is on the left; the **waste** runs down the right. The stock is not shown.",
-        "Tap the beehive or the waste to move its top card onto a pile of the same rank, or else into an empty pile.",
-        "Tap a pile to join it to another pile of the same rank.",
-        "Tap **Draw** to turn up three cards from the stock onto the waste. When the stock runs out, **Recycle** turns the waste back over, and draws again.",
-    )
+    override val rules = R.array.beehive_rules
 
     override fun newGame(random: Random): BeehiveState {
         val deck = shuffledDeck(random)
@@ -168,14 +160,14 @@ object Beehive : Game<BeehiveState> {
     }
 
     override fun outcome(state: BeehiveState) = when {
-        state.cleared == 52 -> Outcome(true, "The hive is empty!")
-        !hasMove(state) && !drawingHelps(state) -> Outcome(false, "No moves left")
+        state.cleared == 52 -> Outcome(true, text(R.string.beehive_won))
+        !hasMove(state) && !drawingHelps(state) -> Outcome(false, text(R.string.outcome_no_moves_left))
         else -> null
     }
 
     override fun actions(state: BeehiveState) = listOf(
         GameAction<BeehiveState>(
-            label = if (state.stock.isEmpty()) "Recycle" else "Draw (${state.stock.size})",
+            label = if (state.stock.isEmpty()) text(R.string.beehive_recycle) else text(R.string.action_draw, state.stock.size),
             enabled = state.stock.isNotEmpty() || state.waste.isNotEmpty(),
         ) { draw(it) },
     )

@@ -14,12 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.MaterialTheme
-import com.updownupdown.cards.watch.ui.LocalBoardSize
-import com.updownupdown.cards.watch.ui.LocalGameAccent
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.BoardText
 import com.updownupdown.cards.watch.cards.CARD_MOVE_MS
@@ -32,13 +31,16 @@ import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.BottomButton
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalAmbient
+import com.updownupdown.cards.watch.ui.LocalBoardSize
+import com.updownupdown.cards.watch.ui.LocalGameAccent
 import com.updownupdown.cards.watch.ui.WearGamePreview
 import kotlin.random.Random
 import kotlinx.coroutines.delay
@@ -69,23 +71,11 @@ object TripleStack : Game<TripleStackState> {
     override val credit = ArtCredit("A Country Grocer", "Hans Smidth", "1908 - 1909", "Artvee", "https://artvee.com/dl/a-country-grocer/")
     override val accent = R.color.game_triple_stack
     override val accentPale = R.color.game_triple_stack_pale
-    override val title = "Triple Stack"
+    override val title = R.string.triple_stack_title
     override val rating = Rating(difficulty = 70, complexity = 20, luck = 40)
     override val stateSerializer: KSerializer<TripleStackState> = TripleStackState.serializer()
 
-    override val rules = listOf(
-        "## Objective",
-        "**Win** by using up every ingredient to serve sandwiches.",
-        "**Lose** when no sandwich can be made while ingredients remain.",
-        "## Serving",
-        "Tap three cards with **equally spaced ranks**, then **Serve**. Aces, Jacks, Queens and Kings are 1, 11, 12 and 13.",
-        "Ranks wrap from King to Ace, so for example: 9 / Q / 2 makes a valid sandwich.",
-        "## Refills",
-        "After serving, the number of ingredients that refill your hand depends on the quality of the sandwich served:",
-        "- Four for a sandwich make from one suit",
-        "- Three for a sandwich made from one color",
-        "- Two for any other",
-    )
+    override val rules = R.array.triple_stack_rules
 
     override fun newGame(random: Random): TripleStackState {
         val deck = shuffledDeck(random)
@@ -154,8 +144,8 @@ object TripleStack : Game<TripleStackState> {
 
     override fun outcome(state: TripleStackState) = when {
         state.refill > 0 -> null
-        state.deck.isEmpty() -> Outcome(true, "Every ingredient served!")
-        !hasSandwich(state.hand) -> Outcome(false, "No sandwich left")
+        state.deck.isEmpty() -> Outcome(true, text(R.string.triple_stack_won))
+        !hasSandwich(state.hand) -> Outcome(false, text(R.string.triple_stack_lost))
         else -> null
     }
 
@@ -163,7 +153,7 @@ object TripleStack : Game<TripleStackState> {
     override fun Bottom(state: TripleStackState, play: (TripleStackState) -> Unit, feedback: Feedback, size: DpSize) {
         val picked = selectedCards(state)
         val earned = if (isSandwich(picked)) refills(picked) else 0
-        BottomButton("Serve ($earned)", { feedback.tryMove(serve(state), play) }, earned > 0)
+        BottomButton(stringResource(R.string.triple_stack_serve, earned), { feedback.tryMove(serve(state), play) }, earned > 0)
     }
 
     /** The cards in the deck at the start: all but the first hand. */
@@ -216,7 +206,7 @@ object TripleStack : Game<TripleStackState> {
             modifier,
             overlay = {
                 val rows = Rows(board, label)
-                BoardText("Ingredients: ${state.deck.size}", Modifier.align(Alignment.TopCenter).offset(y = rows.labelY))
+                BoardText(stringResource(R.string.triple_stack_ingredients, state.deck.size), Modifier.align(Alignment.TopCenter).offset(y = rows.labelY))
                 // How much of the deck is left, under the count: full at the start, emptying as it's served.
                 if (!ambient) {
                     val left by animateFloatAsState(state.deck.size / DECK.toFloat(), tween(CARD_MOVE_MS), label = "left")

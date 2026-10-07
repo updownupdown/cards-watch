@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
@@ -53,25 +54,25 @@ fun SettingsScreen(
     val systemAllows = systemHapticsOn(LocalContext.current)
     ScreenScaffold(scrollState = listState) { contentPadding ->
         TransformingLazyColumn(state = listState, contentPadding = contentPadding) {
-            item { ScreenTitle(R.drawable.ic_settings, "Settings", transformed(spec)) }
+            item { ScreenTitle(R.drawable.ic_settings, stringResource(R.string.settings), transformed(spec)) }
             // Off when the watch's own settings have haptics off.
             item {
                 SwitchButton(
                     checked = haptics && systemAllows,
                     onCheckedChange = onHaptics,
                     enabled = systemAllows,
-                    label = { Text("Haptics") },
-                    secondaryLabel = if (systemAllows) null else ({ Text("Off in watch settings") }),
+                    label = { Text(stringResource(R.string.haptics)) },
+                    secondaryLabel = if (systemAllows) null else ({ Text(stringResource(R.string.haptics_off)) }),
                     modifier = Modifier
                         .fillMaxWidth(SETTING_WIDTH)
                         .transformedHeight(this, spec),
                     transformation = SurfaceTransformation(spec),
                 )
             }
-            item { SectionHeading("Suit Colours", transformed(spec).padding(top = SETTING_GAP)) }
+            item { SectionHeading(stringResource(R.string.suit_colours), transformed(spec).padding(top = SETTING_GAP)) }
             items(SuitColours.entries, key = { "suits:${it.name}" }) { choice ->
                 SettingChoice(
-                    choice.label,
+                    stringResource(choice.label),
                     choice == suitColours,
                     { onSuitColours(choice) },
                     Modifier
@@ -80,10 +81,10 @@ fun SettingsScreen(
                     SurfaceTransformation(spec)
                 )
             }
-            item { SectionHeading("Continue Playing", transformed(spec).padding(top = SETTING_GAP)) }
+            item { SectionHeading(stringResource(R.string.continue_playing), transformed(spec).padding(top = SETTING_GAP)) }
             items(CONTINUE_CHOICES, key = { "continue:$it" }) { count ->
                 SettingChoice(
-                    if (count == 0) "Hide" else "$count",
+                    if (count == 0) stringResource(R.string.hide) else "$count",
                     count == continueShown,
                     { onContinueShown(count) },
                     Modifier

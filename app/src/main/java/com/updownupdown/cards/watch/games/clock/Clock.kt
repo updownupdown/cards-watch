@@ -30,19 +30,20 @@ import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalAmbient
 import com.updownupdown.cards.watch.ui.WearGamePreview
-import kotlinx.coroutines.delay
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializable
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
+import kotlinx.coroutines.delay
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class ClockCard(val card: Card, val faceUp: Boolean = false)
@@ -70,18 +71,12 @@ object Clock : Game<ClockState> {
     override val credit = ArtCredit("Boy Holding Hourglass and Chinese Fan", "Unknown artist", "1780s", "Art Institute of Chicago", "https://www.artic.edu/artworks/47757")
     override val accent = R.color.game_clock
     override val accentPale = R.color.game_clock_pale
-    override val title = "Clock Solitaire"
+    override val title = R.string.clock_title
     override val rating = Rating(difficulty = 90, complexity = 5, luck = 100)
     override val fourSuitColours = false
     override val stateSerializer: KSerializer<ClockState> = ClockState.serializer()
 
-    override val rules = listOf(
-        "## Objective",
-        "Turn every card face up, sorting all 52 to their hours, before all four Kings come up.",
-        "## Gameplay",
-        "Tap the middle pile to turn up its top card.",
-        "Then tap the pile that card belongs to: Aces at 1 o'clock, numbers at their hour, Jacks at 11, Queens at 12 and Kings in the middle.",
-    )
+    override val rules = R.array.clock_rules
 
     fun pileFor(rank: Rank) = if (rank == Rank.King) 0 else rank.value
 
@@ -114,8 +109,8 @@ object Clock : Game<ClockState> {
     }
 
     override fun outcome(state: ClockState) = when {
-        state.revealed == 52 -> Outcome(true, "Every card is home")
-        state.kings == 4 -> Outcome(false, "The fourth King came up")
+        state.revealed == 52 -> Outcome(true, text(R.string.clock_won))
+        state.kings == 4 -> Outcome(false, text(R.string.clock_lost))
         else -> null
     }
 

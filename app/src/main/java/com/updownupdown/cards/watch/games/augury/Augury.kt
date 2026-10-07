@@ -1,5 +1,6 @@
 package com.updownupdown.cards.watch.games.augury
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
@@ -16,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.Icon
@@ -36,6 +38,7 @@ import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.GameButton
 import com.updownupdown.cards.watch.ui.GamePreview
@@ -71,27 +74,27 @@ data class AuguryState(
 )
 
 /** The phone's Easy laws: which cards may follow the path (oldest first). */
-enum class Law(val text: String, val test: (List<Card>, Card) -> Boolean) {
-    AlternateColours("Must alternate colour", { path, card -> card.isRed != path.last().isRed }),
-    SuitOrRank("Must be the same suit or rank", { path, card -> card.suit == path.last().suit || card.rank == path.last().rank }),
-    OddEven("Must alternate between odd and even ranks", { path, card -> odd(card) != odd(path.last()) }),
-    HigherUntilCourt("Must be a higher rank; anything can follow a J, Q or K", { path, card -> court(path.last()) || card.rank.value > path.last().rank.value }),
-    WithinTwo("Must be within two ranks", { path, card -> abs(card.rank.value - path.last().rank.value) <= 2 }),
-    SameColour("Must be the same colour", { path, card -> card.isRed == path.last().isRed }),
-    DifferentSuit("Must be a different suit", { path, card -> card.suit != path.last().suit }),
-    HighLowAlternate("Must alternate between high (8–K) and low (A–7)", { path, card -> high(card) != high(path.last()) }),
-    CourtAlternate("Must alternate between court and number cards", { path, card -> court(card) != court(path.last()) }),
-    LowerUntilAce("Must be a lower rank; anything can follow an Ace", { path, card -> path.last().rank == Rank.Ace || card.rank.value < path.last().rank.value }),
-    FarApart("Must be at least three ranks apart", { path, card -> abs(card.rank.value - path.last().rank.value) >= 3 }),
-    ParityLock("Odds must follow odds, evens must follow evens", { path, card -> odd(card) == odd(path.last()) }),
-    WithinTwoWrap("Must be within two ranks (Ace and King are neighbours)", { path, card ->
+enum class Law(@param:StringRes val text: Int, val test: (List<Card>, Card) -> Boolean) {
+    AlternateColours(R.string.augury_law_alternate_colours, { path, card -> card.isRed != path.last().isRed }),
+    SuitOrRank(R.string.augury_law_suit_or_rank, { path, card -> card.suit == path.last().suit || card.rank == path.last().rank }),
+    OddEven(R.string.augury_law_odd_even, { path, card -> odd(card) != odd(path.last()) }),
+    HigherUntilCourt(R.string.augury_law_higher_until_court, { path, card -> court(path.last()) || card.rank.value > path.last().rank.value }),
+    WithinTwo(R.string.augury_law_within_two, { path, card -> abs(card.rank.value - path.last().rank.value) <= 2 }),
+    SameColour(R.string.augury_law_same_colour, { path, card -> card.isRed == path.last().isRed }),
+    DifferentSuit(R.string.augury_law_different_suit, { path, card -> card.suit != path.last().suit }),
+    HighLowAlternate(R.string.augury_law_high_low_alternate, { path, card -> high(card) != high(path.last()) }),
+    CourtAlternate(R.string.augury_law_court_alternate, { path, card -> court(card) != court(path.last()) }),
+    LowerUntilAce(R.string.augury_law_lower_until_ace, { path, card -> path.last().rank == Rank.Ace || card.rank.value < path.last().rank.value }),
+    FarApart(R.string.augury_law_far_apart, { path, card -> abs(card.rank.value - path.last().rank.value) >= 3 }),
+    ParityLock(R.string.augury_law_parity_lock, { path, card -> odd(card) == odd(path.last()) }),
+    WithinTwoWrap(R.string.augury_law_within_two_wrap, { path, card ->
         val gap = abs(card.rank.value - path.last().rank.value)
         min(gap, 13 - gap) <= 2
     }),
-    SuitSequence("Must follow the suits in order: spades, hearts, diamonds, clubs", { path, card ->
+    SuitSequence(R.string.augury_law_suit_sequence, { path, card ->
         SPADES_FIRST.indexOf(card.suit) == (SPADES_FIRST.indexOf(path.last().suit) + 1) % SPADES_FIRST.size
     }),
-    SameSuitAscender("The same suit must be higher, the other suit of its colour lower; the other colour can follow anything", { path, card ->
+    SameSuitAscender(R.string.augury_law_same_suit_ascender, { path, card ->
         val last = path.last()
         when {
             card.suit == last.suit -> card.rank.value > last.rank.value
@@ -99,7 +102,7 @@ enum class Law(val text: String, val test: (List<Card>, Card) -> Boolean) {
             else -> true
         }
     }),
-    RedHighBlackLow("Red cards must be 8 or higher, black cards 7 or lower", { _, card -> card.isRed == high(card) }),
+    RedHighBlackLow(R.string.augury_law_red_high_black_low, { _, card -> card.isRed == high(card) }),
 }
 
 private val SPADES_FIRST = listOf(Suit.Spades, Suit.Hearts, Suit.Diamonds, Suit.Clubs)
@@ -120,7 +123,7 @@ object Augury : Game<AuguryState> {
     override val credit = ArtCredit("The Oracle", "Camillo Miola", "1880", "J. Paul Getty Museum", "https://commons.wikimedia.org/wiki/File:Camillo_Miola_(Biacca)_-_The_Oracle_-_72.PA.32_-_J._Paul_Getty_Museum.jpg")
     override val accent = R.color.game_augury
     override val accentPale = R.color.game_augury_pale
-    override val title = "Augury"
+    override val title = R.string.augury_title
     override val rating = Rating(difficulty = 50, complexity = 35, luck = 35)
     override val stateSerializer: KSerializer<AuguryState> = AuguryState.serializer()
 
@@ -128,32 +131,7 @@ object Augury : Game<AuguryState> {
     override val boardFraction = 0.68f
     override val boardLift = 0f
 
-    override val rules = listOf(
-        "## Objective",
-        "Work out the **hidden law** well enough to make **eight correct guesses in a row**. The arc at the left fills with each.",
-        "## Gameplay",
-        "Each game has a secret law about which cards may follow the last card(s) on the path.",
-        "- Tap a card in your hand if you think it fits the law. If it does, it joins the path; if not, it lies greyed out beside the last card.",
-        "- If you think no card in your hand fits, tap the crossed-out card. If you're right, you get a new hand; if a card did fit, it is played for you (shown in red), and your run of correct guesses is reset.",
-        "For all laws: A = 1, Jacks = 11, Queens = 12, Kings = 13.",
-        "## Laws",
-        "- Must be the same colour",
-        "- Must alternate colour",
-        "- Must be the same suit or rank",
-        "- Must be a different suit",
-        "- Must alternate between odd and even ranks",
-        "- Must be higher rank; anything can follow J, Q or K",
-        "- Must be within two ranks",
-        "- Must be within two ranks (Ace and King are neighbours)",
-        "- Must be at least three ranks apart",
-        "- Must alternate between high (8–K) and low (A–7)",
-        "- Must alternate between court and number cards",
-        "- Must be lower rank; anything can follow an Ace",
-        "- Odds must follow odds, evens must follow evens",
-        "- Must follow suits in order: spades, hearts, diamonds, clubs",
-        "- Same suit as the last must be higher; the other suit of its colour must be lower; the other colour can follow anything",
-        "- Red cards must be 8 or higher; black cards must be 7 or lower",
-    )
+    override val rules = R.array.augury_rules
 
     fun law(state: AuguryState) = runCatching { Law.valueOf(state.law) }.getOrDefault(Law.AlternateColours)
 
@@ -204,8 +182,8 @@ object Augury : Game<AuguryState> {
     override fun isUndoStep(previous: AuguryState, next: AuguryState) = false
 
     override fun outcome(state: AuguryState) = when {
-        state.streak >= TARGET -> Outcome(true, "The law: ${law(state).text.lowercase()}")
-        state.hand.isEmpty() -> Outcome(false, "The law: ${law(state).text.lowercase()}")
+        state.streak >= TARGET -> Outcome(true, text(R.string.augury_the_law, text(law(state).text)))
+        state.hand.isEmpty() -> Outcome(false, text(R.string.augury_the_law, text(law(state).text)))
         else -> null
     }
 
@@ -302,7 +280,7 @@ object Augury : Game<AuguryState> {
                 }
             }
             GameButton(
-                label = "None fit",
+                label = stringResource(R.string.augury_none_fit),
                 onClick = {
                     if (!playing || declaring) feedback.reject() else {
                         fitting(state)?.let(::takeFrom)

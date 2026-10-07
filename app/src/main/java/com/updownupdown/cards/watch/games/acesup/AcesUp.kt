@@ -12,9 +12,10 @@ import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.WearGamePreview
@@ -36,19 +37,11 @@ object AcesUp : Game<AcesUpState> {
     override val credit = ArtCredit("Playing Card: Ace of Spades", "Unknown artist", null, "Art Institute of Chicago", "https://www.artic.edu/artworks/82930")
     override val accent = R.color.game_aces_up
     override val accentPale = R.color.game_aces_up_pale
-    override val title = "Aces Up"
+    override val title = R.string.aces_up_title
     override val rating = Rating(difficulty = 75, complexity = 15, luck = 70)
     override val stateSerializer: KSerializer<AcesUpState> = AcesUpState.serializer()
 
-    override val rules = listOf(
-        "## Objective",
-        "Discard the whole deck except the four Aces (one per pile).",
-        "## Gameplay",
-        "Tap a card to discard it when another pile shows a **higher card of the same suit**.",
-        "**Aces are high** and can never be discarded.",
-        "When a pile is empty, tap any other top card to move it there.",
-        "When you're stuck, tap **Deal** for one more card on each pile.",
-    )
+    override val rules = R.array.aces_up_rules
 
     private fun value(card: Card) = if (card.rank == Rank.Ace) 14 else card.rank.value
 
@@ -93,14 +86,14 @@ object AcesUp : Game<AcesUpState> {
         if ((0 until PILES).any { canDiscard(state, it) } || canMove(state)) return null
         val left = state.piles.flatten()
         return if (left.size == 4 && left.all { it.rank == Rank.Ace }) {
-            Outcome(true, "Four Aces up!")
+            Outcome(true, text(R.string.aces_up_won))
         } else {
-            Outcome(false, "No moves left")
+            Outcome(false, text(R.string.outcome_no_moves_left))
         }
     }
 
     override fun actions(state: AcesUpState) = listOf(
-        GameAction<AcesUpState>("Deal (${state.deck.size})", enabled = state.deck.isNotEmpty()) { deal(it) },
+        GameAction<AcesUpState>(text(R.string.action_deal, state.deck.size), enabled = state.deck.isNotEmpty()) { deal(it) },
     )
 
     @Composable

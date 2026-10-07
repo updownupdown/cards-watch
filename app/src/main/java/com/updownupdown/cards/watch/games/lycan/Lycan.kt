@@ -1,5 +1,6 @@
 package com.updownupdown.cards.watch.games.lycan
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -27,8 +29,8 @@ import androidx.compose.ui.unit.min
 import androidx.wear.compose.material3.MaterialTheme
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.BoardText
-import com.updownupdown.cards.watch.cards.CARD_FLIP_MS
 import com.updownupdown.cards.watch.cards.CARD_ASPECT
+import com.updownupdown.cards.watch.cards.CARD_FLIP_MS
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardTable
 import com.updownupdown.cards.watch.cards.LocalUndoing
@@ -40,9 +42,10 @@ import com.updownupdown.cards.watch.cards.pileEdge
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.BottomActions
@@ -83,7 +86,12 @@ data class LycanState(
 @Serializable
 data class RoundResult(val won: Boolean, val points: Int)
 
-enum class Capture(val label: String) { Perfect("Perfect"), Sum("Sum"), Split("Split"), Over("Over") }
+enum class Capture(@param:StringRes val label: Int) {
+    Perfect(R.string.lycan_perfect),
+    Sum(R.string.lycan_sum),
+    Split(R.string.lycan_split),
+    Over(R.string.lycan_over),
+}
 
 /** The phone's Medium deck: Aces to 9s, five of each. */
 object Lycan : Game<LycanState> {
@@ -98,26 +106,12 @@ object Lycan : Game<LycanState> {
     override val credit = ArtCredit("Lone Wolf", "Alfred Wierusz-Kowalski", null, "Wikimedia Commons", "https://commons.wikimedia.org/wiki/File:Alfred_Wierusz-Kowalski_-_Samotny_wilk.jpg")
     override val accent = R.color.game_lycan
     override val accentPale = R.color.game_lycan_pale
-    override val title = "Lycan"
+    override val title = R.string.lycan_title
     override val rating = Rating(difficulty = 85, complexity = 60, luck = 40)
     override val fourSuitColours = false
     override val stateSerializer: KSerializer<LycanState> = LycanState.serializer()
 
-    override val rules = listOf(
-        "## Objective",
-        "Empty the **Wolf's hand** (top) each round, and race the Wolf to **100 points**.",
-        "## Capturing",
-        "Tap your cards (bottom) and the Wolf's cards to pick a capture. The next card to be drawn is on the pile at the left.",
-        "- **Perfect:** one of your cards takes a Wolf card of the same rank. You draw the next card.",
-        "- **Sum:** two or more of your cards add up to one Wolf card. You draw the next card.",
-        "- **Split:** one of your cards equals several Wolf cards added up. The Wolf draws the next card.",
-        "- **Over:** one of your cards takes a lower Wolf card. The Wolf draws the difference in cards.",
-        "You can **Fold** at any time to end the round. It can be advantageous to fold early, to limit the Wolf's score.",
-        "## Scoring",
-        "Empty the Wolf's hand to score the value of the cards left in your hand.",
-        "Otherwise, the Wolf scores the value of the cards left in its hand.",
-        "This is an addictive, but very difficult game.",
-    )
+    override val rules = R.array.lycan_rules
 
     private fun buildDeck(random: Random): List<LycanCard> {
         val suits = Suit.entries
@@ -224,13 +218,13 @@ object Lycan : Game<LycanState> {
         previous.copy(pickedPlayer = emptyList(), pickedWolf = emptyList()) !=
             next.copy(pickedPlayer = emptyList(), pickedWolf = emptyList())
 
-    override val scoreName = "Score"
+    override val scoreName = R.string.score_score
 
     override fun score(state: LycanState) = state.playerScore
 
     override fun outcome(state: LycanState) = when {
-        state.playerScore >= TARGET -> Outcome(true, "You beat the Wolf ${state.playerScore} to ${state.wolfScore}")
-        state.wolfScore >= TARGET -> Outcome(false, "The Wolf wins ${state.wolfScore} to ${state.playerScore}")
+        state.playerScore >= TARGET -> Outcome(true, text(R.string.lycan_won, state.playerScore, state.wolfScore))
+        state.wolfScore >= TARGET -> Outcome(false, text(R.string.lycan_lost, state.wolfScore, state.playerScore))
         else -> null
     }
 
@@ -241,9 +235,9 @@ object Lycan : Game<LycanState> {
         val (mine, theirs) = picked(state)
         return listOf(
             when (val kind = pickedCapture(state)) {
-                null -> GameAction("Select", enabled = false) { it }
+                null -> GameAction(text(R.string.lycan_select), enabled = false) { it }
                 else -> GameAction(
-                    label = if (kind == Capture.Over) "Over +${mine.single().value - theirs.single().value}" else kind.label,
+                    label = if (kind == Capture.Over) text(R.string.lycan_over_by, mine.single().value - theirs.single().value) else text(kind.label),
                     color = when (kind) {
                         Capture.Perfect -> AppColors.ButtonGreen
                         Capture.Sum -> AppColors.ButtonPurple
@@ -355,7 +349,7 @@ object Lycan : Game<LycanState> {
                     Modifier.offset(x = left, y = (board - foldHeight) / 2).size(width, foldHeight),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Score("Wolf", state.wolfScore, scoreWidth)
+                    Score(stringResource(R.string.lycan_wolf), state.wolfScore, scoreWidth)
                     // Fold and the round's result share one place of a fixed size, so neither moves the scores
                     // and the result stays still; one replaces the other at once.
                     Box(Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
@@ -363,14 +357,14 @@ object Lycan : Game<LycanState> {
                             // Set like a score: the name, then the points.
                             val color = if (result.won) AppColors.Good else AppColors.Bad
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                BoardText(if (result.won) "You" else "Wolf", color = color)
+                                BoardText(stringResource(if (result.won) R.string.lycan_you else R.string.lycan_wolf), color = color)
                                 BasicText("+${result.points}", style = scoreStyle(color), maxLines = 1)
                             }
                         } else {
-                            GameButton("Fold", { feedback.tryMove(fold(state), play) }, width - scoreWidth * 2 - FOLD_GAP * 2, foldHeight, enabled = outcome(state) == null)
+                            GameButton(stringResource(R.string.lycan_fold), { feedback.tryMove(fold(state), play) }, width - scoreWidth * 2 - FOLD_GAP * 2, foldHeight, enabled = outcome(state) == null)
                         }
                     }
-                    Score("You", state.playerScore, scoreWidth)
+                    Score(stringResource(R.string.lycan_you), state.playerScore, scoreWidth)
                 }
             },
         ) {

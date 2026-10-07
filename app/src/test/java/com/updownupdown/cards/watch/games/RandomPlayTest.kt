@@ -1,6 +1,7 @@
 package com.updownupdown.cards.watch.games
 
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.resolve
 import com.updownupdown.cards.watch.games.accordion.Accordion
 import com.updownupdown.cards.watch.games.acesup.AcesUp
 import com.updownupdown.cards.watch.games.augury.Augury
@@ -31,19 +32,41 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
+import org.robolectric.annotation.Config
 import kotlin.random.Random
 
-/** Plays random taps through many games of each, to catch crashes in the rules. */
+/**
+ * Plays random taps through many games of each, to catch crashes in the rules,
+ * and looks up the text each state shows, to catch a string given the wrong
+ * arguments.
+ */
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [35])
 class RandomPlayTest {
+    private val resources = RuntimeEnvironment.getApplication().resources
+
     private fun <S : Any> fuzz(game: Game<S>, games: Int = 30, steps: Int = 400, move: (S, Random) -> S?) {
+        assertTrue(resources.getString(game.title).isNotBlank())
+        assertTrue(resources.getStringArray(game.rules).isNotEmpty())
+        game.scoreName?.let { resources.getString(it) }
         repeat(games) { seed ->
             val random = Random(seed)
             var state = game.newGame(random)
             repeat(steps) {
+                showText(game, state)
                 if (game.outcome(state) != null) return@repeat
                 move(state, random)?.let { state = it }
             }
         }
+    }
+
+    private fun <S : Any> showText(game: Game<S>, state: S) {
+        game.outcome(state)?.message?.resolve(resources)
+        game.status(state)?.resolve(resources)
+        game.actions(state).forEach { it.label.resolve(resources) }
     }
 
     @Test fun fifteen() = fuzz(FifteenPuzzle) { s, r -> FifteenPuzzle.slide(s, r.nextInt(16)) }

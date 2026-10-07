@@ -23,6 +23,7 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.updownupdown.cards.watch.CardsWatchApp
 import com.updownupdown.cards.watch.EXTRA_GAME
 import com.updownupdown.cards.watch.MainActivity
+import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.games.ALL_GAMES
 import com.updownupdown.cards.watch.games.gameById
@@ -166,7 +167,7 @@ private fun nameButton(context: Context, game: Game<*>, width: Float): LayoutEle
                 .setClickable(open(context, game))
                 .build(),
         )
-        .addContent(text(game.title, 12f, AppColors.ListButtonText))
+        .addContent(text(context.getString(game.title), 12f, AppColors.ListButtonText))
         .build()
 
 /** The recent games shown under the last one. */
@@ -181,9 +182,9 @@ internal fun tileLayout(context: Context, recent: List<Game<*>>, device: DeviceP
     val column = LayoutElementBuilders.Column.Builder().setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
     val last = recent.firstOrNull()
     if (last == null) {
-        column.addContent(pill(width, open(context, null), null, "Solitarius", "Play"))
+        column.addContent(pill(width, open(context, null), null, context.getString(R.string.app_name), context.getString(R.string.play)))
     } else {
-        column.addContent(pill(width, open(context, last), thumbnail(last, CONTINUE_THUMBNAIL), last.title, "Continue"))
+        column.addContent(pill(width, open(context, last), thumbnail(last, CONTINUE_THUMBNAIL), context.getString(last.title), context.getString(R.string.continue_short)))
         val others = othersOnTile(recent)
         if (others.isNotEmpty()) {
             // Narrower than Continue, as the round screen is by then.

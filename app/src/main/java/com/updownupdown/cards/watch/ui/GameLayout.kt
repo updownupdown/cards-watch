@@ -46,6 +46,7 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.TimeText
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.GameAction
+import com.updownupdown.cards.watch.game.resolve
 import kotlin.math.sqrt
 
 /** The board's side as a fraction of the screen's diameter. */
@@ -246,12 +247,12 @@ fun <S> BottomActions(
         0 -> status?.let { StatusText(it, size.width) }
         1 -> {
             val action = actions[0]
-            BottomButton(action.label, { feedback.move(); play(action.perform(state)) }, action.enabled, action.color ?: LocalGameAccent.current)
+            BottomButton(action.label.resolve(), { feedback.move(); play(action.perform(state)) }, action.enabled, action.color ?: LocalGameAccent.current)
         }
         else -> Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             actions.take(2).forEach { action ->
                 GameButton(
-                    label = action.label,
+                    label = action.label.resolve(),
                     onClick = { feedback.move(); play(action.perform(state)) },
                     width = (size.width - 4.dp) / 2,
                     height = size.height,

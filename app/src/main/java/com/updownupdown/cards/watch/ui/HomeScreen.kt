@@ -32,6 +32,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -55,6 +57,7 @@ import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.game.Game
+import com.updownupdown.cards.watch.game.sortedByTitle
 import com.updownupdown.cards.watch.games.ALL_GAMES
 import com.updownupdown.cards.watch.games.clock.Clock
 import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
@@ -131,7 +134,7 @@ fun HomeScreen(
     val spec = rememberTransformationSpec()
     val buzz = rememberHaptics()
     val scope = rememberCoroutineScope()
-    val games = ALL_GAMES.sortedBy { it.title }
+    val games = sortedByTitle(ALL_GAMES)
         .sortedBy { game -> pinned.indexOf(game.id).let { if (it < 0) Int.MAX_VALUE else it } }
     ScreenScaffold(scrollState = listState) { contentPadding ->
         TransformingLazyColumn(state = listState, contentPadding = contentPadding) {
@@ -148,7 +151,7 @@ fun HomeScreen(
                         modifier = Modifier.size(LOGO_SIZE)
                     )
                     Text(
-                        "Solitarius",
+                        stringResource(R.string.app_name),
                         style = TextStyle(
                             fontFamily = Outfit,
                             fontWeight = FontWeight.Medium,
@@ -159,7 +162,7 @@ fun HomeScreen(
                 }
             }
             if (recent.isNotEmpty() && continueShown > 0) {
-                item { SectionHeading("Continue Playing", transformed(spec)) }
+                item { SectionHeading(stringResource(R.string.continue_playing), transformed(spec)) }
                 items(recent.take(continueShown), key = { "recent:${it.id}" }) { game ->
                     GameButton(
                         game,
@@ -174,7 +177,7 @@ fun HomeScreen(
                 }
                 item { Spacer(Modifier.height(SECTION_GAP)) }
             }
-            item { SectionHeading("All Games", transformed(spec)) }
+            item { SectionHeading(stringResource(R.string.all_games), transformed(spec)) }
             items(games, key = { it.id }) { game ->
                 GameButton(
                     game = game,
@@ -196,33 +199,34 @@ fun HomeScreen(
                     transformed(spec).padding(top = SECTION_GAP * 2).fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(BUTTON_GAP, Alignment.CenterHorizontally),
                 ) {
-                    IconListButton(R.drawable.ic_chart, "Stats", onClick = onStats)
-                    IconListButton(R.drawable.ic_settings, "Settings", onClick = onSettings)
+                    IconListButton(R.drawable.ic_chart, stringResource(R.string.stats), onClick = onStats)
+                    IconListButton(R.drawable.ic_settings, stringResource(R.string.settings), onClick = onSettings)
                 }
             }
             // A card fact; tapping it brings another.
             item {
-                var fact by rememberSaveable { mutableIntStateOf(Random.nextInt(CARD_FACTS.size)) }
+                val facts = stringArrayResource(R.array.card_facts)
+                var fact by rememberSaveable { mutableIntStateOf(Random.nextInt(facts.size)) }
                 Column(
                     transformed(spec)
                         .fillMaxWidth()
                         .clickable(interactionSource = null, indication = null) {
                             // Any fact but the one showing.
                             fact =
-                                (fact + 1 + Random.nextInt(CARD_FACTS.size - 1)) % CARD_FACTS.size
+                                (fact + 1 + Random.nextInt(facts.size - 1)) % facts.size
                         }
                         .padding(horizontal = 14.dp, vertical = FACT_GAP),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Icon(
                         painterResource(R.drawable.ic_fact),
-                        contentDescription = "Another card fact",
+                        contentDescription = stringResource(R.string.another_fact),
                         tint = AppColors.PaleYellow,
                         modifier = Modifier.size(LOGO_SIZE * FACT_ICON_SCALE)
                     )
                     val small = MaterialTheme.typography.bodySmall
                     Text(
-                        text = CARD_FACTS[fact],
+                        text = facts[fact],
                         style = small.copy(
                             fontSize = small.fontSize * FACT_TEXT_SCALE,
                             lineHeight = small.lineHeight * FACT_TEXT_SCALE
@@ -237,7 +241,7 @@ fun HomeScreen(
             item {
                 Box(transformed(spec).fillMaxWidth(), contentAlignment = Alignment.Center) {
                     ListButton(
-                        "Top",
+                        stringResource(R.string.top),
                         Modifier.width(104.dp).height(40.dp),
                         icon = R.drawable.ic_chevron_up,
                         onClick = { scope.launch { listState.animateScrollToItem(0) } },
@@ -267,7 +271,7 @@ internal fun GameButton(
     Button(
         onClick = onClick,
         onLongClick = onHold,
-        onLongClickLabel = if (pinned) "Unpin" else "Pin to the top",
+        onLongClickLabel = stringResource(if (pinned) R.string.unpin else R.string.pin),
         containerPainter = CoverPainter(
             ImageBitmap.imageResource(game.banner),
             colorResource(game.accent).copy(alpha = OVERLAY)
@@ -281,7 +285,7 @@ internal fun GameButton(
             {
                 Icon(
                     painterResource(R.drawable.ic_pin),
-                    contentDescription = "Pinned",
+                    contentDescription = stringResource(R.string.pinned),
                     modifier = Modifier.size(18.dp)
                 )
             }
@@ -291,7 +295,7 @@ internal fun GameButton(
         label = {
             val style = LocalTextStyle.current
             Text(
-                text = game.title,
+                text = stringResource(game.title),
                 style = style.copy(fontSize = style.fontSize * TITLE_SCALE),
                 textAlign = TextAlign.Center,
                 maxLines = 1,

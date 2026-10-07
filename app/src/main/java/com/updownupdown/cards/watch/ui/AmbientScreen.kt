@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -87,7 +88,7 @@ private fun Logo(@DrawableRes spade: Int, textColour: Color) {
     ) {
         Image(painterResource(spade), contentDescription = null, modifier = Modifier.size(72.dp))
         Text(
-            text = "Solitarius",
+            text = stringResource(R.string.app_name),
             style = TextStyle(fontFamily = Outfit, fontWeight = FontWeight.Medium, fontSize = 15.sp, textAlign = TextAlign.Center),
             color = textColour,
             modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp),

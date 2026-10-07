@@ -13,6 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.CardTable
@@ -22,11 +24,10 @@ import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
-import androidx.wear.compose.material3.MaterialTheme
-import androidx.wear.compose.material3.Text
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalBoardSize
 import com.updownupdown.cards.watch.ui.WearGamePreview
@@ -63,19 +64,12 @@ object TowerOfHanoi : Game<HanoiState> {
     override val credit = ArtCredit("The Tower of Babel", "Pieter Bruegel the Elder", "1563", "Artvee", "https://artvee.com/dl/the-tower-of-babel-vienna/")
     override val accent = R.color.game_tower_of_hanoi
     override val accentPale = R.color.game_tower_of_hanoi_pale
-    override val title = "Tower of Hanoi"
+    override val title = R.string.tower_of_hanoi_title
     override val rating = Rating(difficulty = 40, complexity = 15, luck = 0)
     override val stateSerializer: KSerializer<HanoiState> = HanoiState.serializer()
     override val saveVersion = 3
 
-    override val rules = listOf(
-        "## Objective",
-        "Build one pile ordered from **9** to **Ace**.",
-        "## Gameplay",
-        "Tap a pile to pick up its top card, then tap another pile to move it there.",
-        "A card can be moved to an empty pile, or on a card of **higher rank**.",
-        "There is no losing: keep moving until the tower is built.",
-    )
+    override val rules = R.array.tower_of_hanoi_rules
 
     override fun newGame(random: Random): HanoiState {
         val cards = RANKS.map { Card(it, suitOf(it)) }.shuffled(random)
@@ -101,9 +95,9 @@ object TowerOfHanoi : Game<HanoiState> {
         state.piles.any { pile -> pile.map { it.rank } == RANKS.reversed() }
 
     override fun outcome(state: HanoiState) =
-        if (isBuilt(state)) Outcome(true, "Built in ${state.moves} moves") else null
+        if (isBuilt(state)) Outcome(true, text(R.string.tower_of_hanoi_won, state.moves)) else null
 
-    override val scoreName = "Moves"
+    override val scoreName = R.string.score_moves
     override val lowScoreWins = true
     override fun score(state: HanoiState) = state.moves
 

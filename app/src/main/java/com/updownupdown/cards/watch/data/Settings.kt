@@ -1,15 +1,17 @@
 package com.updownupdown.cards.watch.data
 
+import androidx.annotation.StringRes
+import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.game.Game
 
 /** The home screen's Suit Colours: how cards colour their suits. */
-enum class SuitColours(val label: String) {
+enum class SuitColours(@param:StringRes val label: Int) {
     /** Four where the game's suits matter, two where only colours or neither do ([Game.fourSuitColours]). */
-    Auto("Auto"),
+    Auto(R.string.suit_colours_auto),
     /** Red and white, as on a paper deck. */
-    Two("Two"),
+    Two(R.string.suit_colours_two),
     /** A colour for each suit. */
-    Four("Four");
+    Four(R.string.suit_colours_four);
 
     fun fourIn(game: Game<*>): Boolean = when (this) {
         Two -> false

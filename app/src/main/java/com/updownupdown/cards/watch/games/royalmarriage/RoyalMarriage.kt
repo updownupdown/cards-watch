@@ -23,6 +23,7 @@ import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalBoardScroll
@@ -56,20 +57,11 @@ object RoyalMarriage : Game<RoyalMarriageState> {
     override val credit = ArtCredit("The Wedding by Proxy of Marie de' Medici to King Henry IV", "Peter Paul Rubens", "1622–25", "Wikimedia Commons", "https://commons.wikimedia.org/wiki/File:Peter_Paul_Rubens_-_The_Wedding_by_Proxy_of_Marie_de%27_Medici_to_King_Henry_IV.jpg")
     override val accent = R.color.game_royal_marriage
     override val accentPale = R.color.game_royal_marriage_pale
-    override val title = "Royal Marriage"
+    override val title = R.string.royal_marriage_title
     override val rating = Rating(difficulty = 85, complexity = 25, luck = 35)
     override val stateSerializer: KSerializer<RoyalMarriageState> = RoyalMarriageState.serializer()
 
-    override val rules = listOf(
-        "## Objective",
-        "Discard every card except the **Queen of Hearts** and **King of Hearts**, which must end up side by side.",
-        "## Deal",
-        "All 52 cards lie in one line, read left to right and then down: the Queen of Hearts first, the King of Hearts last.",
-        "## Discarding",
-        "- One card, or two side by side, can be discarded if the cards either side of them match in **rank or suit**.",
-        "- A longer run can go only if every card in it is of the **same suit**, and the cards either side match in rank or suit.",
-        "- Tap the card or cards to remove, then **Discard**. Double-tap a single card to discard it.",
-    )
+    override val rules = R.array.royal_marriage_rules
 
     fun isCouple(card: Card) = card == QUEEN || card == KING
 
@@ -113,13 +105,13 @@ object RoyalMarriage : Game<RoyalMarriageState> {
     override fun isUndoStep(previous: RoyalMarriageState, next: RoyalMarriageState) = previous.line != next.line
 
     override fun outcome(state: RoyalMarriageState) = when {
-        state.line.size == 2 -> Outcome(true, "The Queen and King are wed!")
-        !hasMove(state.line) -> Outcome(false, "No legal moves remain")
+        state.line.size == 2 -> Outcome(true, text(R.string.royal_marriage_won))
+        !hasMove(state.line) -> Outcome(false, text(R.string.royal_marriage_lost))
         else -> null
     }
 
     override fun actions(state: RoyalMarriageState) = listOf(
-        GameAction<RoyalMarriageState>("Discard", enabled = outcome(state) == null && canDiscard(state.line, state.selected)) { discard(it) ?: it },
+        GameAction<RoyalMarriageState>(text(R.string.royal_marriage_discard), enabled = outcome(state) == null && canDiscard(state.line, state.selected)) { discard(it) ?: it },
     )
 
     /** The room between the cards' window and the Discard button, on top of the layout's own. */

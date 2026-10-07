@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Playing card trivia, one of which sits at the foot of the home list. The same list, in the same order, as the phone app's src/data/card-facts.ts. -->
+<resources>
+    <string-array name="card_facts">
+        <item>Playing cards reached Europe in the 1370s, most likely brought over from the Mamluk Sultanate of Egypt.</item>
+        <item>The four French suits—spades, hearts, diamonds and clubs—appeared in France around 1480 and went on to conquer most of the world.</item>
+        <item>Italian and Spanish decks still use the older Latin suits: cups, coins, swords and batons.</item>
+        <item>German decks use hearts, bells, leaves and acorns instead of the French suits.</item>
+        <item>Swiss-German cards have their own suits: roses, bells, acorns and shields.</item>
+        <item>A standard deck has 52 cards, and 52 is also the number of weeks in a year.</item>
+        <item>Add up every card from Ace (1) to King (13) in all four suits and you get 364. Count one Joker as 1 and you get 365.</item>
+        <item>There are more ways to order a shuffled deck (about 8 × 10⁶⁷) than there are atoms on Earth.</item>
+        <item>Any thoroughly shuffled deck is almost certainly in an order that no deck has ever been in before.</item>
+        <item>The mathematicians Bayer and Diaconis showed that about seven riffle shuffles are enough to mix a 52-card deck well.</item>
+        <item>A perfect \"out\" riffle shuffle, done eight times in a row, puts a 52-card deck back in its original order.</item>
+        <item>The Joker was added to American decks in the 1860s as the top trump in the game of Euchre.</item>
+        <item>The King of Hearts is the only King without a moustache on most standard decks.</item>
+        <item>The King of Hearts is often called the \"suicide king\" because his sword appears to go through his head.</item>
+        <item>The Jack of Spades, Jack of Hearts and King of Diamonds are shown in profile, so they are nicknamed \"one-eyed\" cards.</item>
+        <item>In French decks, the Kings were traditionally named David, Alexander, Caesar and Charlemagne.</item>
+        <item>The Queens of the traditional Paris pattern were named Pallas, Judith, Rachel and Argine.</item>
+        <item>The Jacks of the Paris pattern were named after heroes: Ogier, La Hire, Hector and Lancelot.</item>
+        <item>The Jack was once called the Knave. Printers switched to \"J\" so its index wouldn\'t be confused with the King\'s \"K\".</item>
+        <item>Corner indices, the small rank and suit in each corner, only became common in the late 1800s. Before that, you had to fan cards wide to read them.</item>
+        <item>Double-ended court cards, readable either way up, became popular in the 1800s so players didn\'t have to turn cards over and reveal their hand.</item>
+        <item>The ornate Ace of Spades comes from a British tax: from 1765 it was printed by the government to prove the duty had been paid.</item>
+        <item>The Tarot began in 15th-century Italy as a card game, tarocchi. Its use for fortune-telling came centuries later.</item>
+        <item>Tarot card games are still played today, especially French Tarot, which is popular in France.</item>
+        <item>Solitaire is called \"Patience\" in Britain and much of Europe.</item>
+        <item>The first known collections of patience games were published in the 1870s.</item>
+        <item>Klondike is named after the Klondike Gold Rush in Canada\'s Yukon, 1896–1899.</item>
+        <item>Windows 3.0 shipped with Solitaire in 1990, partly to teach people how to use a mouse by dragging and dropping.</item>
+        <item>FreeCell became famous through Windows, which numbered its deals from 1 to 32,000.</item>
+        <item>Of Windows\' original 32,000 FreeCell deals, only one, deal #11982, cannot be solved.</item>
+        <item>Accordion is one of the hardest solitaires to win: a well-played game still fails most of the time.</item>
+        <item>The mathematician Persi Diaconis called the odds of winning Klondike \"one of the embarrassments of applied probability\": they are still only known by estimate.</item>
+        <item>Card games were so popular in medieval Europe that many cities passed laws banning them, starting from the 1370s.</item>
+        <item>The earliest playing cards are thought to come from China, during the Tang dynasty, around the 9th century.</item>
+        <item>Mamluk cards had suits of cups, coins, swords and polo sticks.</item>
+        <item>In early European decks, court cards were often three men: a King, a Knight and a Knave. The Queen came later.</item>
+        <item>Spanish decks traditionally have no 10s, and often no 8s or 9s either.</item>
+        <item>Cards were among the first things printed with woodblocks in Europe, before Gutenberg\'s press.</item>
+        <item>Casinos drill holes through, or clip the corners of, retired cards so they can\'t be slipped back into a game.</item>
+        <item>The world record for the tallest house of cards, built without glue, is more than 7 metres high.</item>
+        <item>\"Poker face\", \"above board\" and \"ace up your sleeve\" all come from card playing.</item>
+        <item>\"Following suit\" comes from trick-taking games, where you must play a card of the suit that was led.</item>
+        <item>The cribbage board of the WWII submarine USS Wahoo is still passed down to the oldest submarine serving in the US Navy.</item>
+        <item>The standard card size used by casinos is 2.5 × 3.5 inches, called \"poker size\". Narrower \"bridge size\" cards are 2.25 inches wide.</item>
+        <item>Mahjong grew out of Chinese card games in the 1800s, and its tiles still carry the old card suits of coins, strings and myriads.</item>
+        <item>In Britain, a deck of cards is usually called a \"pack\".</item>
+        <item>Kings, Queens and Jacks were once called \"coat cards\", after their fine clothes. The name drifted into \"court cards\".</item>
+        <item>There are 2,598,960 different five-card poker hands.</item>
+        <item>The odds of being dealt a royal flush in five cards are 1 in 649,740.</item>
+        <item>There are about 5.36 × 10²⁸ different ways to deal the four hands of a bridge game.</item>
+        <item>Card makers traditionally decorate the Ace of Spades with their own name or logo.</item>
+        <item>The Nine of Diamonds is known as the \"Curse of Scotland\", though nobody is quite sure why.</item>
+        <item>The Four of Clubs is nicknamed \"the devil\'s bedposts\" and is said by some players to be unlucky.</item>
+        <item>A tarot deck has 78 cards: 56 in four suits, plus 22 trumps.</item>
+        <item>In French Tarot, the Fool works a little like a Joker: it can be played instead of following suit.</item>
+        <item>Japanese hanafuda cards have 12 suits, one for each month of the year, with flowers in place of numbers.</item>
+        <item>Nintendo was founded in 1889 to make hanafuda playing cards.</item>
+        <item>During World War II, a US card maker produced decks that came apart when soaked, revealing escape maps for prisoners of war.</item>
+        <item>Rounded corners became standard in the late 1800s. They wear better than square ones and make a deck easier to shuffle.</item>
+        <item>Patterned card backs became common in the 1800s. Before that, backs were usually left plain.</item>
+        <item>Microsoft Solitaire was inducted into the World Video Game Hall of Fame in 2019.</item>
+        <item>The card designs in Windows Solitaire were drawn by Susan Kare, who also designed the original Macintosh icons.</item>
+        <item>Napoleon is said to have played patience during his exile on St Helena, and several games are named after him.</item>
+        <item>Braille playing cards have the rank and suit embossed in a corner so they can be read by touch.</item>
+        <item>\"Wild card\", \"hold all the cards\" and \"lay your cards on the table\" are all phrases borrowed from card games.</item>
+        <item>Italy still has many regional card patterns, such as Neapolitan, Piacentine and Sicilian, each with its own look.</item>
+        <item>The oldest complete deck of ordinary playing cards known is the Flemish Hunting Deck, painted around 1475–1480. Its suits are hunting gear: horns, dog collars, hound tethers and game nooses.</item>
+        <item>The Stuttgart Playing Cards, painted around 1430, have suits of ducks, falcons, stags and hounds.</item>
+        <item>The Worshipful Company of Makers of Playing Cards was founded in London by royal charter in 1628, and still exists.</item>
+        <item>In 1805, an Englishman named Richard Harding was hanged for forging the Ace of Spades to dodge the tax on cards.</item>
+        <item>Britain\'s tax on playing cards lasted until 1960. The United States had one too, repealed in 1965.</item>
+        <item>In 1685, the colony of New France ran short of coins and paid its soldiers with playing cards signed by the governor.</item>
+        <item>During the French Revolution, card makers replaced Kings, Queens and Jacks with Geniuses, Liberties and Equalities.</item>
+        <item>The Ace was once the lowest card. Its rise above the King is often linked to the French Revolution, though some games ranked it high long before.</item>
+        <item>The word \"ace\" comes from the Latin \"as\", a small Roman coin, by way of the Old French word for the one on a die.</item>
+        <item>In French, the suits are pique (pike), cœur (heart), carreau (tile) and trèfle (clover).</item>
+        <item>The English suit names are borrowed from the older Latin suits: \"spade\" from the Italian for swords, and \"club\" from the batons, though the shapes are French.</item>
+        <item>French court cards are marked R, D and V, for Roi, Dame and Valet. German ones are K, D and B, for König, Dame and Bube.</item>
+        <item>In German-suited decks, the Two is called the Daus and usually outranks the King, as an Ace would.</item>
+        <item>Spanish cards tell you their suit by the breaks in the border line: none for coins, one for cups, two for swords, three for batons.</item>
+        <item>Indian Ganjifa cards are round and traditionally painted by hand. The Mughal version has 96 cards in eight suits.</item>
+        <item>Playing cards reached Japan with Portuguese sailors in the 1500s. The Japanese word for cards, \"karuta\", comes from the Portuguese \"carta\".</item>
+        <item>Tarot trumps were first called \"trionfi\", meaning triumphs. That is where the word \"trump\" comes from.</item>
+        <item>The Visconti-Sforza decks, painted by hand for the rulers of Milan in the mid-1400s, are among the oldest tarot cards to survive.</item>
+        <item>Fortune-telling with cards spread in 18th-century France. A Parisian known as Etteilla published the first guide to it in 1770.</item>
+        <item>The word \"Joker\" is thought to come from \"Jucker\", a German name for the game of Euchre.</item>
+        <item>In Euchre, the top trumps are Jacks, called \"bowers\" after \"Bauer\", the German word for farmer and a name for the Jack.</item>
+        <item>The King of Diamonds is the only King who carries an axe instead of a sword.</item>
+        <item>The Queen of Spades is the only Queen who holds a sceptre.</item>
+        <item>The first cards with corner indices were nicknamed \"squeezers\", because a hand could be squeezed into a tight fan and still be read.</item>
+        <item>Bicycle playing cards have been printed since 1885, and were named during the cycling craze of the time.</item>
+        <item>Bee playing cards, a casino favourite, are marked \"No. 92\" after the year they were first made: 1892.</item>
+        <item>Most playing cards are two sheets of paper glued together with a dark paste, which stops light from showing through.</item>
+        <item>The finish on many decks is a pattern of tiny dimples. They hold a little air, which helps the cards glide over each other.</item>
+        <item>Decks are often printed on sheets of 56 cards: the 52, two Jokers and two extras, which is why so many decks come with spare cards.</item>
+        <item>\"Transformation\" cards, popular in the 1800s, work the pips into a picture: hearts become faces, spades become hats.</item>
+        <item>Spell out the thirteen ranks, from \"ace\" to \"king\", and count the letters: there are exactly 52.</item>
+        <item>Some see a calendar in the deck: four suits for the seasons, 13 cards a suit for the weeks in each, 12 court cards for the months. It is almost certainly a coincidence.</item>
+        <item>If a deck had been shuffled once a second since the Big Bang, fewer than 10¹⁸ of its 8 × 10⁶⁷ possible orders would have come up.</item>
+        <item>A \"faro\" shuffle weaves the two halves of a deck together perfectly, one card at a time.</item>
+        <item>Deal through two shuffled decks side by side, and there is a 63% chance that the same card turns up in both at the same moment.</item>
+        <item>In bridge, the suits rank in alphabetical order: clubs, diamonds, hearts, spades.</item>
+        <item>A bridge deal in which every player holds a whole suit is reported every few years. The odds against it are so vast that poor shuffling, or a prank, is the likelier cause.</item>
+        <item>The name \"bridge\" probably comes from \"biritch\", the name of a whist-like game described in an English pamphlet of 1886.</item>
+        <item>Poker grew up along the Mississippi in the early 1800s, and was first played with only 20 cards.</item>
+        <item>\"Dead man\'s hand\", two black Aces and two black Eights, is said to be what Wild Bill Hickok held when he was shot in 1876.</item>
+        <item>The Texas Legislature officially recognises the town of Robstown as the birthplace of Texas Hold\'em.</item>
+        <item>\"Passing the buck\" comes from poker, where a marker called the buck, often a knife with a buckhorn handle, showed whose turn it was to deal.</item>
+        <item>The earliest known mention of the game twenty-one is in a story by Cervantes, the author of Don Quixote, written around 1601.</item>
+        <item>In blackjack, a two-card 21 turns up about once in every 21 hands.</item>
+        <item>Crazy Eights is said to be named after \"Section 8\", the US military\'s discharge for soldiers judged mentally unfit.</item>
+        <item>Scopa, the Italian card game, means \"broom\": the best move is to sweep every card off the table.</item>
+        <item>In Dickens\'s Great Expectations, Pip and Estella play Beggar-my-neighbour. Whether a game of it could go on forever was an open question until 2024, when a never-ending deal was found.</item>
+        <item>Paul Cézanne\'s painting The Card Players was reported sold for more than $250 million in 2011, then the highest price ever paid for a painting.</item>
+        <item>\"Dogs Playing Poker\" is really a series: Cassius Coolidge painted 16 pictures of dogs for a firm that advertised cigars, starting in 1903.</item>
+        <item>During the Vietnam War, American soldiers asked card makers for crates of nothing but Aces of Spades, believing, wrongly, that the enemy feared the card.</item>
+        <item>Several US states give prisoners decks printed with unsolved cases, and tips from the players have solved crimes.</item>
+        <item>The record for throwing a playing card is 65.96 metres, set by the magician Rick Smith Jr. in 2002.</item>
+        <item>The record for memorising the order of a shuffled deck is under 13 seconds.</item>
+        <item>Bryan Berg, who holds the records for houses of cards, trained as an architect. He uses no glue, tape or folds.</item>
+        <item>The oldest known description of a patience game is in a German book of games from 1783.</item>
+        <item>In Britain, \"solitaire\" usually means the board game with pegs. The card games are \"patience\".</item>
+        <item>The stock, the pile of cards left over after the deal, is also called the \"talon\", French for \"heel\".</item>
+        <item>Canfield is named after Richard Canfield, a casino owner said to have sold players a deck for $50 and paid $5 for every card they got to the foundations.</item>
+        <item>Spider Solitaire takes its name from a spider\'s eight legs: there are eight foundations to fill.</item>
+        <item>Forty Thieves is named after the 40 cards dealt to the tableau at the start. It is also known as Napoleon at St Helena.</item>
+        <item>Calculation is a solitaire of almost pure skill: a careful player can win most games, where a careless one wins almost none.</item>
+        <item>Windows Solitaire once had a \"boss key\" that hid the game behind a fake spreadsheet. Microsoft had it taken out before release.</item>
+        <item>Windows FreeCell hid two deals numbered −1 and −2, which were built to be impossible.</item>
+        <item>Hearts was added to Windows in 1992 to show off its new networking: it could be played against people on other computers.</item>
+        <item>In 2020, on Solitaire\'s 30th birthday, Microsoft said the game still had 35 million players a month.</item>
+    </string-array>
+</resources>

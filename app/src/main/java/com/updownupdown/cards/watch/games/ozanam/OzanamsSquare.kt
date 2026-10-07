@@ -24,12 +24,13 @@ import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.Outcome
 import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.WearGamePreview
+import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /**
  * @param grid the square, row by row; null where a place is empty.
@@ -71,7 +72,7 @@ object OzanamsSquare : Game<OzanamState> {
     override val credit = ArtCredit("Melencolia I", "Albrecht Dürer", "1514", "The Metropolitan Museum of Art", "https://commons.wikimedia.org/wiki/File:Melencolia_I_MET_DP820348.jpg")
     override val accent = R.color.game_ozanams_square
     override val accentPale = R.color.game_ozanams_square_pale
-    override val title = "Ozanam's Square"
+    override val title = R.string.ozanams_square_title
     override val rating = Rating(difficulty = 35, complexity = 15, luck = 5)
     override val stateSerializer: KSerializer<OzanamState> = OzanamState.serializer()
 
@@ -79,20 +80,11 @@ object OzanamsSquare : Game<OzanamState> {
     override val boardFraction = 0.7f
     override val boardLift = -0.02f
 
-    override val scoreName = "Moves"
+    override val scoreName = R.string.score_moves
     override val lowScoreWins = true
     override fun score(state: OzanamState) = state.moves
 
-    override val rules = listOf(
-        "## Objective",
-        "Fill the square so that each **row, column and long diagonal** holds **one card of each rank and one of each suit**.",
-        "## Gameplay",
-        "- The cards to place lie in a pile for each suit, at the right. Tap a pile to pick its top card; tap it again for the next card of that suit.",
-        "- Then tap an empty space to place it. Cards dealt into place (shown in black) can't be moved.",
-        "- Cards you place can be moved to another space, swapped, or sent back by tapping their pile.",
-        "- A card that repeats a rank or suit in one of its lines is marked in red.",
-        "- Every deal has **exactly one** solution.",
-    )
+    override val rules = R.array.ozanams_square_rules
 
     /** Rows, columns and the two long diagonals. */
     private val LINES: List<List<Int>> =
@@ -197,7 +189,7 @@ object OzanamsSquare : Game<OzanamState> {
     }
 
     override fun outcome(state: OzanamState) =
-        if (solved(state.grid)) Outcome(true, "The square is complete!") else null
+        if (solved(state.grid)) Outcome(true, text(R.string.ozanams_square_won)) else null
 
     /** The gap between the square and the tray, × a card's width, on top of the usual gap. */
     private const val TRAY_GAP = 0.25f

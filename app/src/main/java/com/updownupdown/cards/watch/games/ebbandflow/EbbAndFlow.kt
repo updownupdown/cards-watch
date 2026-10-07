@@ -29,18 +29,19 @@ import com.updownupdown.cards.watch.cards.shuffledDeck
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.AppColors
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.LocalAmbient
 import com.updownupdown.cards.watch.ui.LocalBoardSize
 import com.updownupdown.cards.watch.ui.WearGamePreview
+import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlin.random.Random
 
 /**
  * @param stock the cards still to draw.
@@ -72,19 +73,11 @@ object EbbAndFlow : Game<EbbAndFlowState> {
     override val credit = ArtCredit("Beach at Low Tide (Mouth of the River)", "Hilaire Germain Edgar Degas", "1869", "Art Institute of Chicago", "https://www.artic.edu/artworks/218848")
     override val accent = R.color.game_ebb_and_flow
     override val accentPale = R.color.game_ebb_and_flow_pale
-    override val title = "Ebb & Flow"
+    override val title = R.string.ebb_and_flow_title
     override val rating = Rating(difficulty = 50, complexity = 30, luck = 40)
     override val stateSerializer: KSerializer<EbbAndFlowState> = EbbAndFlowState.serializer()
 
-    override val rules = listOf(
-        "## Objective",
-        "Play all **52 cards** onto the four piles.",
-        "## Gameplay",
-        "Play cards onto the rising (first two) or falling (last two) piles, using cards of the same rank or higher/lower.",
-        "Any card can start an empty pile. Aces are worth 1.",
-        "A card **one rank back and in the same suit** can also be played.",
-        "If your hand has 5 cards or less, you can **draw** to fill your hand back up to seven.",
-    )
+    override val rules = R.array.ebb_and_flow_rules
 
     /** Whether pile [index] climbs. */
     fun rising(index: Int) = index < PILES / 2
@@ -138,15 +131,15 @@ object EbbAndFlow : Game<EbbAndFlowState> {
     }
 
     override fun outcome(state: EbbAndFlowState) = when {
-        state.stock.isEmpty() && state.hand.isEmpty() -> Outcome(true, "Every card played!")
+        state.stock.isEmpty() && state.hand.isEmpty() -> Outcome(true, text(R.string.ebb_and_flow_won))
         state.hand.isNotEmpty() && !hasPlay(state) && !canDraw(state) ->
-            Outcome(false, "Stuck with ${state.stock.size + state.hand.size} cards left")
+            Outcome(false, text(R.string.ebb_and_flow_lost, state.stock.size + state.hand.size))
 
         else -> null
     }
 
     override fun actions(state: EbbAndFlowState) = listOf(
-        GameAction<EbbAndFlowState>("Draw (${state.stock.size})", enabled = canDraw(state)) {
+        GameAction<EbbAndFlowState>(text(R.string.action_draw, state.stock.size), enabled = canDraw(state)) {
             draw(
                 it
             ) ?: it

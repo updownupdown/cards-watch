@@ -11,8 +11,9 @@ import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.Game
-import com.updownupdown.cards.watch.game.Rating
 import com.updownupdown.cards.watch.game.Outcome
+import com.updownupdown.cards.watch.game.Rating
+import com.updownupdown.cards.watch.game.text
 import com.updownupdown.cards.watch.game.tryMove
 import com.updownupdown.cards.watch.ui.GamePreview
 import com.updownupdown.cards.watch.ui.WearGamePreview
@@ -44,18 +45,12 @@ object LightsOut : Game<LightsOutState> {
     override val credit = ArtCredit("Eruption of Mt Vesuvius, Seen from the Ponte della Maddalena in Naples", "Francesco Piranesi", "c. 1783", "Rijksmuseum", "https://www.rijksmuseum.nl/en/collection/object/Eruption-of-Mt-Vesuvius-Seen-from-the-Ponte-della-Maddalena-in-Naples--e30197f5500c476812d6b072e2b4186d")
     override val accent = R.color.game_lights_out
     override val accentPale = R.color.game_lights_out_pale
-    override val title = "Lights Out"
+    override val title = R.string.lights_out_title
     override val rating = Rating(difficulty = 50, complexity = 10, luck = 0)
     override val stateSerializer: KSerializer<LightsOutState> = LightsOutState.serializer()
     override val saveVersion = 2
 
-    override val rules = listOf(
-        "## Objective",
-        "Turn all 20 cards face down.",
-        "## Gameplay",
-        "Tapping a card turns over that card, and orthogonal cards.",
-        "Every deal can be solved.",
-    )
+    override val rules = R.array.lights_out_rules
 
     /** The cards shown when face up: a fixed pattern, as in the phone game. */
     val CARDS: List<Card> = List(CELLS) { Card(Rank.entries[it % Rank.entries.size], Suit.entries[it % Suit.entries.size]) }
@@ -129,9 +124,9 @@ object LightsOut : Game<LightsOutState> {
     }
 
     override fun outcome(state: LightsOutState) =
-        if (state.faceUp.none { it }) Outcome(true, "Lights out in ${state.moves} moves") else null
+        if (state.faceUp.none { it }) Outcome(true, text(R.string.lights_out_won, state.moves)) else null
 
-    override val scoreName = "Moves"
+    override val scoreName = R.string.score_moves
     override val lowScoreWins = true
     override fun score(state: LightsOutState) = state.moves
 

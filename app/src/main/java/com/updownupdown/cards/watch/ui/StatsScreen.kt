@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,6 +42,8 @@ import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameStats
 import com.updownupdown.cards.watch.game.formatTime
+import com.updownupdown.cards.watch.game.sortedByTitle
+import com.updownupdown.cards.watch.game.upper
 import com.updownupdown.cards.watch.games.ALL_GAMES
 import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.nestor.Nestor
@@ -101,21 +104,20 @@ fun StatsScreen(stats: Map<String, GameStats>, onOpen: (Game<*>) -> Unit) {
     val listState = rememberTransformingLazyColumnState()
     val spec = rememberTransformationSpec()
     val overall = overallStats(stats)
-    val byGame = ALL_GAMES.mapNotNull { game -> stats[game.id]?.takeIf { it.won + it.lost > 0 }?.let { game to it } }
-        .sortedBy { it.first.title }
+    val byGame = sortedByTitle(ALL_GAMES).mapNotNull { game -> stats[game.id]?.takeIf { it.won + it.lost > 0 }?.let { game to it } }
     ScreenScaffold(scrollState = listState) { contentPadding ->
         TransformingLazyColumn(
             state = listState,
             contentPadding = contentPadding,
             verticalArrangement = Arrangement.spacedBy(ITEM_GAP, Alignment.Top),
         ) {
-            item { ScreenTitle(R.drawable.ic_chart, "Stats", transformed(spec)) }
+            item { ScreenTitle(R.drawable.ic_chart, stringResource(R.string.stats), transformed(spec)) }
 
             // Games completed, out of all of them.
             item {
                 Column(transformed(spec).fillMaxWidth(0.8f), horizontalAlignment = Alignment.CenterHorizontally) {
                     BigNumber("${overall.completed}/${ALL_GAMES.size}", AppColors.PaleYellow)
-                    StatLabel("Completed")
+                    StatLabel(stringResource(R.string.stat_completed))
                     Bar(overall.completed / ALL_GAMES.size.toFloat(), AppColors.PaleYellow, BAR, Modifier.padding(top = 6.dp))
                 }
             }
@@ -124,9 +126,9 @@ fun StatsScreen(stats: Map<String, GameStats>, onOpen: (Game<*>) -> Unit) {
             item {
                 Column(transformed(spec).padding(top = GROUP_GAP).fillMaxWidth(0.8f), horizontalAlignment = Alignment.CenterHorizontally) {
                     Row(Modifier.fillMaxWidth()) {
-                        Figure("${overall.won}", "Won", AppColors.Good)
-                        Figure("${overall.lost}", "Lost", AppColors.Bad)
-                        Figure(overall.winPercent?.let { "$it%" } ?: "–", "Win %", Color.White)
+                        Figure("${overall.won}", stringResource(R.string.stat_won), AppColors.Good)
+                        Figure("${overall.lost}", stringResource(R.string.stat_lost), AppColors.Bad)
+                        Figure(overall.winPercent?.let { stringResource(R.string.percent, it) } ?: "–", stringResource(R.string.stat_win_percent), Color.White)
                     }
                     WinBar(overall.won, overall.lost, Modifier.padding(top = 6.dp).fillMaxWidth(0.85f))
                 }
@@ -134,13 +136,13 @@ fun StatsScreen(stats: Map<String, GameStats>, onOpen: (Game<*>) -> Unit) {
 
             item {
                 Row(transformed(spec).padding(top = GROUP_GAP).fillMaxWidth(0.75f)) {
-                    Figure("${overall.played}", "Played", Color.White)
-                    Figure("${overall.bestStreak}", "Best Streak", Color.White)
+                    Figure("${overall.played}", stringResource(R.string.stat_played), Color.White)
+                    Figure("${overall.bestStreak}", stringResource(R.string.stat_best_streak), Color.White)
                 }
             }
 
             overall.mostPlayed?.let { game ->
-                item { SectionHeading("Most Played", transformed(spec).padding(top = GROUP_GAP)) }
+                item { SectionHeading(stringResource(R.string.most_played), transformed(spec).padding(top = GROUP_GAP)) }
                 item {
                     GameButton(
                         game,
@@ -156,14 +158,14 @@ fun StatsScreen(stats: Map<String, GameStats>, onOpen: (Game<*>) -> Unit) {
             }
 
             if (byGame.isNotEmpty()) {
-                item { SectionHeading("All Games", transformed(spec).padding(top = GROUP_GAP)) }
+                item { SectionHeading(stringResource(R.string.all_games), transformed(spec).padding(top = GROUP_GAP)) }
                 items(byGame, key = { "game:${it.first.id}" }) { (game, gameStats) ->
                     GameLine(game, gameStats, { onOpen(game) }, transformed(spec))
                 }
             } else {
                 item {
                     Text(
-                        "Finish a game to see it here.",
+                        stringResource(R.string.stats_empty),
                         style = MaterialTheme.typography.bodySmall,
                         color = AppColors.TextMuted,
                         textAlign = TextAlign.Center,
@@ -194,7 +196,7 @@ private fun BigNumber(text: String, color: Color) {
 @Composable
 private fun StatLabel(text: String) {
     Text(
-        text.uppercase(),
+        text.upper(),
         style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.sp),
         color = AppColors.TextMuted,
         textAlign = TextAlign.Center,
@@ -255,24 +257,25 @@ private fun WinBar(won: Int, lost: Int, modifier: Modifier) {
  */
 @Composable
 private fun GameLine(game: Game<*>, stats: GameStats, onOpen: () -> Unit, modifier: Modifier) {
+    val title = stringResource(game.title)
     val colour = colorResource(game.accentPale)
     val small = MaterialTheme.typography.bodySmall
     val bests = listOfNotNull(
-        stats.bestTimeMs?.let { "Fastest ${formatTime(it)}" },
-        game.scoreName?.let { name -> stats.bestScore?.let { "$name $it" } },
+        stats.bestTimeMs?.let { stringResource(R.string.stat_fastest_time, formatTime(it)) },
+        game.scoreName?.let { name -> stats.bestScore?.let { stringResource(R.string.stat_best_score_value, stringResource(name), it) } },
     )
     Column(
         modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .clickable(onClickLabel = "Play ${game.title}", onClick = onOpen)
+            .clickable(onClickLabel = stringResource(R.string.play_game, title), onClick = onOpen)
             .padding(vertical = 5.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Column(Modifier.fillMaxWidth(GAME_WIDTH)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    game.title,
+                    title,
                     style = small.copy(fontWeight = FontWeight.Medium),
                     color = colour,
                     maxLines = 1,
@@ -286,7 +289,7 @@ private fun GameLine(game: Game<*>, stats: GameStats, onOpen: () -> Unit, modifi
                     modifier = Modifier.padding(start = 6.dp),
                 )
                 Text(
-                    stats.winPercent?.let { "$it%" } ?: "",
+                    stats.winPercent?.let { stringResource(R.string.percent, it) } ?: "",
                     style = small,
                     color = AppColors.TextMuted,
                     textAlign = TextAlign.End,
