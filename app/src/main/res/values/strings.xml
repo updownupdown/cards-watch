@@ -8,6 +8,7 @@
     <string name="settings">Settings</string>
     <string name="continue_playing">Continue Playing</string>
     <string name="all_games">All Games</string>
+    <string name="stats_by_game" formatted="false">Games (W/L/%)</string>
     <string name="stat_won">Won</string>
     <string name="stat_lost">Lost</string>
     <string name="stat_win_percent" formatted="false">Win %</string>

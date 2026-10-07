@@ -327,5 +327,19 @@ class ScreenshotTest {
         GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, Ouroboros.after({ Ouroboros.lookAround(it) }))) {}, {})
     }
 
+    // The second card a ten, its target ten round, up the left: brought in only half as far, clear of the left path.
+    @Test fun ouroborosTargetFar() = capture("ouroboros_target_far", before = { compose.onRoot().performTouchInput { click(Offset(168f, 345f)) } }) {
+        GameScreen(GameSession(Ouroboros, SavedGame(Ouroboros.saveVersion, ouroborosSecondTen())) {}, {})
+    }
+
+    private fun ouroborosSecondTen() = Ouroboros.after({ Ouroboros.lookAround(it) }).let { state ->
+        val second = Ouroboros.tops(state)[1]
+        val ten = state.deck.indexOfFirst { it.card?.rank == Rank.Ten && it != state.deck[state.pos] }
+        val deck = state.deck.toMutableList()
+        deck[ten] = state.deck[second].copy(faceUp = state.deck[ten].faceUp)
+        deck[second] = state.deck[ten].copy(faceUp = true)
+        state.copy(deck = deck)
+    }
+
     @Test fun splash() = capture("splash") { SplashScreen() }
 }

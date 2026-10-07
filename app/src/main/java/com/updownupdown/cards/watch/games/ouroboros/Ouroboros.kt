@@ -255,6 +255,12 @@ object Ouroboros : Game<OuroborosState> {
     private const val PULL = 0.22f
     private const val TARGET_PULL = 0.95f
 
+    /**
+     * How far in the target [steps] round the loop comes: the full pull for the 1st and 2nd, tapering to half for
+     * the 10th, so the far ones, up the left, don't cover the left path.
+     */
+    private fun targetPull(steps: Int) = TARGET_PULL * (1f - 0.5f * ((steps - 2).coerceIn(0, 8) / 8f))
+
     /** The gap between the loop and the marked paths, and between the paths, × a card's width. */
     private const val PATHS_IN = 0.35f
     private const val PATHS_GAP = 0.35f
@@ -365,7 +371,7 @@ object Ouroboros : Game<OuroborosState> {
                 fun place(index: Int): Pair<Float, Dp> {
                     val k = (index - state.pos + count) % count
                     val r = radius - cardHeight * when (index) {
-                        targetIndex -> TARGET_PULL
+                        targetIndex -> targetPull(k)
                         pickedIndex -> PULL
                         else -> 0f
                     }

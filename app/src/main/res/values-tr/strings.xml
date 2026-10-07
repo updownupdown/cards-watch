@@ -7,6 +7,7 @@
     <string name="settings">Ayarlar</string>
     <string name="continue_playing">Oynamaya devam</string>
     <string name="all_games">Tüm oyunlar</string>
+    <string name="stats_by_game" formatted="false">Oyunlar (G/M/%)</string>
     <string name="stat_won">Kazanılan</string>
     <string name="stat_lost">Kaybedilen</string>
     <string name="stat_win_percent" formatted="false">Kazanma %</string>
