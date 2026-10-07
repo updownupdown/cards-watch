@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Playing card trivia, one of which sits at the foot of the home list. The same list, in the same order, as the phone app's src/data/card-facts.ts. -->
+<!-- Playing card trivia, one of which sits at the foot of the home list: the phone app's (its src/data/card-facts.ts), copied by scripts/card-facts.py. -->
 <resources>
     <string-array name="card_facts">
         <item>Playing cards reached Europe in the 1370s, most likely brought over from the Mamluk Sultanate of Egypt.</item>

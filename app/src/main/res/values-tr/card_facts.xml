@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The phone app's card facts in this language (its src/locales/tr/content/facts.json), copied by scripts/card-facts.py. -->
+<resources>
+    <string-array name="card_facts">
+        <item>Oyun kartları Avrupa\'ya 1370\'lerde, büyük olasılıkla Mısır\'daki Memlük Sultanlığı\'ndan geldi.</item>
+        <item>Dört Fransız takımı (maça, kupa, karo ve sinek) 1480 civarında Fransa\'da ortaya çıktı ve dünyanın büyük bölümünü fethetti.</item>
+        <item>İtalyan ve İspanyol desteleri hâlâ eski Latin takımlarını kullanır: kadehler, sikkeler, kılıçlar ve sopalar.</item>
+        <item>Alman desteleri Fransız takımları yerine kupalar, çanlar, yapraklar ve meşe palamutları kullanır.</item>
+        <item>İsviçre-Alman kartlarının kendi takımları vardır: güller, çanlar, meşe palamutları ve kalkanlar.</item>
+        <item>Standart bir destede 52 kart vardır; 52 aynı zamanda bir yıldaki hafta sayısıdır.</item>
+        <item>Dört takımdaki tüm kartları As\'tan (1) Papaz\'a (13) kadar toplarsan 364 eder. Bir Joker\'i de 1 sayarsan 365 olur.</item>
+        <item>Karılmış bir destenin dizilebileceği sıra sayısı (yaklaşık 8 × 10⁶⁷), Dünya\'daki atom sayısından fazladır.</item>
+        <item>İyice karılmış her deste, büyük olasılıkla daha önce hiçbir destenin almadığı bir sıradadır.</item>
+        <item>Matematikçiler Bayer ve Diaconis, 52 kartlık bir desteyi iyi karıştırmak için yaklaşık yedi şelale karıştırmanın yettiğini gösterdi.</item>
+        <item>Kusursuz bir “out” şelale karıştırma arka arkaya sekiz kez yapılırsa 52 kartlık deste ilk sırasına geri döner.</item>
+        <item>Joker, 1860\'larda Euchre oyununun en büyük kozu olarak Amerikan destelerine eklendi.</item>
+        <item>Çoğu standart destede Kupa Papazı, bıyığı olmayan tek Papaz\'dır.</item>
+        <item>Kupa Papazı\'na sık sık “intihar eden papaz” denir, çünkü kılıcı başının içinden geçiyor gibi görünür.</item>
+        <item>Maça Vale, Kupa Vale ve Karo Papazı profilden çizilir, bu yüzden bunlara “tek gözlü” kartlar denir.</item>
+        <item>Fransız destelerinde Papazlar geleneksel olarak Davut, İskender, Sezar ve Şarlman diye adlandırılırdı.</item>
+        <item>Geleneksel Paris deseninin Kızları Pallas, Judith, Rachel ve Argine diye adlandırılırdı.</item>
+        <item>Paris deseninin Valeleri kahramanların adını taşırdı: Ogier, La Hire, Hektor ve Lancelot.</item>
+        <item>Vale\'ye İngilizcede eskiden “Knave” denirdi. Matbaacılar, dizini Papaz\'ın “K”sıyla karışmasın diye “J”ye geçti.</item>
+        <item>Köşe dizinleri, yani her köşedeki küçük değer ve takım, ancak 1800\'lerin sonunda yaygınlaştı. Öncesinde kartları okumak için onları geniş bir yelpaze gibi açmak gerekirdi.</item>
+        <item>İki uçlu, her iki yönden okunabilen resimli kartlar 1800\'lerde yaygınlaştı; böylece oyuncular kartları çevirip ellerini belli etmek zorunda kalmadı.</item>
+        <item>Süslü Maça As\'ı bir İngiliz vergisinden gelir: 1765\'ten itibaren verginin ödendiğini kanıtlamak için devlet tarafından basıldı.</item>
+        <item>Tarot, 15. yüzyıl İtalya\'sında tarocchi adlı bir kart oyunu olarak başladı. Fal için kullanılması yüzyıllar sonra geldi.</item>
+        <item>Tarot kart oyunları bugün hâlâ oynanır; özellikle Fransa\'da sevilen Fransız Tarot\'u.</item>
+        <item>Solitaire, İngiltere\'de ve Avrupa\'nın büyük bölümünde “Patience” (sabır) diye bilinir.</item>
+        <item>Bilinen ilk pasyans oyunu derlemeleri 1870\'lerde yayımlandı.</item>
+        <item>Klondike, adını Kanada\'nın Yukon bölgesindeki 1896–1899 Klondike Altına Hücumu\'ndan alır.</item>
+        <item>Windows 3.0, 1990\'da Solitaire ile birlikte geldi; amaçlardan biri insanlara sürükleyip bırakarak fare kullanmayı öğretmekti.</item>
+        <item>FreeCell, dağıtımlarını 1\'den 32.000\'e kadar numaralandıran Windows sayesinde ünlendi.</item>
+        <item>Windows\'un ilk 32.000 FreeCell dağıtımından yalnızca biri, 11982 numaralı dağıtım, çözülemez.</item>
+        <item>Akordeon kazanması en zor pasyanslardan biridir: iyi oynanan bir oyun bile çoğu zaman kaybedilir.</item>
+        <item>Matematikçi Persi Diaconis, Klondike\'ı kazanma olasılığına “uygulamalı olasılığın utançlarından biri” dedi: bu olasılık hâlâ yalnızca tahminen biliniyor.</item>
+        <item>Kart oyunları ortaçağ Avrupa\'sında o kadar sevildi ki, 1370\'lerden itibaren pek çok şehir onları yasaklayan yasalar çıkardı.</item>
+        <item>İlk oyun kartlarının 9. yüzyıl civarında, Tang hanedanı döneminde Çin\'de ortaya çıktığı düşünülüyor.</item>
+        <item>Memlük kartlarının takımları kadehler, sikkeler, kılıçlar ve polo sopalarıydı.</item>
+        <item>İlk Avrupa destelerinde resimli kartlar genellikle üç erkekti: bir Papaz, bir Şövalye ve bir Uşak. Kız sonradan geldi.</item>
+        <item>İspanyol destelerinde geleneksel olarak 10\'lar yoktur, çoğu zaman 8\'ler ve 9\'lar da yoktur.</item>
+        <item>Kartlar, Avrupa\'da Gutenberg\'in matbaasından önce tahta kalıpla basılan ilk şeyler arasındaydı.</item>
+        <item>Kumarhaneler, emekli kartlar bir oyuna gizlice sokulamasın diye onları deler ya da köşelerini keser.</item>
+        <item>Yapıştırıcısız en yüksek kart evi dünya rekoru 7 metreyi aşar.</item>
+        <item>“Poker face”, “above board” ve “ace up your sleeve” deyimlerinin hepsi kart oyunlarından gelir.</item>
+        <item>“Following suit” deyimi, açılan takımdan kart oynamanın zorunlu olduğu el alma oyunlarından gelir.</item>
+        <item>İkinci Dünya Savaşı denizaltısı USS Wahoo\'nun cribbage tahtası, hâlâ ABD Donanması\'nda görevdeki en eski denizaltıya devredilir.</item>
+        <item>Kumarhanelerin kullandığı standart kart boyutu 2,5 × 3,5 inçtir ve “poker boyu” diye anılır. Daha dar “briç boyu” kartlar 2,25 inç genişliğindedir.</item>
+        <item>Mahjong, 1800\'lerde Çin kart oyunlarından doğdu; taşlarında hâlâ eski kart takımları olan sikkeler, ipler ve on binler bulunur.</item>
+        <item>İngiltere\'de bir kart destesine genellikle “deck” değil “pack” denir.</item>
+        <item>Papaz, Kız ve Valelere bir zamanlar şık giysileri yüzünden “coat cards” (cübbeli kartlar) denirdi. Bu ad zamanla “court cards” (saray kartları) oldu.</item>
+        <item>Beş kartlık 2.598.960 farklı poker eli vardır.</item>
+        <item>Beş kartta royal flush gelme olasılığı 649.740\'ta 1\'dir.</item>
+        <item>Bir briç oyununun dört elini dağıtmanın yaklaşık 5,36 × 10²⁸ farklı yolu vardır.</item>
+        <item>Kart üreticileri geleneksel olarak Maça As\'ını kendi adları ya da logolarıyla süsler.</item>
+        <item>Karo 9\'a “İskoçya\'nın Laneti” denir, ama nedenini kimse tam bilmiyor.</item>
+        <item>Sinek 4\'e “şeytanın karyola direkleri” denir ve bazı oyunculara göre uğursuzdur.</item>
+        <item>Bir tarot destesinde 78 kart vardır: dört takımda 56 kart ve 22 koz.</item>
+        <item>Fransız Tarot\'unda Deli biraz Joker gibi işler: takım uymak yerine oynanabilir.</item>
+        <item>Japon hanafuda kartlarında yılın her ayı için bir tane olmak üzere 12 takım vardır ve sayıların yerinde çiçekler bulunur.</item>
+        <item>Nintendo, 1889\'da hanafuda oyun kartları yapmak için kuruldu.</item>
+        <item>İkinci Dünya Savaşı\'nda bir ABD kart üreticisi, ıslatılınca ayrılıp savaş esirleri için kaçış haritaları ortaya çıkaran desteler üretti.</item>
+        <item>Yuvarlak köşeler 1800\'lerin sonunda standart oldu. Kare köşelerden daha geç aşınır ve desteyi karıştırmayı kolaylaştırır.</item>
+        <item>Desenli kart arkaları 1800\'lerde yaygınlaştı. Öncesinde arkalar genellikle düz bırakılırdı.</item>
+        <item>Microsoft Solitaire, 2019\'da Dünya Video Oyunları Şöhretler Müzesi\'ne alındı.</item>
+        <item>Windows Solitaire\'deki kart tasarımlarını, ilk Macintosh simgelerini de tasarlayan Susan Kare çizdi.</item>
+        <item>Napolyon\'un Saint Helena\'daki sürgününde pasyans oynadığı söylenir ve birkaç oyun onun adını taşır.</item>
+        <item>Braille oyun kartlarında değer ve takım bir köşeye kabartma olarak basılır, böylece dokunarak okunabilir.</item>
+        <item>“Wild card”, “hold all the cards” ve “lay your cards on the table” deyimlerinin hepsi kart oyunlarından alınmıştır.</item>
+        <item>İtalya\'da hâlâ Napoli, Piacenza ve Sicilya desenleri gibi her biri kendine özgü görünen pek çok bölgesel kart deseni vardır.</item>
+        <item>Bilinen en eski eksiksiz sıradan oyun kartı destesi, 1475–1480 civarında boyanan Flaman Av Destesi\'dir. Takımları av gereçleridir: av boruları, köpek tasmaları, tazı bağları ve av ilmekleri.</item>
+        <item>1430 civarında boyanan Stuttgart Oyun Kartları\'nın takımları ördekler, şahinler, geyikler ve tazılardır.</item>
+        <item>Worshipful Company of Makers of Playing Cards, 1628\'de kraliyet beratıyla Londra\'da kuruldu ve hâlâ varlığını sürdürüyor.</item>
+        <item>1805\'te Richard Harding adlı bir İngiliz, kart vergisinden kaçmak için Maça As\'ı sahtelediği için asıldı.</item>
+        <item>İngiltere\'nin oyun kartı vergisi 1960\'a kadar sürdü. ABD\'de de bir tane vardı; 1965\'te kaldırıldı.</item>
+        <item>1685\'te Yeni Fransa kolonisinde madeni para tükendi ve askerlere vali tarafından imzalanmış oyun kartlarıyla ödeme yapıldı.</item>
+        <item>Fransız Devrimi sırasında kart üreticileri Papaz, Kız ve Valelerin yerine Dâhiler, Özgürlükler ve Eşitlikler koydu.</item>
+        <item>As bir zamanlar en düşük karttı. Papaz\'ın üstüne çıkışı çoğu zaman Fransız Devrimi\'ne bağlanır, ama bazı oyunlar onu çok daha önce yüksek sayıyordu.</item>
+        <item>İngilizce “ace” sözcüğü, küçük bir Roma sikkesi olan Latince “as”tan, zarın birli yüzü için kullanılan Eski Fransızca sözcük yoluyla gelir.</item>
+        <item>Fransızcada takımlar pique (mızrak), cœur (kalp), carreau (karo taş) ve trèfle (yonca) diye adlandırılır.</item>
+        <item>İngilizce takım adları eski Latin takımlarından alınmıştır: “spade” İtalyancada kılıç anlamındaki sözcükten, “club” ise sopalardan gelir; ama şekiller Fransızdır.</item>
+        <item>Fransız resimli kartları Roi, Dame ve Valet için R, D ve V ile işaretlenir. Almanlarınki König, Dame ve Bube için K, D ve B ile.</item>
+        <item>Alman takımlı destelerde 2\'ye Daus denir ve bir As gibi genellikle Papaz\'dan büyüktür.</item>
+        <item>İspanyol kartları takımlarını kenar çizgisindeki aralıklarla belli eder: sikkelerde hiç, kadehlerde bir, kılıçlarda iki, sopalarda üç.</item>
+        <item>Hint Ganjifa kartları yuvarlaktır ve geleneksel olarak elle boyanır. Babür versiyonunda sekiz takımda 96 kart vardır.</item>
+        <item>Oyun kartları Japonya\'ya 1500\'lerde Portekizli denizcilerle geldi. Japoncada kart anlamına gelen “karuta”, Portekizce “carta”dan gelir.</item>
+        <item>Tarot kozlarına önce “trionfi”, yani zaferler denirdi. İngilizce “trump” (koz) sözcüğü buradan gelir.</item>
+        <item>1400\'lerin ortasında Milano hükümdarları için elle boyanan Visconti-Sforza desteleri, günümüze ulaşan en eski tarot kartları arasındadır.</item>
+        <item>Kartlarla fal bakmak 18. yüzyıl Fransa\'sında yayıldı. Etteilla diye bilinen bir Parisli, 1770\'te bu konudaki ilk kılavuzu yayımladı.</item>
+        <item>“Joker” sözcüğünün, Euchre oyununun Almanca adı olan “Jucker”dan geldiği düşünülüyor.</item>
+        <item>Euchre\'da en büyük kozlar Valelerdir; Almancada çiftçi anlamına gelen ve Vale\'nin de adı olan “Bauer”dan ötürü bunlara “bowers” denir.</item>
+        <item>Karo Papazı, kılıç yerine balta taşıyan tek Papaz\'dır.</item>
+        <item>Maça Kızı, asa tutan tek Kız\'dır.</item>
+        <item>Köşe dizinli ilk kartlara “squeezers” (sıkıştırılanlar) lakabı takıldı, çünkü bir el sıkı bir yelpazeye sıkıştırılsa bile okunabiliyordu.</item>
+        <item>Bicycle oyun kartları 1885\'ten beri basılıyor ve adlarını o dönemin bisiklet çılgınlığından aldılar.</item>
+        <item>Kumarhanelerin gözdesi Bee oyun kartlarının üzerinde, ilk üretildikleri yıl olan 1892\'den ötürü “No. 92” yazar.</item>
+        <item>Çoğu oyun kartı, koyu bir macunla birbirine yapıştırılmış iki kâğıt tabakasıdır; bu macun ışığın geçmesini engeller.</item>
+        <item>Pek çok destenin yüzeyi minik çukurcuklardan oluşan bir desendir. Bunlar biraz hava tutar ve kartların birbiri üzerinde kaymasına yardım eder.</item>
+        <item>Desteler çoğu zaman 56 kartlık tabakalara basılır: 52 kart, iki Joker ve iki fazlası. Bu yüzden pek çok destede yedek kartlar çıkar.</item>
+        <item>1800\'lerde sevilen “dönüşüm” kartları, sembolleri bir resmin içine katar: kupalar yüzlere, maçalar şapkalara dönüşür.</item>
+        <item>On üç değerin İngilizce adlarını “ace”den “king”e kadar yazıp harflerini say: tam 52 tane.</item>
+        <item>Bazıları destede bir takvim görür: mevsimler için dört takım, her mevsimin haftaları için takım başına 13 kart, aylar için 12 resimli kart. Bu neredeyse kesinlikle bir rastlantıdır.</item>
+        <item>Bir deste Büyük Patlama\'dan beri saniyede bir karılsaydı, olası 8 × 10⁶⁷ sırasından 10¹⁸\'den azı ortaya çıkmış olurdu.</item>
+        <item>“Faro” karıştırma, destenin iki yarısını birer birer kusursuz biçimde iç içe geçirir.</item>
+        <item>Karılmış iki desteyi yan yana açarsan, aynı kartın aynı anda ikisinde de çıkma olasılığı %63\'tür.</item>
+        <item>Briçte takımlar İngilizce adlarının alfabetik sırasıyla dizilir: sinek (clubs), karo (diamonds), kupa (hearts), maça (spades).</item>
+        <item>Her oyuncunun bir takımın tamamını aldığı bir briç dağıtımı birkaç yılda bir haber olur. Olasılığı o kadar düşüktür ki asıl neden büyük olasılıkla kötü karıştırma ya da bir şakadır.</item>
+        <item>“Bridge” adı muhtemelen 1886 tarihli bir İngiliz broşüründe anlatılan, whist benzeri “biritch” oyunundan gelir.</item>
+        <item>Poker 1800\'lerin başında Mississippi boyunca gelişti ve ilk başta yalnızca 20 kartla oynanırdı.</item>
+        <item>İki siyah As ve iki siyah 8\'den oluşan “ölü adamın eli”nin, Wild Bill Hickok\'un 1876\'da vurulduğunda elinde tuttuğu kartlar olduğu söylenir.</item>
+        <item>Teksas Yasama Meclisi, Robstown kasabasını resmen Texas Hold\'em\'in doğum yeri olarak tanır.</item>
+        <item>İngilizce “passing the buck” deyimi pokerden gelir: “buck” denen bir işaret, çoğu zaman geyik boynuzu saplı bir bıçak, dağıtma sırasının kimde olduğunu gösterirdi.</item>
+        <item>Yirmi bir oyunundan bilinen en eski söz, Don Kişot\'un yazarı Cervantes\'in 1601 civarında yazdığı bir öyküde geçer.</item>
+        <item>Blackjack\'te iki kartla 21 yaklaşık her 21 elde bir gelir.</item>
+        <item>Crazy Eights\'in adını, ABD ordusunun akıl sağlığı yerinde görülmeyen askerleri terhis ettiği “Section 8”den aldığı söylenir.</item>
+        <item>İtalyan kart oyunu Scopa “süpürge” demektir: en iyi hamle masadaki bütün kartları süpürmektir.</item>
+        <item>Dickens\'ın Büyük Umutlar romanında Pip ve Estella, Beggar-my-neighbour oynar. Bu oyunun sonsuza dek sürüp süremeyeceği, hiç bitmeyen bir dağıtımın bulunduğu 2024\'e kadar açık bir soruydu.</item>
+        <item>Paul Cézanne\'ın Kağıt Oynayanlar tablosunun 2011\'de 250 milyon doları aşan bir fiyata satıldığı bildirildi; bu, o güne dek bir tabloya ödenen en yüksek fiyattı.</item>
+        <item>“Poker Oynayan Köpekler” aslında bir dizidir: Cassius Coolidge, 1903\'ten başlayarak bir puro reklamı firması için köpekli 16 resim yaptı.</item>
+        <item>Vietnam Savaşı sırasında Amerikan askerleri, düşmanın bu karttan korktuğuna yanlış biçimde inanarak kart üreticilerinden sandık sandık yalnızca Maça As\'ı istedi.</item>
+        <item>ABD\'nin birkaç eyaleti mahkûmlara çözülmemiş davaların basıldığı desteler veriyor ve oyunculardan gelen ipuçlarıyla suçlar çözüldü.</item>
+        <item>Oyun kartı fırlatma rekoru 65,96 metredir; 2002\'de sihirbaz Rick Smith Jr. tarafından kırıldı.</item>
+        <item>Karılmış bir destenin sırasını ezberleme rekoru 13 saniyenin altındadır.</item>
+        <item>Kart evi rekorlarının sahibi Bryan Berg mimarlık eğitimi aldı. Yapıştırıcı, bant ya da katlama kullanmaz.</item>
+        <item>Bir pasyans oyununun bilinen en eski tarifi, 1783 tarihli bir Alman oyun kitabındadır.</item>
+        <item>İngiltere\'de “solitaire” genellikle çivili tahta oyunu demektir. Kartla oynananlara “patience” denir.</item>
+        <item>Dağıtımdan sonra kalan kartlardan oluşan deste, Fransızcada “topuk” anlamına gelen “talon” diye de anılır.</item>
+        <item>Canfield, adını oyunculara desteyi 50 dolara satıp temele çıkardıkları her kart için 5 dolar ödediği söylenen kumarhane sahibi Richard Canfield\'dan alır.</item>
+        <item>Örümcek, adını örümceğin sekiz bacağından alır: doldurulacak sekiz temel vardır.</item>
+        <item>Kırk Haramiler, adını başta sütunlara dağıtılan 40 karttan alır. Napoleon at St Helena adıyla da bilinir.</item>
+        <item>Hesap, neredeyse tamamen beceriye dayanan bir pasyanstır: dikkatli bir oyuncu oyunların çoğunu kazanırken dikkatsiz biri neredeyse hiç kazanamaz.</item>
+        <item>Windows Solitaire\'de bir zamanlar oyunu sahte bir elektronik tablonun arkasına gizleyen bir “patron tuşu” vardı. Microsoft bunu çıkış öncesinde kaldırttı.</item>
+        <item>Windows FreeCell\'de, çözülemez olacak şekilde hazırlanmış −1 ve −2 numaralı iki gizli dağıtım vardı.</item>
+        <item>Hearts, Windows\'a yeni ağ özelliklerini göstermek için 1992\'de eklendi: başka bilgisayarlardaki kişilere karşı oynanabiliyordu.</item>
+        <item>2020\'de, Solitaire\'in 30. doğum gününde Microsoft, oyunun hâlâ ayda 35 milyon oyuncusu olduğunu söyledi.</item>
+    </string-array>
+</resources>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The phone app's card facts in this language (its src/locales/it/content/facts.json), copied by scripts/card-facts.py. -->
+<resources>
+    <string-array name="card_facts">
+        <item>Le carte da gioco arrivarono in Europa negli anni \'70 del Trecento, portate con ogni probabilità dal Sultanato mamelucco d\'Egitto.</item>
+        <item>I quattro semi francesi, picche, cuori, quadri e fiori, comparvero in Francia intorno al 1480 e finirono per conquistare gran parte del mondo.</item>
+        <item>I mazzi italiani e spagnoli usano ancora i più antichi semi latini: coppe, denari, spade e bastoni.</item>
+        <item>I mazzi tedeschi usano cuori, campanelli, foglie e ghiande al posto dei semi francesi.</item>
+        <item>Le carte svizzero-tedesche hanno semi tutti loro: rose, campanelli, ghiande e scudi.</item>
+        <item>Un mazzo standard ha 52 carte, e 52 sono anche le settimane di un anno.</item>
+        <item>Somma tutte le carte dall\'Asso (1) al Re (13) nei quattro semi e ottieni 364. Conta un Jolly come 1 e arrivi a 365.</item>
+        <item>I modi di ordinare un mazzo mescolato (circa 8 × 10⁶⁷) sono più degli atomi della Terra.</item>
+        <item>Un mazzo mescolato a fondo è quasi certamente in un ordine in cui nessun mazzo è mai stato prima.</item>
+        <item>I matematici Bayer e Diaconis dimostrarono che circa sette mescolate all\'americana bastano per mescolare bene un mazzo da 52 carte.</item>
+        <item>Una mescolata all\'americana perfetta «out», ripetuta otto volte di fila, riporta un mazzo da 52 carte al suo ordine iniziale.</item>
+        <item>Il Jolly fu aggiunto ai mazzi americani negli anni \'60 dell\'Ottocento come briscola più alta nel gioco dell\'Euchre.</item>
+        <item>Nella maggior parte dei mazzi standard, il Re di cuori è l\'unico Re senza baffi.</item>
+        <item>Il Re di cuori è spesso chiamato «re suicida» perché la sua spada sembra trafiggergli la testa.</item>
+        <item>Il Fante di picche, il Fante di cuori e il Re di quadri sono ritratti di profilo, per questo sono detti carte «con un occhio solo».</item>
+        <item>Nei mazzi francesi, i Re portavano tradizionalmente i nomi di Davide, Alessandro, Cesare e Carlo Magno.</item>
+        <item>Le Donne del tradizionale modello parigino si chiamavano Pallade, Giuditta, Rachele e Argine.</item>
+        <item>I Fanti del modello parigino portavano i nomi di eroi: Ogier, La Hire, Ettore e Lancillotto.</item>
+        <item>In inglese il Fante un tempo si chiamava «Knave». Gli stampatori passarono a «J» perché il suo indice non si confondesse con la «K» del Re.</item>
+        <item>Gli indici agli angoli, il piccolo valore e seme in ogni angolo, si diffusero solo a fine Ottocento. Prima bisognava aprire bene le carte a ventaglio per leggerle.</item>
+        <item>Le figure a doppia testa, leggibili in entrambi i versi, si diffusero nell\'Ottocento, così i giocatori non dovevano capovolgere le carte rivelando la mano.</item>
+        <item>L\'Asso di picche decorato nasce da una tassa britannica: dal 1765 lo stampava il governo come prova che l\'imposta era stata pagata.</item>
+        <item>I tarocchi nacquero nell\'Italia del Quattrocento come gioco di carte. L\'uso divinatorio arrivò secoli dopo.</item>
+        <item>I giochi con i tarocchi si giocano ancora oggi, soprattutto il Tarot francese, molto popolare in Francia.</item>
+        <item>In Gran Bretagna e in buona parte d\'Europa il solitario si chiama «Patience».</item>
+        <item>Le prime raccolte note di solitari furono pubblicate negli anni \'70 dell\'Ottocento.</item>
+        <item>Klondike deve il nome alla corsa all\'oro del Klondike, nello Yukon canadese, 1896–1899.</item>
+        <item>Nel 1990 Windows 3.0 uscì con il Solitario, in parte per insegnare a usare il mouse trascinando e rilasciando.</item>
+        <item>FreeCell divenne famoso grazie a Windows, che ne numerava le partite da 1 a 32.000.</item>
+        <item>Delle 32.000 partite originali di FreeCell su Windows, solo una, la n. 11982, è irrisolvibile.</item>
+        <item>Fisarmonica è uno dei solitari più difficili da vincere: anche giocata bene, una partita fallisce quasi sempre.</item>
+        <item>Il matematico Persi Diaconis definì le probabilità di vincere a Klondike «uno degli imbarazzi della probabilità applicata»: si conoscono ancora solo per stima.</item>
+        <item>Nell\'Europa medievale i giochi di carte erano così popolari che molte città li vietarono per legge, a partire dagli anni \'70 del Trecento.</item>
+        <item>Si ritiene che le prime carte da gioco vengano dalla Cina, sotto la dinastia Tang, intorno al IX secolo.</item>
+        <item>Le carte mamelucche avevano i semi di coppe, denari, spade e mazze da polo.</item>
+        <item>Nei primi mazzi europei le figure erano spesso tre uomini: un Re, un Cavaliere e un Fante. La Donna arrivò più tardi.</item>
+        <item>I mazzi spagnoli tradizionalmente non hanno i 10, e spesso nemmeno gli 8 e i 9.</item>
+        <item>Le carte furono tra le prime cose stampate in Europa con matrici di legno, prima della stampa di Gutenberg.</item>
+        <item>I casinò forano o tagliano gli angoli delle carte dismesse, così non possono essere reintrodotte di nascosto in una partita.</item>
+        <item>Il record mondiale per il castello di carte più alto, costruito senza colla, supera i 7 metri.</item>
+        <item>«Poker face», «above board» e «ace up your sleeve» (l\'asso nella manica) vengono tutte dal gioco delle carte.</item>
+        <item>In inglese «following suit» (seguire il seme) viene dai giochi a prese, dove devi giocare una carta del seme uscito.</item>
+        <item>La tavola da cribbage del sommergibile USS Wahoo, della Seconda guerra mondiale, passa ancora al sommergibile più anziano in servizio nella Marina USA.</item>
+        <item>La misura standard delle carte nei casinò è 2,5 × 3,5 pollici, detta «poker size». Le carte «bridge size», più strette, sono larghe 2,25 pollici.</item>
+        <item>Il mahjong nacque dai giochi di carte cinesi nell\'Ottocento, e le sue tessere portano ancora gli antichi semi delle carte: monete, fili e miriadi.</item>
+        <item>In Gran Bretagna un mazzo di carte si chiama di solito «pack».</item>
+        <item>In inglese Re, Donne e Fanti un tempo si chiamavano «coat cards», per i loro abiti eleganti. Il nome scivolò in «court cards».</item>
+        <item>Esistono 2.598.960 diverse mani di poker da cinque carte.</item>
+        <item>La probabilità di ricevere una scala reale in cinque carte è di 1 su 649.740.</item>
+        <item>Esistono circa 5,36 × 10²⁸ modi diversi di distribuire le quattro mani di una partita a bridge.</item>
+        <item>I produttori di carte decorano tradizionalmente l\'Asso di picche con il proprio nome o logo.</item>
+        <item>Il Nove di quadri è noto come la «Maledizione di Scozia», anche se nessuno sa bene perché.</item>
+        <item>Il Quattro di fiori è soprannominato «le colonne del letto del diavolo» e per alcuni giocatori porta sfortuna.</item>
+        <item>Un mazzo di tarocchi ha 78 carte: 56 in quattro semi, più 22 trionfi.</item>
+        <item>Nel Tarot francese il Matto funziona un po\' come un Jolly: si può giocare invece di rispondere al seme.</item>
+        <item>Le carte giapponesi hanafuda hanno 12 semi, uno per ogni mese dell\'anno, con fiori al posto dei numeri.</item>
+        <item>Nintendo fu fondata nel 1889 per produrre carte da gioco hanafuda.</item>
+        <item>Nella Seconda guerra mondiale, un produttore americano di carte realizzò mazzi che, bagnati, si separavano rivelando mappe di fuga per i prigionieri di guerra.</item>
+        <item>Gli angoli arrotondati divennero standard a fine Ottocento. Si consumano meno di quelli squadrati e rendono il mazzo più facile da mescolare.</item>
+        <item>I dorsi decorati si diffusero nell\'Ottocento. Prima, di solito, i dorsi erano lasciati lisci.</item>
+        <item>Microsoft Solitaire è entrato nella World Video Game Hall of Fame nel 2019.</item>
+        <item>Le carte del Solitario di Windows furono disegnate da Susan Kare, che creò anche le icone originali del Macintosh.</item>
+        <item>Si dice che Napoleone giocasse ai solitari durante l\'esilio a Sant\'Elena, e diversi giochi portano il suo nome.</item>
+        <item>Le carte da gioco in braille hanno valore e seme in rilievo in un angolo, così si possono leggere al tatto.</item>
+        <item>«Wild card», «hold all the cards» e «lay your cards on the table» (mettere le carte in tavola) sono tutte espressioni prese dai giochi di carte.</item>
+        <item>L\'Italia ha ancora molte carte regionali, come le napoletane, le piacentine e le siciliane, ognuna con il suo aspetto.</item>
+        <item>Il più antico mazzo completo di carte comuni che si conosca è il Mazzo da caccia fiammingo, dipinto intorno al 1475–1480. I semi sono attrezzi da caccia: corni, collari, guinzagli e lacci.</item>
+        <item>Le Carte da gioco di Stoccarda, dipinte intorno al 1430, hanno i semi di anatre, falconi, cervi e segugi.</item>
+        <item>La Worshipful Company of Makers of Playing Cards fu fondata a Londra con carta reale nel 1628, ed esiste ancora.</item>
+        <item>Nel 1805 un inglese di nome Richard Harding fu impiccato per aver falsificato l\'Asso di picche per evadere la tassa sulle carte.</item>
+        <item>La tassa britannica sulle carte da gioco durò fino al 1960. Anche gli Stati Uniti ne avevano una, abolita nel 1965.</item>
+        <item>Nel 1685 la colonia della Nuova Francia rimase senza monete e pagò i soldati con carte da gioco firmate dal governatore.</item>
+        <item>Durante la Rivoluzione francese, i fabbricanti di carte sostituirono Re, Donne e Fanti con Geni, Libertà e Uguaglianze.</item>
+        <item>Un tempo l\'Asso era la carta più bassa. Il suo salire sopra il Re è spesso legato alla Rivoluzione francese, anche se alcuni giochi lo mettevano in alto molto prima.</item>
+        <item>La parola inglese «ace» viene dal latino «as», una piccola moneta romana, attraverso l\'antico francese che indicava l\'uno sul dado.</item>
+        <item>In francese i semi sono pique (picca), cœur (cuore), carreau (piastrella) e trèfle (trifoglio).</item>
+        <item>I nomi inglesi dei semi vengono dai più antichi semi latini: «spade» dall\'italiano «spade» e «club» dai bastoni, anche se le forme sono francesi.</item>
+        <item>Le figure francesi sono segnate R, D e V, per Roi, Dame e Valet. Quelle tedesche K, D e B, per König, Dame e Bube.</item>
+        <item>Nei mazzi con semi tedeschi il Due si chiama Daus e di solito batte il Re, come farebbe un Asso.</item>
+        <item>Le carte spagnole indicano il seme con le interruzioni del bordo: nessuna per denari, una per coppe, due per spade, tre per bastoni.</item>
+        <item>Le carte indiane Ganjifa sono rotonde e tradizionalmente dipinte a mano. La versione Moghul ha 96 carte in otto semi.</item>
+        <item>Le carte da gioco arrivarono in Giappone con i marinai portoghesi nel Cinquecento. La parola giapponese «karuta» viene dal portoghese «carta».</item>
+        <item>I trionfi dei tarocchi si chiamavano in origine «trionfi», cioè vittorie. Da lì viene la parola inglese «trump», briscola.</item>
+        <item>I tarocchi Visconti-Sforza, dipinti a mano per i signori di Milano a metà Quattrocento, sono tra i più antichi giunti fino a noi.</item>
+        <item>La cartomanzia si diffuse nella Francia del Settecento. Un parigino noto come Etteilla ne pubblicò la prima guida nel 1770.</item>
+        <item>Si pensa che la parola «Joker» venga da «Jucker», un nome tedesco del gioco dell\'Euchre.</item>
+        <item>Nell\'Euchre le briscole più alte sono i Fanti, detti «bowers» da «Bauer», in tedesco contadino e nome del Fante.</item>
+        <item>Il Re di quadri è l\'unico Re che porta un\'ascia invece di una spada.</item>
+        <item>La Donna di picche è l\'unica Donna che regge uno scettro.</item>
+        <item>Le prime carte con indici agli angoli furono soprannominate «squeezers», perché la mano si poteva stringere in un ventaglio fitto e restava leggibile.</item>
+        <item>Le carte Bicycle si stampano dal 1885 e presero il nome dalla mania per la bicicletta dell\'epoca.</item>
+        <item>Le carte Bee, amate dai casinò, sono marcate «No. 92» dall\'anno in cui furono prodotte per la prima volta: il 1892.</item>
+        <item>Quasi tutte le carte da gioco sono due fogli di carta incollati con una pasta scura, che impedisce alla luce di trasparire.</item>
+        <item>La finitura di molti mazzi è un motivo di minuscole fossette. Trattengono un po\' d\'aria, che aiuta le carte a scivolare l\'una sull\'altra.</item>
+        <item>I mazzi si stampano spesso su fogli da 56 carte: le 52, due Jolly e due extra. Ecco perché tanti mazzi hanno carte di scorta.</item>
+        <item>Le carte «a trasformazione», popolari nell\'Ottocento, inseriscono i semi in un disegno: i cuori diventano volti, le picche cappelli.</item>
+        <item>Scrivi in inglese i tredici valori, da «ace» a «king», e conta le lettere: sono esattamente 52.</item>
+        <item>Alcuni vedono un calendario nel mazzo: quattro semi per le stagioni, 13 carte per seme come le settimane di ognuna, 12 figure per i mesi. È quasi certamente un caso.</item>
+        <item>Se un mazzo fosse stato mescolato una volta al secondo dal Big Bang, sarebbero usciti meno di 10¹⁸ dei suoi 8 × 10⁶⁷ ordini possibili.</item>
+        <item>Una mescolata «faro» intreccia perfettamente le due metà di un mazzo, una carta alla volta.</item>
+        <item>Gira una a una le carte di due mazzi mescolati affiancati: c\'è il 63% di probabilità che la stessa carta esca in entrambi nello stesso momento.</item>
+        <item>Nel bridge i semi si ordinano alfabeticamente in inglese: fiori, quadri, cuori, picche.</item>
+        <item>Ogni pochi anni si segnala una mano di bridge in cui ogni giocatore ha un seme intero. Le probabilità sono così remote che è più probabile una mescolata scarsa, o uno scherzo.</item>
+        <item>Il nome «bridge» viene probabilmente da «biritch», un gioco simile al whist descritto in un opuscolo inglese del 1886.</item>
+        <item>Il poker nacque lungo il Mississippi a inizio Ottocento, e all\'inizio si giocava con sole 20 carte.</item>
+        <item>La «mano del morto», due Assi neri e due Otto neri, sarebbe quella che Wild Bill Hickok teneva quando fu ucciso nel 1876.</item>
+        <item>Il Parlamento del Texas riconosce ufficialmente la città di Robstown come luogo di nascita del Texas Hold\'em.</item>
+        <item>«Passing the buck» (scaricare la responsabilità) viene dal poker, dove un segnalino detto «buck», spesso un coltello col manico di corno, indicava a chi toccava distribuire.</item>
+        <item>La più antica menzione nota del gioco del ventuno è in un racconto di Cervantes, l\'autore del Don Chisciotte, scritto intorno al 1601.</item>
+        <item>Nel blackjack, un 21 con due carte esce circa una volta ogni 21 mani.</item>
+        <item>Si dice che Crazy Eights prenda il nome dalla «Section 8», il congedo militare USA per i soldati giudicati mentalmente inadatti.</item>
+        <item>Scopa, il gioco di carte italiano, prende il nome dalla mossa migliore: spazzare via dal tavolo tutte le carte.</item>
+        <item>In Grandi speranze di Dickens, Pip ed Estella giocano a Beggar-my-neighbour. Se una partita potesse durare all\'infinito è rimasto un mistero fino al 2024, quando si è trovata una distribuzione senza fine.</item>
+        <item>Il dipinto di Paul Cézanne I giocatori di carte sarebbe stato venduto nel 2011 per oltre 250 milioni di dollari, allora il prezzo più alto mai pagato per un quadro.</item>
+        <item>«Dogs Playing Poker» è in realtà una serie: dal 1903 Cassius Coolidge dipinse 16 quadri di cani per una ditta che pubblicizzava sigari.</item>
+        <item>Durante la guerra del Vietnam i soldati americani chiesero ai produttori casse di soli Assi di picche, credendo, a torto, che il nemico temesse quella carta.</item>
+        <item>Diversi stati USA danno ai detenuti mazzi stampati con casi irrisolti, e le soffiate dei giocatori hanno risolto dei crimini.</item>
+        <item>Il record di lancio di una carta da gioco è di 65,96 metri, stabilito dal mago Rick Smith Jr. nel 2002.</item>
+        <item>Il record per memorizzare l\'ordine di un mazzo mescolato è sotto i 13 secondi.</item>
+        <item>Bryan Berg, detentore dei record per i castelli di carte, ha studiato da architetto. Non usa colla, nastro né pieghe.</item>
+        <item>La più antica descrizione nota di un solitario è in un libro tedesco di giochi del 1783.</item>
+        <item>In Gran Bretagna «solitaire» indica di solito il gioco da tavolo con i pioli. I giochi di carte sono «patience».</item>
+        <item>Il mazzo, le carte rimaste dopo la distribuzione, si chiama anche «tallone», dal francese «talon».</item>
+        <item>Canfield deve il nome a Richard Canfield, proprietario di casinò che, si dice, vendeva un mazzo ai giocatori per 50 $ e pagava 5 $ per ogni carta portata in fondazione.</item>
+        <item>Ragno deve il nome alle otto zampe del ragno: ci sono otto fondazioni da riempire.</item>
+        <item>Quaranta ladroni deve il nome alle 40 carte distribuite nelle colonne all\'inizio. È noto anche come Napoleone a Sant\'Elena.</item>
+        <item>Calcolo è un solitario quasi di pura abilità: un giocatore attento vince quasi sempre, uno distratto quasi mai.</item>
+        <item>Il Solitario di Windows aveva una volta un «tasto del capo» che nascondeva il gioco dietro un finto foglio di calcolo. Microsoft lo fece togliere prima dell\'uscita.</item>
+        <item>FreeCell di Windows nascondeva due partite numerate −1 e −2, costruite apposta per essere impossibili.</item>
+        <item>Hearts fu aggiunto a Windows nel 1992 per mostrare le nuove funzioni di rete: si poteva giocare contro persone su altri computer.</item>
+        <item>Nel 2020, per i 30 anni del Solitario, Microsoft disse che il gioco aveva ancora 35 milioni di giocatori al mese.</item>
+    </string-array>
+</resources>

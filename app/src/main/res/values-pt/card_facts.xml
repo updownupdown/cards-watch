@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The phone app's card facts in this language (its src/locales/pt/content/facts.json), copied by scripts/card-facts.py. -->
+<resources>
+    <string-array name="card_facts">
+        <item>As cartas de baralho chegaram à Europa na década de 1370, provavelmente trazidas do Sultanato Mameluco do Egito.</item>
+        <item>Os quatro naipes franceses — espadas, copas, ouros e paus — surgiram na França por volta de 1480 e acabaram conquistando quase o mundo todo.</item>
+        <item>Os baralhos italianos e espanhóis ainda usam os naipes latinos, mais antigos: copas, ouros, espadas e bastos.</item>
+        <item>Os baralhos alemães usam corações, sinos, folhas e bolotas no lugar dos naipes franceses.</item>
+        <item>As cartas suíço-alemãs têm naipes próprios: rosas, sinos, bolotas e escudos.</item>
+        <item>Um baralho padrão tem 52 cartas, e 52 também é o número de semanas de um ano.</item>
+        <item>Some todas as cartas do Ás (1) ao Rei (13) nos quatro naipes e você terá 364. Conte um Coringa como 1 e terá 365.</item>
+        <item>Há mais maneiras de ordenar um baralho embaralhado (cerca de 8 × 10⁶⁷) do que átomos na Terra.</item>
+        <item>Qualquer baralho bem embaralhado está quase certamente numa ordem em que nenhum baralho jamais esteve.</item>
+        <item>Os matemáticos Bayer e Diaconis mostraram que cerca de sete embaralhamentos riffle bastam para misturar bem um baralho de 52 cartas.</item>
+        <item>Um embaralhamento riffle “out” perfeito, feito oito vezes seguidas, devolve um baralho de 52 cartas à ordem original.</item>
+        <item>O Coringa foi acrescentado aos baralhos americanos na década de 1860 como o trunfo mais alto do jogo Euchre.</item>
+        <item>O Rei de copas é o único Rei sem bigode na maioria dos baralhos padrão.</item>
+        <item>O Rei de copas costuma ser chamado de “rei suicida”, porque sua espada parece atravessar a cabeça dele.</item>
+        <item>O Valete de espadas, o Valete de copas e o Rei de ouros aparecem de perfil, por isso são chamados de cartas “de um olho só”.</item>
+        <item>Nos baralhos franceses, os Reis tradicionalmente se chamavam Davi, Alexandre, César e Carlos Magno.</item>
+        <item>As Damas do tradicional padrão de Paris se chamavam Palas, Judite, Raquel e Argine.</item>
+        <item>Os Valetes do padrão de Paris levavam nomes de heróis: Ogier, La Hire, Heitor e Lancelote.</item>
+        <item>O Valete já foi chamado de “Knave”. Os impressores passaram a usar “J” para que seu índice não fosse confundido com o “K” do Rei.</item>
+        <item>Os índices nos cantos, o pequeno valor e naipe em cada canto, só se tornaram comuns no fim do século XIX. Antes, era preciso abrir bem as cartas em leque para lê-las.</item>
+        <item>As figuras de duas cabeças, legíveis de qualquer lado, se popularizaram no século XIX para que os jogadores não precisassem virar as cartas e revelar a mão.</item>
+        <item>O Ás de espadas ornamentado vem de um imposto britânico: a partir de 1765, era impresso pelo governo para provar que a taxa tinha sido paga.</item>
+        <item>O tarô começou na Itália do século XV como um jogo de cartas, o tarocchi. Seu uso para ler a sorte veio séculos depois.</item>
+        <item>Jogos de cartas com o tarô ainda são jogados hoje, especialmente o tarô francês, popular na França.</item>
+        <item>Em inglês, o solitaire é chamado de “patience” na Grã-Bretanha e em boa parte da Europa.</item>
+        <item>As primeiras coletâneas conhecidas de jogos de paciência foram publicadas na década de 1870.</item>
+        <item>Klondike tem esse nome por causa da Corrida do Ouro de Klondike, no Yukon, Canadá, em 1896–1899.</item>
+        <item>O Windows 3.0 veio com o Solitaire em 1990, em parte para ensinar as pessoas a usar o mouse arrastando e soltando.</item>
+        <item>O FreeCell ficou famoso com o Windows, que numerava suas partidas de 1 a 32.000.</item>
+        <item>Das 32.000 partidas originais de FreeCell do Windows, só uma, a nº 11982, não tem solução.</item>
+        <item>Acordeão é uma das paciências mais difíceis de ganhar: mesmo bem jogada, a partida fracassa na maioria das vezes.</item>
+        <item>O matemático Persi Diaconis chamou as chances de ganhar no Klondike de “um dos constrangimentos da probabilidade aplicada”: até hoje elas só são conhecidas por estimativa.</item>
+        <item>Os jogos de cartas eram tão populares na Europa medieval que muitas cidades aprovaram leis para proibi-los, a partir da década de 1370.</item>
+        <item>Acredita-se que as primeiras cartas de baralho tenham vindo da China, durante a dinastia Tang, por volta do século IX.</item>
+        <item>As cartas mamelucas tinham naipes de taças, moedas, espadas e tacos de polo.</item>
+        <item>Nos primeiros baralhos europeus, as figuras costumavam ser três homens: um Rei, um Cavaleiro e um Valete. A Dama veio depois.</item>
+        <item>Os baralhos espanhóis tradicionalmente não têm 10, e muitas vezes também não têm 8 nem 9.</item>
+        <item>As cartas estiveram entre as primeiras coisas impressas com xilogravura na Europa, antes da prensa de Gutenberg.</item>
+        <item>Os cassinos fazem furos nas cartas aposentadas, ou cortam seus cantos, para que não possam ser infiltradas de volta num jogo.</item>
+        <item>O recorde mundial de castelo de cartas mais alto, construído sem cola, passa de 7 metros.</item>
+        <item>“Poker face”, “above board” e “ace up your sleeve” são todas expressões inglesas vindas dos jogos de cartas.</item>
+        <item>A expressão inglesa “following suit” vem dos jogos de vazas, em que é preciso jogar uma carta do naipe que foi puxado.</item>
+        <item>O tabuleiro de cribbage do submarino USS Wahoo, da Segunda Guerra Mundial, ainda é passado ao submarino mais antigo em serviço na Marinha dos EUA.</item>
+        <item>O tamanho padrão de carta usado pelos cassinos é 2,5 × 3,5 polegadas, chamado de “tamanho pôquer”. As cartas “tamanho bridge”, mais estreitas, têm 2,25 polegadas de largura.</item>
+        <item>O mahjong surgiu de jogos de cartas chineses no século XIX, e suas peças ainda trazem os antigos naipes de moedas, cordões e miríades.</item>
+        <item>Na Grã-Bretanha, um baralho costuma ser chamado de “pack”.</item>
+        <item>Reis, Damas e Valetes já foram chamados de “coat cards” (cartas de casaco), por causa das roupas finas. O nome acabou virando “court cards” (cartas da corte).</item>
+        <item>Existem 2.598.960 mãos de pôquer de cinco cartas diferentes.</item>
+        <item>A chance de receber um royal flush em cinco cartas é de 1 em 649.740.</item>
+        <item>Há cerca de 5,36 × 10²⁸ maneiras diferentes de distribuir as quatro mãos de uma partida de bridge.</item>
+        <item>Os fabricantes de cartas tradicionalmente decoram o Ás de espadas com o próprio nome ou logotipo.</item>
+        <item>O Nove de ouros é conhecido como a “Maldição da Escócia”, embora ninguém saiba ao certo por quê.</item>
+        <item>O Quatro de paus tem o apelido de “as colunas da cama do diabo”, e alguns jogadores dizem que dá azar.</item>
+        <item>Um baralho de tarô tem 78 cartas: 56 em quatro naipes, mais 22 trunfos.</item>
+        <item>No tarô francês, o Louco funciona um pouco como um Coringa: pode ser jogado em vez de seguir o naipe.</item>
+        <item>As cartas japonesas hanafuda têm 12 naipes, um para cada mês do ano, com flores no lugar dos números.</item>
+        <item>A Nintendo foi fundada em 1889 para fabricar cartas hanafuda.</item>
+        <item>Durante a Segunda Guerra Mundial, um fabricante de cartas dos EUA produziu baralhos que se desfaziam quando molhados, revelando mapas de fuga para prisioneiros de guerra.</item>
+        <item>Os cantos arredondados viraram padrão no fim do século XIX. Eles se desgastam menos que os quadrados e facilitam embaralhar.</item>
+        <item>Os versos estampados se tornaram comuns no século XIX. Antes disso, os versos costumavam ser lisos.</item>
+        <item>O Microsoft Solitaire entrou para o World Video Game Hall of Fame em 2019.</item>
+        <item>As cartas do Solitaire do Windows foram desenhadas por Susan Kare, que também criou os ícones originais do Macintosh.</item>
+        <item>Dizem que Napoleão jogava paciência durante seu exílio em Santa Helena, e vários jogos levam o nome dele.</item>
+        <item>As cartas de baralho em braille têm o valor e o naipe em relevo num canto, para que possam ser lidas pelo tato.</item>
+        <item>“Wild card”, “hold all the cards” e “lay your cards on the table” são expressões inglesas tiradas dos jogos de cartas.</item>
+        <item>A Itália ainda tem muitos padrões regionais de cartas, como o napolitano, o piacentino e o siciliano, cada um com seu visual.</item>
+        <item>O baralho comum completo mais antigo que se conhece é o Baralho de Caça Flamengo, pintado por volta de 1475–1480. Seus naipes são apetrechos de caça: cornetas, coleiras, trelas e laços.</item>
+        <item>As Cartas de Stuttgart, pintadas por volta de 1430, têm naipes de patos, falcões, cervos e cães de caça.</item>
+        <item>A Worshipful Company of Makers of Playing Cards foi fundada em Londres por carta régia em 1628 e existe até hoje.</item>
+        <item>Em 1805, um inglês chamado Richard Harding foi enforcado por falsificar o Ás de espadas para fugir do imposto sobre cartas.</item>
+        <item>O imposto britânico sobre cartas de baralho durou até 1960. Os Estados Unidos também tiveram um, revogado em 1965.</item>
+        <item>Em 1685, a colônia da Nova França ficou sem moedas e pagou seus soldados com cartas de baralho assinadas pelo governador.</item>
+        <item>Durante a Revolução Francesa, os fabricantes de cartas trocaram Reis, Damas e Valetes por Gênios, Liberdades e Igualdades.</item>
+        <item>O Ás já foi a carta mais baixa. Sua ascensão acima do Rei costuma ser ligada à Revolução Francesa, embora alguns jogos já o pusessem no alto bem antes.</item>
+        <item>A palavra inglesa “ace” vem do latim “as”, uma pequena moeda romana, passando pela palavra do francês antigo para o um no dado.</item>
+        <item>Em francês, os naipes são pique (lança), cœur (coração), carreau (ladrilho) e trèfle (trevo).</item>
+        <item>Os nomes ingleses dos naipes vêm dos naipes latinos, mais antigos: “spade”, do italiano para espadas, e “club”, dos bastos, embora as formas sejam francesas.</item>
+        <item>As figuras francesas são marcadas R, D e V, de Roi, Dame e Valet. As alemãs, K, D e B, de König, Dame e Bube.</item>
+        <item>Nos baralhos de naipes alemães, o Dois se chama Daus e geralmente vale mais que o Rei, como faria um Ás.</item>
+        <item>As cartas espanholas mostram o naipe pelas interrupções na linha da borda: nenhuma para ouros, uma para copas, duas para espadas, três para bastos.</item>
+        <item>As cartas indianas ganjifa são redondas e tradicionalmente pintadas à mão. A versão mogol tem 96 cartas em oito naipes.</item>
+        <item>As cartas chegaram ao Japão com marinheiros portugueses nos anos 1500. A palavra japonesa para cartas, “karuta”, vem do português “carta”.</item>
+        <item>Os trunfos do tarô se chamavam a princípio “trionfi”, ou seja, triunfos. É daí que vem a palavra inglesa “trump” (trunfo).</item>
+        <item>Os baralhos Visconti-Sforza, pintados à mão para os governantes de Milão em meados do século XV, estão entre as cartas de tarô mais antigas que sobreviveram.</item>
+        <item>A cartomancia se espalhou pela França do século XVIII. Um parisiense conhecido como Etteilla publicou o primeiro guia sobre ela em 1770.</item>
+        <item>Acredita-se que a palavra “Joker” venha de “Jucker”, um nome alemão para o jogo Euchre.</item>
+        <item>No Euchre, os trunfos mais altos são os Valetes, chamados de “bowers”, de “Bauer”, palavra alemã para camponês e um nome para o Valete.</item>
+        <item>O Rei de ouros é o único Rei que carrega um machado em vez de uma espada.</item>
+        <item>A Dama de espadas é a única Dama que segura um cetro.</item>
+        <item>As primeiras cartas com índices nos cantos foram apelidadas de “squeezers” (apertadoras), porque a mão podia ser apertada num leque estreito e ainda ser lida.</item>
+        <item>As cartas Bicycle são impressas desde 1885 e receberam o nome durante a febre do ciclismo da época.</item>
+        <item>As cartas Bee, favoritas dos cassinos, trazem a marca “No. 92” por causa do ano em que foram feitas pela primeira vez: 1892.</item>
+        <item>A maioria das cartas de baralho é feita de duas folhas de papel coladas com uma pasta escura, que impede a luz de passar.</item>
+        <item>O acabamento de muitos baralhos é um padrão de minúsculas covinhas. Elas retêm um pouco de ar, o que ajuda as cartas a deslizar umas sobre as outras.</item>
+        <item>Os baralhos costumam ser impressos em folhas de 56 cartas: as 52, dois Coringas e duas extras, e por isso tantos baralhos vêm com cartas sobrando.</item>
+        <item>As cartas de “transformação”, populares no século XIX, incorporam os símbolos dos naipes num desenho: copas viram rostos, espadas viram chapéus.</item>
+        <item>Escreva os treze valores em inglês, de “ace” a “king”, e conte as letras: são exatamente 52.</item>
+        <item>Há quem veja um calendário no baralho: quatro naipes para as estações, 13 cartas por naipe para as semanas de cada uma, 12 figuras para os meses. É quase certamente coincidência.</item>
+        <item>Se um baralho tivesse sido embaralhado uma vez por segundo desde o Big Bang, menos de 10¹⁸ de suas 8 × 10⁶⁷ ordens possíveis teriam aparecido.</item>
+        <item>O embaralhamento “faro” intercala perfeitamente as duas metades de um baralho, uma carta de cada vez.</item>
+        <item>Vire as cartas de dois baralhos embaralhados lado a lado, e há 63% de chance de a mesma carta aparecer nos dois ao mesmo tempo.</item>
+        <item>No bridge, os naipes seguem a ordem alfabética inglesa: paus, ouros, copas, espadas.</item>
+        <item>Uma partida de bridge em que cada jogador recebe um naipe inteiro é relatada de tempos em tempos. As chances contra são tão vastas que um mau embaralhamento, ou uma pegadinha, é a causa mais provável.</item>
+        <item>O nome “bridge” provavelmente vem de “biritch”, nome de um jogo parecido com o whist descrito num panfleto inglês de 1886.</item>
+        <item>O pôquer surgiu às margens do Mississippi no início do século XIX e, no começo, era jogado com só 20 cartas.</item>
+        <item>A “mão do morto”, dois Ases pretos e dois Oitos pretos, seria o que Wild Bill Hickok segurava quando foi baleado em 1876.</item>
+        <item>O Legislativo do Texas reconhece oficialmente a cidade de Robstown como o berço do Texas Hold\'em.</item>
+        <item>A expressão inglesa “passing the buck” vem do pôquer, em que um marcador chamado buck, muitas vezes uma faca com cabo de chifre de cervo, indicava de quem era a vez de distribuir.</item>
+        <item>A menção mais antiga conhecida ao jogo vinte e um está num conto de Cervantes, autor de Dom Quixote, escrito por volta de 1601.</item>
+        <item>No blackjack, um 21 com duas cartas aparece cerca de uma vez a cada 21 mãos.</item>
+        <item>Dizem que Crazy Eights tem esse nome por causa da “Section 8”, a dispensa militar dos EUA para soldados considerados mentalmente inaptos.</item>
+        <item>Scopa, o jogo de cartas italiano, significa “vassoura”: a melhor jogada é varrer todas as cartas da mesa.</item>
+        <item>Em Grandes Esperanças, de Dickens, Pip e Estella jogam Beggar-my-neighbour. Se uma partida podia durar para sempre foi uma questão em aberto até 2024, quando se achou uma distribuição sem fim.</item>
+        <item>O quadro Os Jogadores de Cartas, de Paul Cézanne, teria sido vendido por mais de US$ 250 milhões em 2011, o maior preço já pago por uma pintura até então.</item>
+        <item>“Dogs Playing Poker” é na verdade uma série: Cassius Coolidge pintou 16 quadros de cachorros para uma empresa que anunciava charutos, a partir de 1903.</item>
+        <item>Durante a Guerra do Vietnã, soldados americanos pediram aos fabricantes caixas só com Ases de espadas, acreditando, por engano, que o inimigo temia a carta.</item>
+        <item>Vários estados dos EUA dão aos presos baralhos impressos com casos não resolvidos, e dicas dos jogadores já solucionaram crimes.</item>
+        <item>O recorde de arremesso de uma carta de baralho é de 65,96 metros, estabelecido pelo mágico Rick Smith Jr. em 2002.</item>
+        <item>O recorde de memorizar a ordem de um baralho embaralhado é de menos de 13 segundos.</item>
+        <item>Bryan Berg, recordista em castelos de cartas, estudou arquitetura. Ele não usa cola, fita nem dobras.</item>
+        <item>A descrição mais antiga conhecida de um jogo de paciência está num livro alemão de jogos de 1783.</item>
+        <item>Na Grã-Bretanha, “solitaire” geralmente é o jogo de tabuleiro com pinos. Os jogos de cartas são “patience”.</item>
+        <item>O monte, as cartas que sobram após a distribuição, também é chamado de “talon”, “calcanhar” em francês.</item>
+        <item>Canfield leva o nome de Richard Canfield, dono de cassino que, dizem, vendia um baralho aos jogadores por US$ 50 e pagava US$ 5 por carta levada às fundações.</item>
+        <item>A paciência Aranha deve seu nome às oito patas da aranha: há oito fundações a preencher.</item>
+        <item>Quarenta ladrões tem esse nome por causa das 40 cartas distribuídas nas colunas no início. Também é conhecido como Napoleon at St Helena.</item>
+        <item>Cálculo é uma paciência quase só de habilidade: um jogador cuidadoso ganha a maioria das partidas, e um descuidado quase nenhuma.</item>
+        <item>O Solitaire do Windows já teve uma “tecla do chefe” que escondia o jogo atrás de uma planilha falsa. A Microsoft mandou tirá-la antes do lançamento.</item>
+        <item>O FreeCell do Windows escondia duas partidas numeradas −1 e −2, feitas para serem impossíveis.</item>
+        <item>Hearts foi adicionado ao Windows em 1992 para exibir sua nova rede: dava para jogar contra pessoas em outros computadores.</item>
+        <item>Em 2020, no 30º aniversário do Solitaire, a Microsoft disse que o jogo ainda tinha 35 milhões de jogadores por mês.</item>
+    </string-array>
+</resources>

@@ -41,8 +41,6 @@ class TranslationsTest {
             val folder = "values-" + if (language.tag == "id") "in" else language.tag
             val translated = strings(folder)
             for ((name, lines) in english) {
-                // Card facts are translated on the phone first, then copied here.
-                if (name == "card_facts" && name !in translated) continue
                 val theirs = translated[name]
                 assertTrue("$folder lacks $name", theirs != null)
                 assertEquals("$folder/$name: lines", lines.size, theirs!!.size)
