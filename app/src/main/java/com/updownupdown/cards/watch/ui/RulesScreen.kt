@@ -62,6 +62,7 @@ import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.openOnPhoneDialogCurvedText
 import androidx.wear.remote.interactions.RemoteActivityHelper
 import com.updownupdown.cards.watch.R
+import com.updownupdown.cards.watch.data.titleOf
 import com.updownupdown.cards.watch.game.ArtCredit
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameStats
@@ -155,7 +156,7 @@ fun GameRules(
         Column(Modifier.fillMaxWidth(RULES_WIDTH), horizontalAlignment = Alignment.CenterHorizontally) {
             val title = MaterialTheme.typography.titleMedium
             Text(
-                text = stringResource(game.title),
+                text = titleOf(game),
                 style = title.copy(fontSize = title.fontSize * TITLE_SCALE, lineHeight = title.lineHeight * TITLE_SCALE),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth().then(edge),

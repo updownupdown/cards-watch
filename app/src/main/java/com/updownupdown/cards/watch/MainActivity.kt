@@ -1,5 +1,6 @@
 package com.updownupdown.cards.watch
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -8,6 +9,7 @@ import android.os.SystemClock
 import android.view.MotionEvent
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -30,7 +32,9 @@ import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import com.updownupdown.cards.watch.data.LocalEnglishTitles
 import com.updownupdown.cards.watch.data.SaveStore
+import com.updownupdown.cards.watch.data.withAppLanguage
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.games.gameById
 import com.updownupdown.cards.watch.ui.AmbientScreen
@@ -119,6 +123,11 @@ class MainActivity : ComponentActivity() {
         return super.dispatchGenericMotionEvent(event)
     }
 
+    // In the language chosen in Settings.
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(withAppLanguage(base))
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         requested = intent.getStringExtra(EXTRA_GAME)
@@ -140,7 +149,11 @@ class MainActivity : ComponentActivity() {
         var splash by mutableStateOf(savedInstanceState == null)
         setContent {
             AppTheme {
-                CompositionLocalProvider(LocalHapticsOn provides saves.hapticsOn, LocalAsleep provides ambient) {
+                CompositionLocalProvider(
+                    LocalHapticsOn provides saves.hapticsOn,
+                    LocalAsleep provides ambient,
+                    LocalEnglishTitles provides saves.englishTitles,
+                ) {
                     Box(Modifier.fillMaxSize()) {
                         AppScaffold {
                             App(
@@ -205,6 +218,7 @@ private fun App(
     onPlaying: (Game<*>?) -> Unit,
 ) {
     val nav = rememberSwipeDismissableNavController()
+    val activity = LocalActivity.current
     // The game on top, if it's a game, from the back stack: the home list stays
     // composed under a game (to be seen as it's swiped away), so it can't tell.
     val top by nav.currentBackStackEntryFlow.collectAsState(null)
@@ -242,6 +256,16 @@ private fun App(
                 onSuitColours = saves::chooseSuitColours,
                 continueShown = saves.continueShown,
                 onContinueShown = saves::chooseContinueShown,
+                language = saves.language,
+                onLanguage = { choice ->
+                    if (choice != saves.language) {
+                        saves.chooseLanguage(choice)
+                        // Made again in the new language, still on Settings.
+                        activity?.recreate()
+                    }
+                },
+                englishTitles = saves.englishTitles,
+                onEnglishTitles = saves::chooseEnglishTitles,
             )
         }
         composable(GAME_ROUTE) { entry ->

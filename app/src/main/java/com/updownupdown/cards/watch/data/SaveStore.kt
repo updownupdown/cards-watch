@@ -26,7 +26,7 @@ import kotlinx.serialization.json.Json
  */
 class SaveStore(private val context: Context, private val scope: CoroutineScope) {
     private val dir = File(context.filesDir, "saves").apply { mkdirs() }
-    private val prefs = context.getSharedPreferences("app", Context.MODE_PRIVATE)
+    private val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
     private val sessions = mutableMapOf<String, GameSession<*>>()
     // One write at a time, in order, so an older state never lands last.
     private val writer = Dispatchers.IO.limitedParallelism(1)
@@ -90,6 +90,28 @@ class SaveStore(private val context: Context, private val scope: CoroutineScope)
     fun chooseContinueShown(count: Int) {
         continueShown = count
         prefs.edit().putInt(KEY_CONTINUE, count).apply()
+    }
+
+    /** The language chosen in Settings, or null for Auto, which follows the watch's. */
+    var language: AppLanguage? by mutableStateOf(AppLanguage.byTag(prefs.getString(KEY_LANGUAGE, null)))
+        private set
+
+    /** Saves the language; it takes hold as the app's screens are made again ([withAppLanguage]). */
+    fun chooseLanguage(choice: AppLanguage?) {
+        language = choice
+        // Written at once: the screen is remade straight after, and reads it.
+        prefs.edit().apply { if (choice == null) remove(KEY_LANGUAGE) else putString(KEY_LANGUAGE, choice.tag) }.commit()
+        refreshSurfaces(context)
+    }
+
+    /** Whether games go by their English titles, whatever the language. */
+    var englishTitles: Boolean by mutableStateOf(prefs.getBoolean(KEY_ENGLISH_TITLES, false))
+        private set
+
+    fun chooseEnglishTitles(on: Boolean) {
+        englishTitles = on
+        prefs.edit().putBoolean(KEY_ENGLISH_TITLES, on).commit()
+        refreshSurfaces(context)
     }
 
     /** Pins [game] to the top of the home list, or unpins it. */

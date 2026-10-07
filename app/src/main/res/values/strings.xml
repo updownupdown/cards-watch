@@ -43,6 +43,17 @@
     <string name="suit_colours_auto">Auto</string>
     <string name="suit_colours_two">Two</string>
     <string name="suit_colours_four">Four</string>
+    <string name="language">Language</string>
+    <string name="language_auto">Auto (%1$s)</string>
+    <string name="english_titles">English Game Titles</string>
+    <!-- Each language in itself, the same in every language -->
+    <string name="language_en" translatable="false">English</string>
+    <string name="language_fr" translatable="false">Français</string>
+    <string name="language_es" translatable="false">Español</string>
+    <string name="language_it" translatable="false">Italiano</string>
+    <string name="language_pt" translatable="false">Português</string>
+    <string name="language_tr" translatable="false">Türkçe</string>
+    <string name="language_id" translatable="false">Bahasa Indonesia</string>
     <string name="stat_completed">Completed</string>
     <string name="most_played">Most Played</string>
     <string name="stats_empty">Finish a game to see it here.</string>

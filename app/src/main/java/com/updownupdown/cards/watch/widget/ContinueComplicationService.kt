@@ -24,6 +24,8 @@ import com.updownupdown.cards.watch.CardsWatchApp
 import com.updownupdown.cards.watch.EXTRA_GAME
 import com.updownupdown.cards.watch.MainActivity
 import com.updownupdown.cards.watch.R
+import com.updownupdown.cards.watch.data.titleOf
+import com.updownupdown.cards.watch.data.withAppLanguage
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.games.gameById
 
@@ -42,8 +44,11 @@ class ContinueComplicationService : SuspendingComplicationDataSourceService() {
         val intent = Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         if (game != null) intent.putExtra(EXTRA_GAME, game.id)
         val tap = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-        val label = PlainComplicationText.Builder(if (game != null) getString(R.string.continue_game, getString(game.title)) else getString(R.string.play)).build()
-        val name = PlainComplicationText.Builder(getString(R.string.play)).build()
+        // In the language chosen in Settings, as it is now: the service may outlive a change.
+        val text = withAppLanguage(this)
+        val play = text.getString(R.string.play)
+        val label = PlainComplicationText.Builder(if (game != null) text.getString(R.string.continue_game, titleOf(game, text)) else play).build()
+        val name = PlainComplicationText.Builder(play).build()
         val spade = MonochromaticImage.Builder(Icon.createWithResource(this, R.drawable.ic_spade_mono)).build()
         return when (type) {
             ComplicationType.MONOCHROMATIC_IMAGE ->
