@@ -18,7 +18,7 @@ class BaselineProfileGenerator {
     val rule = BaselineProfileRule()
 
     @Test
-    fun generate() = rule.collect(packageName = "com.updownupdown.cards.watch", includeInStartupProfile = true) {
+    fun generate() = rule.collect(packageName = "com.updownupdown.cards", includeInStartupProfile = true) {
         pressHome()
         startActivityAndWait()
         val x = device.displayWidth / 2
