@@ -37,6 +37,12 @@ android {
     // The cards' rank, suit and back icons, read as SVGs when the app starts.
     sourceSets["main"].assets.srcDir("src/main/card-icons")
 
+    // Only the app's languages (AppLanguage) from its libraries too. Android
+    // still names Indonesian "in" here.
+    androidResources {
+        localeFilters += listOf("en", "fr", "es", "it", "pt", "tr", "in")
+    }
+
     buildFeatures {
         compose = true
     }

@@ -9,14 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.test.click
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.click
 import androidx.compose.ui.test.swipe
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.swipeUp
 import androidx.wear.compose.material3.AppScaffold
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
@@ -24,6 +24,7 @@ import com.github.takahirom.roborazzi.captureRoboImage
 import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Suit
+import com.updownupdown.cards.watch.data.AppLanguage
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameSession
 import com.updownupdown.cards.watch.game.GameStats
@@ -41,10 +42,10 @@ import com.updownupdown.cards.watch.games.fifteen.FifteenPuzzle
 import com.updownupdown.cards.watch.games.fifteen.FifteenState
 import com.updownupdown.cards.watch.games.fortune.Call
 import com.updownupdown.cards.watch.games.fortune.FortunesCall
-import com.updownupdown.cards.watch.games.littlewindmill.LittleWindmill
 import com.updownupdown.cards.watch.games.hanoi.TowerOfHanoi
 import com.updownupdown.cards.watch.games.jailbreak.Jailbreak
 import com.updownupdown.cards.watch.games.lightsout.LightsOut
+import com.updownupdown.cards.watch.games.littlewindmill.LittleWindmill
 import com.updownupdown.cards.watch.games.lycan.Lycan
 import com.updownupdown.cards.watch.games.memory.Memory
 import com.updownupdown.cards.watch.games.nestor.Nestor
@@ -52,8 +53,8 @@ import com.updownupdown.cards.watch.games.ouroboros.Ouroboros
 import com.updownupdown.cards.watch.games.ozanam.OzanamsSquare
 import com.updownupdown.cards.watch.games.ozanam.Source
 import com.updownupdown.cards.watch.games.rogue.RogueRun
-import com.updownupdown.cards.watch.games.royalmarriage.RoyalMarriage
 import com.updownupdown.cards.watch.games.rogue.RogueState
+import com.updownupdown.cards.watch.games.royalmarriage.RoyalMarriage
 import com.updownupdown.cards.watch.games.tentwentythirty.TenTwentyThirty
 import com.updownupdown.cards.watch.games.triplestack.TripleStack
 import kotlin.random.Random
@@ -190,6 +191,11 @@ class ScreenshotTest {
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
     fun settings() = capture("settings") {
         SettingsScreen(haptics = true, onHaptics = {}, continueShown = 1)
+    }
+
+    @Test
+    fun settingsLanguage() = capture("settings_language") {
+        SettingsScreen(haptics = true, onHaptics = {}, language = AppLanguage.Turkish, englishTitles = true, startAt = 19)
     }
 
     private val someStats = mapOf(

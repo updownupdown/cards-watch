@@ -6,6 +6,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import com.updownupdown.cards.watch.data.titleResources
 import java.text.Collator
 import java.util.Locale
 
@@ -48,10 +49,10 @@ fun currentLocale(): Locale = LocalConfiguration.current.locales[0]
 @Composable
 fun String.upper(): String = uppercase(currentLocale())
 
-/** [games] in order of their titles, as the watch's language sorts them. */
+/** [games] in order of their titles as shown, as the watch's language sorts them. */
 @Composable
 fun <G : Game<*>> sortedByTitle(games: List<G>): List<G> {
-    val resources = LocalContext.current.resources
+    val resources = titleResources()
     val collator = Collator.getInstance(currentLocale())
     return games.sortedWith(compareBy(collator) { resources.getString(it.title) })
 }

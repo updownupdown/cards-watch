@@ -27,8 +27,10 @@ import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
 import com.updownupdown.cards.watch.R
+import com.updownupdown.cards.watch.data.AppLanguage
 import com.updownupdown.cards.watch.data.CONTINUE_CHOICES
 import com.updownupdown.cards.watch.data.SuitColours
+import com.updownupdown.cards.watch.data.autoLanguage
 
 /** A setting's switch or choice's width, × the list's; it sits in the middle. */
 private const val SETTING_WIDTH = 0.8f
@@ -38,7 +40,8 @@ private val SETTING_GAP = 18.dp
 
 /**
  * The settings, from the home screen's Settings button: Haptics, Suit
- * Colours and how many games Continue Playing shows.
+ * Colours, how many games Continue Playing shows, the Language (Auto, which
+ * follows the watch, or one of the app's) and English Game Titles.
  */
 @Composable
 fun SettingsScreen(
@@ -48,8 +51,14 @@ fun SettingsScreen(
     onSuitColours: (SuitColours) -> Unit = {},
     continueShown: Int = 3,
     onContinueShown: (Int) -> Unit = {},
+    language: AppLanguage? = null,
+    onLanguage: (AppLanguage?) -> Unit = {},
+    englishTitles: Boolean = false,
+    onEnglishTitles: (Boolean) -> Unit = {},
+    /** The item the list starts at, for screenshots of its foot. */
+    startAt: Int = 0,
 ) {
-    val listState = rememberTransformingLazyColumnState()
+    val listState = rememberTransformingLazyColumnState(initialAnchorItemIndex = startAt)
     val spec = rememberTransformationSpec()
     val systemAllows = systemHapticsOn(LocalContext.current)
     ScreenScaffold(scrollState = listState) { contentPadding ->
@@ -91,6 +100,35 @@ fun SettingsScreen(
                         .fillMaxWidth(SETTING_WIDTH)
                         .transformedHeight(this, spec),
                     SurfaceTransformation(spec)
+                )
+            }
+            item { SectionHeading(stringResource(R.string.language), transformed(spec).padding(top = SETTING_GAP)) }
+            // Auto, then each language by its own name.
+            items(listOf(null) + AppLanguage.entries, key = { "language:${it?.tag ?: "auto"}" }) { choice ->
+                SettingChoice(
+                    if (choice == null) {
+                        stringResource(R.string.language_auto, stringResource(autoLanguage().nativeName))
+                    } else {
+                        stringResource(choice.nativeName)
+                    },
+                    choice == language,
+                    { onLanguage(choice) },
+                    Modifier
+                        .fillMaxWidth(SETTING_WIDTH)
+                        .transformedHeight(this, spec),
+                    SurfaceTransformation(spec)
+                )
+            }
+            item { Spacer(Modifier.height(SETTING_GAP)) }
+            item {
+                SwitchButton(
+                    checked = englishTitles,
+                    onCheckedChange = onEnglishTitles,
+                    label = { Text(stringResource(R.string.english_titles)) },
+                    modifier = Modifier
+                        .fillMaxWidth(SETTING_WIDTH)
+                        .transformedHeight(this, spec),
+                    transformation = SurfaceTransformation(spec),
                 )
             }
             // Room to bring the foot of the list up clear of the round screen's.

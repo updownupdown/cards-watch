@@ -24,6 +24,8 @@ import com.updownupdown.cards.watch.CardsWatchApp
 import com.updownupdown.cards.watch.EXTRA_GAME
 import com.updownupdown.cards.watch.MainActivity
 import com.updownupdown.cards.watch.R
+import com.updownupdown.cards.watch.data.titleOf
+import com.updownupdown.cards.watch.data.withAppLanguage
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.games.ALL_GAMES
 import com.updownupdown.cards.watch.games.gameById
@@ -50,11 +52,13 @@ private const val RECENT_SHOWN = 2
  */
 class GamesTileService : TileService() {
     override fun onTileRequest(requestParams: RequestBuilders.TileRequest): ListenableFuture<TileBuilders.Tile> {
+        // In the language chosen in Settings, as it is now: the service may outlive a change.
+        val context = withAppLanguage(this)
         val recent = (application as CardsWatchApp).saves.recentGameIds.mapNotNull(::gameById)
         return done(
             TileBuilders.Tile.Builder()
                 .setResourcesVersion(RESOURCES_VERSION)
-                .setTileTimeline(TimelineBuilders.Timeline.fromLayoutElement(tileLayout(this, recent, requestParams.deviceConfiguration)))
+                .setTileTimeline(TimelineBuilders.Timeline.fromLayoutElement(tileLayout(context, recent, requestParams.deviceConfiguration)))
                 .build(),
         )
     }
@@ -167,7 +171,7 @@ private fun nameButton(context: Context, game: Game<*>, width: Float): LayoutEle
                 .setClickable(open(context, game))
                 .build(),
         )
-        .addContent(text(context.getString(game.title), 12f, AppColors.ListButtonText))
+        .addContent(text(titleOf(game, context), 12f, AppColors.ListButtonText))
         .build()
 
 /** The recent games shown under the last one. */
@@ -184,7 +188,7 @@ internal fun tileLayout(context: Context, recent: List<Game<*>>, device: DeviceP
     if (last == null) {
         column.addContent(pill(width, open(context, null), null, context.getString(R.string.app_name), context.getString(R.string.play)))
     } else {
-        column.addContent(pill(width, open(context, last), thumbnail(last, CONTINUE_THUMBNAIL), context.getString(last.title), context.getString(R.string.continue_short)))
+        column.addContent(pill(width, open(context, last), thumbnail(last, CONTINUE_THUMBNAIL), titleOf(last, context), context.getString(R.string.continue_short)))
         val others = othersOnTile(recent)
         if (others.isNotEmpty()) {
             // Narrower than Continue, as the round screen is by then.

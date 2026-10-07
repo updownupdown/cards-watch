@@ -56,6 +56,7 @@ import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
 import com.updownupdown.cards.watch.R
+import com.updownupdown.cards.watch.data.titleOf
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.sortedByTitle
 import com.updownupdown.cards.watch.games.ALL_GAMES
@@ -295,7 +296,7 @@ internal fun GameButton(
         label = {
             val style = LocalTextStyle.current
             Text(
-                text = stringResource(game.title),
+                text = titleOf(game),
                 style = style.copy(fontSize = style.fontSize * TITLE_SCALE),
                 textAlign = TextAlign.Center,
                 maxLines = 1,

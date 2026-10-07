@@ -39,6 +39,7 @@ import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
 import com.updownupdown.cards.watch.R
+import com.updownupdown.cards.watch.data.titleOf
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameStats
 import com.updownupdown.cards.watch.game.formatTime
@@ -257,7 +258,7 @@ private fun WinBar(won: Int, lost: Int, modifier: Modifier) {
  */
 @Composable
 private fun GameLine(game: Game<*>, stats: GameStats, onOpen: () -> Unit, modifier: Modifier) {
-    val title = stringResource(game.title)
+    val title = titleOf(game)
     val colour = colorResource(game.accentPale)
     val small = MaterialTheme.typography.bodySmall
     val bests = listOfNotNull(

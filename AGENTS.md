@@ -33,7 +33,7 @@ first, then Stats and Settings side by side as icon buttons, a card fact
 (`res/values/card_facts.xml`) and a Top button at the foot.
 Each button opens its own screen, swiped away like a game: `StatsScreen`
 (stats across every game, and each game played, by title, which opens it) and `SettingsScreen`
-(Haptics, Suit Colours, Continue Playing). The app starts
+(Haptics, Suit Colours, Continue Playing, Language, English Game Titles). The app starts
 on the logo, then goes straight into the last game played (or home, if
 there's none). Each button is the
 game's wide picture (`banner`, cut to cover, never stretched) under 85% of the
@@ -136,6 +136,14 @@ the two lists alike.
   where it's drawn (`resolve()`). Boards call `stringResource`.
 - Capitals go through `upper()`, and lists of games are sorted with
   `sortedByTitle`, both by the watch's language.
+- The Language setting (`data/Language.kt`) is Auto, which follows the
+  watch, or one of `AppLanguage`, the phone app's languages. The activity
+  starts in it (`withAppLanguage` in `attachBaseContext`) and is made again
+  when it changes; the tile and complication look it up on each request.
+  Adding a language means adding it to `AppLanguage`, `locales_config.xml`
+  and `localeFilters` (Indonesian is `in` there and in `values-in`).
+- A game's title is shown through `titleOf`, which follows English Game
+  Titles (English whatever the language, like the phone's setting).
 - No text in Kotlin but what isn't words: numbers, and keys.
 
 ## Saved games
