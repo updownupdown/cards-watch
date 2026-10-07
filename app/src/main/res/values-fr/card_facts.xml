@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The phone app's card facts in this language (its src/locales/fr/content/facts.json), copied by scripts/card-facts.py. -->
+<resources>
+    <string-array name="card_facts">
+        <item>Les cartes à jouer sont arrivées en Europe dans les années 1370, très probablement depuis le sultanat mamelouk d\'Égypte.</item>
+        <item>Les quatre couleurs françaises, pique, cœur, carreau et trèfle, sont apparues en France vers 1480, avant de conquérir la majeure partie du monde.</item>
+        <item>Les jeux italiens et espagnols utilisent encore les anciennes couleurs latines : coupes, deniers, épées et bâtons.</item>
+        <item>Les jeux allemands utilisent cœurs, grelots, feuilles et glands au lieu des couleurs françaises.</item>
+        <item>Les cartes suisses alémaniques ont leurs propres couleurs : roses, grelots, glands et écus.</item>
+        <item>Un jeu standard compte 52 cartes, et 52 est aussi le nombre de semaines dans une année.</item>
+        <item>Additionnez toutes les cartes de l\'As (1) au Roi (13) dans les quatre couleurs et vous obtenez 364. Comptez un Joker pour 1 et vous obtenez 365.</item>
+        <item>Il y a plus de façons d\'ordonner un jeu mélangé (environ 8 × 10⁶⁷) que d\'atomes sur Terre.</item>
+        <item>Un jeu bien mélangé est presque à coup sûr dans un ordre qu\'aucun jeu n\'a jamais connu.</item>
+        <item>Les mathématiciens Bayer et Diaconis ont montré qu\'environ sept mélanges à l\'américaine suffisent à bien mélanger un jeu de 52 cartes.</item>
+        <item>Un mélange à l\'américaine parfait de type « out », répété huit fois de suite, remet un jeu de 52 cartes dans son ordre d\'origine.</item>
+        <item>Le Joker a été ajouté aux jeux américains dans les années 1860 comme atout maître du jeu d\'Euchre.</item>
+        <item>Le Roi de cœur est le seul Roi sans moustache dans la plupart des jeux standard.</item>
+        <item>Le Roi de cœur est souvent surnommé le « roi suicidaire », car son épée semble lui traverser la tête.</item>
+        <item>Le Valet de pique, le Valet de cœur et le Roi de carreau sont vus de profil : on les surnomme les cartes « borgnes ».</item>
+        <item>Dans les jeux français, les Rois portaient traditionnellement les noms de David, Alexandre, César et Charlemagne.</item>
+        <item>Les Dames du portrait de Paris traditionnel s\'appelaient Pallas, Judith, Rachel et Argine.</item>
+        <item>Les Valets du portrait de Paris portaient des noms de héros : Ogier, La Hire, Hector et Lancelot.</item>
+        <item>En anglais, le Valet s\'appelait autrefois « Knave ». Les imprimeurs sont passés au « J » pour ne pas confondre son indice avec le « K » du Roi.</item>
+        <item>Les index de coin, le petit rang et la petite couleur dans chaque coin, ne se sont répandus qu\'à la fin du XIXe siècle. Avant, il fallait écarter largement les cartes pour les lire.</item>
+        <item>Les figures à double tête, lisibles dans les deux sens, se sont répandues au XIXe siècle pour que les joueurs n\'aient plus à retourner leurs cartes, trahissant leur main.</item>
+        <item>L\'As de pique richement orné vient d\'une taxe britannique : à partir de 1765, il était imprimé par l\'État pour prouver que la taxe avait été payée.</item>
+        <item>Le tarot est né en Italie au XVe siècle comme jeu de cartes, les tarocchi. Son usage divinatoire n\'est venu que des siècles plus tard.</item>
+        <item>On joue encore au tarot aujourd\'hui, en particulier au tarot français, très populaire en France.</item>
+        <item>En Grande-Bretagne et dans une grande partie de l\'Europe, le solitaire s\'appelle « Patience ».</item>
+        <item>Les premiers recueils connus de patiences ont été publiés dans les années 1870.</item>
+        <item>Le Klondike doit son nom à la ruée vers l\'or du Klondike, au Yukon canadien, de 1896 à 1899.</item>
+        <item>Windows 3.0 est sorti avec le Solitaire en 1990, en partie pour apprendre aux gens à utiliser une souris par glisser-déposer.</item>
+        <item>FreeCell est devenu célèbre grâce à Windows, qui numérotait ses donnes de 1 à 32 000.</item>
+        <item>Sur les 32 000 donnes d\'origine du FreeCell de Windows, une seule, la donne nº 11982, est impossible à résoudre.</item>
+        <item>L\'Accordéon est l\'une des réussites les plus difficiles à gagner : même bien jouée, une partie échoue la plupart du temps.</item>
+        <item>Le mathématicien Persi Diaconis a qualifié les chances de gagner au Klondike d\'« un des embarras des probabilités appliquées » : on ne les connaît encore que par estimation.</item>
+        <item>Les jeux de cartes étaient si populaires dans l\'Europe médiévale que de nombreuses villes les ont interdits par la loi, dès les années 1370.</item>
+        <item>Les plus anciennes cartes à jouer viendraient de Chine, sous la dynastie Tang, vers le IXe siècle.</item>
+        <item>Les cartes mameloukes avaient pour couleurs les coupes, les deniers, les épées et les maillets de polo.</item>
+        <item>Dans les premiers jeux européens, les figures étaient souvent trois hommes : un Roi, un Cavalier et un Valet. La Dame est venue plus tard.</item>
+        <item>Les jeux espagnols n\'ont traditionnellement pas de 10, et souvent pas de 8 ni de 9 non plus.</item>
+        <item>Les cartes ont été parmi les premiers objets imprimés à la planche de bois en Europe, avant la presse de Gutenberg.</item>
+        <item>Les casinos percent les cartes retirées du jeu, ou en coupent les coins, pour qu\'on ne puisse pas les glisser à nouveau dans une partie.</item>
+        <item>Le record du monde du plus haut château de cartes, construit sans colle, dépasse 7 mètres.</item>
+        <item>« Poker face », « above board » et « ace up your sleeve » sont des expressions anglaises qui viennent toutes du jeu de cartes.</item>
+        <item>« Following suit » vient des jeux de levées, où l\'on doit fournir une carte de la couleur demandée.</item>
+        <item>La planche de cribbage du USS Wahoo, sous-marin de la Seconde Guerre mondiale, est toujours transmise au plus ancien sous-marin en service dans l\'US Navy.</item>
+        <item>La taille standard des cartes de casino est de 2,5 × 3,5 pouces, dite « format poker ». Les cartes « format bridge », plus étroites, font 2,25 pouces de large.</item>
+        <item>Le mahjong est issu de jeux de cartes chinois au XIXe siècle, et ses tuiles portent encore les anciennes couleurs des cartes : pièces, ficelles et myriades.</item>
+        <item>En Grande-Bretagne, un jeu de cartes s\'appelle généralement un « pack ».</item>
+        <item>Les Rois, Dames et Valets s\'appelaient autrefois en anglais « coat cards », d\'après leurs beaux habits. Le nom a dérivé en « court cards ».</item>
+        <item>Il existe 2 598 960 mains de poker de cinq cartes différentes.</item>
+        <item>La probabilité de recevoir une quinte flush royale en cinq cartes est de 1 sur 649 740.</item>
+        <item>Il existe environ 5,36 × 10²⁸ façons différentes de distribuer les quatre mains d\'une partie de bridge.</item>
+        <item>Les fabricants de cartes ornent traditionnellement l\'As de pique de leur nom ou de leur logo.</item>
+        <item>Le Neuf de carreau est surnommé la « Malédiction de l\'Écosse », sans que personne sache vraiment pourquoi.</item>
+        <item>Le Quatre de trèfle est surnommé « les colonnes de lit du diable », et certains joueurs le disent porte-malheur.</item>
+        <item>Un jeu de tarot compte 78 cartes : 56 réparties en quatre couleurs, plus 22 atouts.</item>
+        <item>Au tarot français, l\'Excuse fonctionne un peu comme un Joker : on peut la jouer au lieu de fournir à la couleur.</item>
+        <item>Les cartes japonaises hanafuda ont 12 couleurs, une pour chaque mois de l\'année, avec des fleurs à la place des chiffres.</item>
+        <item>Nintendo a été fondé en 1889 pour fabriquer des cartes à jouer hanafuda.</item>
+        <item>Pendant la Seconde Guerre mondiale, un fabricant américain a produit des jeux qui se décollaient une fois mouillés, révélant des cartes d\'évasion pour les prisonniers de guerre.</item>
+        <item>Les coins arrondis se sont imposés à la fin du XIXe siècle. Ils s\'usent moins que les coins carrés et rendent le jeu plus facile à mélanger.</item>
+        <item>Les dos de cartes à motifs se sont répandus au XIXe siècle. Avant, les dos restaient généralement unis.</item>
+        <item>Le Solitaire de Microsoft est entré au World Video Game Hall of Fame en 2019.</item>
+        <item>Les cartes du Solitaire de Windows ont été dessinées par Susan Kare, qui a aussi créé les icônes du premier Macintosh.</item>
+        <item>Napoléon aurait joué aux patiences pendant son exil à Sainte-Hélène, et plusieurs réussites portent son nom.</item>
+        <item>Les cartes à jouer en braille portent le rang et la couleur en relief dans un coin, pour être lues au toucher.</item>
+        <item>« Wild card », « hold all the cards » et « lay your cards on the table » sont toutes des expressions anglaises empruntées aux jeux de cartes.</item>
+        <item>L\'Italie compte encore de nombreux portraits régionaux, comme le napolitain, le piacentin et le sicilien, chacun avec son propre style.</item>
+        <item>Le plus ancien jeu complet de cartes ordinaires connu est le jeu de chasse flamand, peint vers 1475–1480. Ses couleurs sont des accessoires de chasse : cors, colliers de chien, laisses et collets.</item>
+        <item>Les cartes de Stuttgart, peintes vers 1430, ont pour couleurs les canards, les faucons, les cerfs et les chiens de chasse.</item>
+        <item>La Worshipful Company of Makers of Playing Cards a été fondée à Londres par charte royale en 1628, et existe toujours.</item>
+        <item>En 1805, un Anglais nommé Richard Harding a été pendu pour avoir contrefait l\'As de pique afin d\'échapper à la taxe sur les cartes.</item>
+        <item>La taxe britannique sur les cartes à jouer a duré jusqu\'en 1960. Les États-Unis en avaient une aussi, abrogée en 1965.</item>
+        <item>En 1685, à court de pièces, la colonie de la Nouvelle-France a payé ses soldats avec des cartes à jouer signées par le gouverneur.</item>
+        <item>Pendant la Révolution française, les fabricants ont remplacé les Rois, Dames et Valets par des Génies, des Libertés et des Égalités.</item>
+        <item>L\'As était autrefois la plus petite carte. Son passage au-dessus du Roi est souvent lié à la Révolution française, même si certains jeux le plaçaient en haut bien avant.</item>
+        <item>Le mot anglais « ace » vient du latin « as », une petite pièce romaine, par l\'ancien français qui désignait ainsi le un du dé.</item>
+        <item>En français, les couleurs sont pique (l\'arme), cœur, carreau (le pavé) et trèfle (la plante).</item>
+        <item>Les noms anglais des couleurs viennent des anciennes couleurs latines : « spade » de l\'italien pour les épées, et « club » des bâtons, même si les formes sont françaises.</item>
+        <item>Les figures françaises sont marquées R, D et V, pour Roi, Dame et Valet. Les allemandes K, D et B, pour König, Dame et Bube.</item>
+        <item>Dans les jeux à couleurs allemandes, le Deux s\'appelle le Daus et bat généralement le Roi, comme le ferait un As.</item>
+        <item>Les cartes espagnoles indiquent leur couleur par les coupures du filet de bordure : aucune pour les deniers, une pour les coupes, deux pour les épées, trois pour les bâtons.</item>
+        <item>Les cartes indiennes Ganjifa sont rondes et traditionnellement peintes à la main. La version moghole compte 96 cartes en huit couleurs.</item>
+        <item>Les cartes à jouer sont arrivées au Japon avec les marins portugais au XVIe siècle. Le mot japonais pour les cartes, « karuta », vient du portugais « carta ».</item>
+        <item>Les atouts du tarot s\'appelaient d\'abord « trionfi », c\'est-à-dire triomphes. C\'est de là que vient le mot anglais « trump » (atout).</item>
+        <item>Les jeux Visconti-Sforza, peints à la main pour les seigneurs de Milan au milieu du XVe siècle, comptent parmi les plus anciennes cartes de tarot conservées.</item>
+        <item>La cartomancie s\'est répandue dans la France du XVIIIe siècle. Un Parisien connu sous le nom d\'Etteilla en a publié le premier guide en 1770.</item>
+        <item>Le mot « Joker » viendrait de « Jucker », un nom allemand du jeu d\'Euchre.</item>
+        <item>À l\'Euchre, les atouts maîtres sont les Valets, appelés « bowers » d\'après « Bauer », le mot allemand pour paysan, qui désigne aussi le Valet.</item>
+        <item>Le Roi de carreau est le seul Roi à porter une hache au lieu d\'une épée.</item>
+        <item>La Dame de pique est la seule Dame à tenir un sceptre.</item>
+        <item>Les premières cartes à index de coin ont été surnommées « squeezers », car on pouvait serrer sa main en éventail étroit et la lire quand même.</item>
+        <item>Les cartes Bicycle sont imprimées depuis 1885 et doivent leur nom à l\'engouement pour le vélo de l\'époque.</item>
+        <item>Les cartes Bee, prisées des casinos, portent la mention « No. 92 » d\'après leur année de création : 1892.</item>
+        <item>La plupart des cartes sont faites de deux feuilles de papier collées avec une pâte sombre, qui empêche la lumière de passer.</item>
+        <item>Le fini de nombreux jeux est un motif de minuscules alvéoles. Elles retiennent un peu d\'air, ce qui aide les cartes à glisser les unes sur les autres.</item>
+        <item>Les jeux sont souvent imprimés sur des feuilles de 56 cartes : les 52, deux Jokers et deux extras. Voilà pourquoi tant de jeux ont des cartes en trop.</item>
+        <item>Les cartes « à transformation », en vogue au XIXe siècle, intègrent les points dans un dessin : les cœurs deviennent des visages, les piques des chapeaux.</item>
+        <item>Écrivez en anglais les treize rangs, de « ace » à « king », et comptez les lettres : il y en a exactement 52.</item>
+        <item>Certains voient un calendrier dans le jeu : quatre couleurs pour les saisons, 13 cartes par couleur pour leurs semaines, 12 figures pour les mois. C\'est presque sûrement une coïncidence.</item>
+        <item>Si l\'on avait mélangé un jeu chaque seconde depuis le Big Bang, moins de 10¹⁸ de ses 8 × 10⁶⁷ ordres possibles seraient sortis.</item>
+        <item>Le mélange « faro » entrelace parfaitement les deux moitiés d\'un jeu, une carte à la fois.</item>
+        <item>Retournez en parallèle les cartes de deux jeux mélangés : il y a 63 % de chances que la même carte sorte des deux au même moment.</item>
+        <item>Au bridge, les couleurs sont classées dans l\'ordre alphabétique anglais : trèfle, carreau, cœur, pique.</item>
+        <item>Une donne de bridge où chaque joueur tient une couleur entière est signalée toutes les quelques années. Elle est si improbable qu\'un mauvais mélange, ou une farce, est l\'explication la plus vraisemblable.</item>
+        <item>Le nom « bridge » vient sans doute de « biritch », un jeu proche du whist décrit dans une brochure anglaise de 1886.</item>
+        <item>Le poker est né le long du Mississippi au début du XIXe siècle, et se jouait d\'abord avec seulement 20 cartes.</item>
+        <item>La « main du mort », deux As noirs et deux Huit noirs, serait ce que tenait Wild Bill Hickok quand il fut abattu en 1876.</item>
+        <item>L\'Assemblée législative du Texas reconnaît officiellement la ville de Robstown comme berceau du Texas Hold\'em.</item>
+        <item>L\'expression anglaise « passing the buck » vient du poker, où un marqueur appelé « buck », souvent un couteau à manche en corne de cerf, indiquait qui devait distribuer.</item>
+        <item>La plus ancienne mention connue du vingt-et-un se trouve dans une nouvelle de Cervantès, l\'auteur de Don Quichotte, écrite vers 1601.</item>
+        <item>Au blackjack, un 21 en deux cartes sort environ une main sur 21.</item>
+        <item>Le Huit américain (Crazy Eights) devrait son nom à la « Section 8 », la réforme de l\'armée américaine pour les soldats jugés mentalement inaptes.</item>
+        <item>Scopa, le jeu de cartes italien, signifie « balai » : le meilleur coup consiste à balayer toutes les cartes de la table.</item>
+        <item>Dans Les Grandes Espérances de Dickens, Pip et Estella jouent à la bataille « Beggar-my-neighbour ». Une partie pouvait-elle durer à l\'infini ? La question est restée ouverte jusqu\'en 2024, quand on a trouvé une donne sans fin.</item>
+        <item>Le tableau Les Joueurs de cartes de Paul Cézanne aurait été vendu plus de 250 millions de dollars en 2011, alors le prix le plus élevé jamais payé pour un tableau.</item>
+        <item>« Dogs Playing Poker » est en fait une série : Cassius Coolidge a peint 16 tableaux de chiens pour une société qui faisait de la publicité pour des cigares, à partir de 1903.</item>
+        <item>Pendant la guerre du Viêt Nam, des soldats américains ont demandé aux fabricants des caisses remplies uniquement d\'As de pique, croyant à tort que l\'ennemi craignait cette carte.</item>
+        <item>Plusieurs États américains donnent aux détenus des jeux imprimés d\'affaires non résolues, et des indices venus des joueurs ont permis d\'élucider des crimes.</item>
+        <item>Le record du lancer de carte à jouer est de 65,96 mètres, établi par le magicien Rick Smith Jr. en 2002.</item>
+        <item>Le record de mémorisation de l\'ordre d\'un jeu mélangé est de moins de 13 secondes.</item>
+        <item>Bryan Berg, détenteur des records de châteaux de cartes, a une formation d\'architecte. Il n\'utilise ni colle, ni ruban adhésif, ni pliage.</item>
+        <item>La plus ancienne description connue d\'une patience se trouve dans un livre de jeux allemand de 1783.</item>
+        <item>En Grande-Bretagne, « solitaire » désigne généralement le jeu de plateau à fiches. Les jeux de cartes sont des « patience ».</item>
+        <item>La pioche, le paquet de cartes restant après la donne, s\'appelle aussi le « talon », un mot français.</item>
+        <item>Canfield doit son nom à Richard Canfield, propriétaire de casino qui aurait vendu un jeu 50 $ aux joueurs et payé 5 $ par carte envoyée aux fondations.</item>
+        <item>L\'Araignée doit son nom aux huit pattes de l\'araignée : il y a huit fondations à remplir.</item>
+        <item>Quarante Voleurs doit son nom aux 40 cartes distribuées dans les colonnes au départ. On l\'appelle aussi Napoléon à Sainte-Hélène.</item>
+        <item>Calcul est une réussite presque purement de stratégie : un joueur attentif gagne la plupart des parties, un joueur distrait presque aucune.</item>
+        <item>Le Solitaire de Windows a eu une « touche patron » qui cachait le jeu derrière un faux tableur. Microsoft l\'a fait retirer avant la sortie.</item>
+        <item>Le FreeCell de Windows cachait deux donnes numérotées −1 et −2, conçues pour être impossibles.</item>
+        <item>La Dame de pique (Hearts) a été ajoutée à Windows en 1992 pour montrer ses nouvelles fonctions réseau : on pouvait y jouer contre des gens sur d\'autres ordinateurs.</item>
+        <item>En 2020, pour les 30 ans du Solitaire, Microsoft a annoncé que le jeu comptait encore 35 millions de joueurs par mois.</item>
+    </string-array>
+</resources>

@@ -135,8 +135,9 @@ renders the wordiest screens in each language: check new text fits there
 `res/values/strings.xml` holds the screens' text and what several games
 share ("Deal (%1$d)"), `games.xml` each game's title, rules (a string array)
 and its own messages and labels, and `card_facts.xml` the card facts: the
-phone's `src/data/card-facts.ts`, the same facts in the same order, so keep
-the two lists alike.
+phone's `src/data/card-facts.ts`, the same facts in the same order. They're
+written and translated on the phone (new ones at the end), then copied here,
+every language at once, by `scripts/card-facts.py ../cards`.
 
 - `Game.title` and `scoreName` are string ids, `rules` an array id.
 - The rules' functions, which have no `Context`, give `outcome`, `status`

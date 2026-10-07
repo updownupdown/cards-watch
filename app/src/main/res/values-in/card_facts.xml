@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The phone app's card facts in this language (its src/locales/id/content/facts.json), copied by scripts/card-facts.py. -->
+<resources>
+    <string-array name="card_facts">
+        <item>Kartu remi tiba di Eropa pada tahun 1370-an, kemungkinan besar dibawa dari Kesultanan Mamluk di Mesir.</item>
+        <item>Empat jenis kartu Prancis—sekop, hati, wajik, dan keriting—muncul di Prancis sekitar tahun 1480 lalu menaklukkan sebagian besar dunia.</item>
+        <item>Dek Italia dan Spanyol masih memakai jenis Latin yang lebih tua: cawan, koin, pedang, dan tongkat.</item>
+        <item>Dek Jerman memakai hati, lonceng, daun, dan biji ek sebagai ganti jenis Prancis.</item>
+        <item>Kartu Swiss-Jerman punya jenisnya sendiri: mawar, lonceng, biji ek, dan perisai.</item>
+        <item>Dek standar berisi 52 kartu, dan 52 juga jumlah minggu dalam setahun.</item>
+        <item>Jumlahkan semua kartu dari As (1) sampai King (13) di keempat jenis dan hasilnya 364. Hitung satu Joker sebagai 1 dan hasilnya 365.</item>
+        <item>Ada lebih banyak cara mengurutkan dek yang dikocok (sekitar 8 × 10⁶⁷) daripada jumlah atom di Bumi.</item>
+        <item>Dek yang dikocok dengan saksama hampir pasti berada dalam urutan yang belum pernah dimiliki dek mana pun sebelumnya.</item>
+        <item>Matematikawan Bayer dan Diaconis menunjukkan bahwa sekitar tujuh kocokan riffle sudah cukup untuk mengacak dek 52 kartu dengan baik.</item>
+        <item>Kocokan riffle “out” yang sempurna, dilakukan delapan kali berturut-turut, mengembalikan dek 52 kartu ke urutan aslinya.</item>
+        <item>Joker ditambahkan ke dek Amerika pada tahun 1860-an sebagai truf tertinggi dalam permainan Euchre.</item>
+        <item>King hati adalah satu-satunya King tanpa kumis di kebanyakan dek standar.</item>
+        <item>King hati sering dijuluki “suicide king” (raja bunuh diri) karena pedangnya tampak menembus kepalanya.</item>
+        <item>Jack sekop, Jack hati, dan King wajik digambar dari samping, sehingga dijuluki kartu “bermata satu”.</item>
+        <item>Di dek Prancis, para King secara tradisional bernama David, Aleksander, Caesar, dan Charlemagne.</item>
+        <item>Para Queen pada pola Paris tradisional bernama Pallas, Judith, Rachel, dan Argine.</item>
+        <item>Para Jack pada pola Paris dinamai menurut para pahlawan: Ogier, La Hire, Hector, dan Lancelot.</item>
+        <item>Jack dulu disebut “Knave”. Para pencetak beralih ke “J” agar indeksnya tidak tertukar dengan “K” milik King.</item>
+        <item>Indeks sudut, nilai dan jenis kecil di tiap sudut, baru umum pada akhir 1800-an. Sebelumnya, kartu harus dikipas lebar agar bisa dibaca.</item>
+        <item>Kartu wajah berkepala dua, yang terbaca dari kedua arah, populer pada 1800-an agar pemain tak perlu membalik kartu dan memperlihatkan tangannya.</item>
+        <item>As sekop yang penuh hiasan berasal dari pajak Inggris: sejak 1765 kartu ini dicetak oleh pemerintah sebagai bukti pajak telah dibayar.</item>
+        <item>Tarot bermula di Italia abad ke-15 sebagai permainan kartu, tarocchi. Penggunaannya untuk meramal baru muncul berabad-abad kemudian.</item>
+        <item>Permainan kartu tarot masih dimainkan hingga kini, terutama Tarot Prancis, yang populer di Prancis.</item>
+        <item>Solitaire disebut “Patience” di Inggris dan sebagian besar Eropa.</item>
+        <item>Kumpulan permainan patience pertama yang diketahui terbit pada tahun 1870-an.</item>
+        <item>Klondike dinamai dari Demam Emas Klondike di Yukon, Kanada, 1896–1899.</item>
+        <item>Windows 3.0 dirilis bersama Solitaire pada 1990, sebagian untuk mengajari orang memakai mouse dengan cara seret dan lepas.</item>
+        <item>FreeCell menjadi terkenal lewat Windows, yang menomori pembagiannya dari 1 sampai 32.000.</item>
+        <item>Dari 32.000 pembagian FreeCell asli Windows, hanya satu, pembagian #11982, yang tidak bisa diselesaikan.</item>
+        <item>Akordeon adalah salah satu solitaire tersulit untuk dimenangkan: permainan yang dimainkan dengan baik pun biasanya tetap gagal.</item>
+        <item>Matematikawan Persi Diaconis menyebut peluang menang Klondike “salah satu hal memalukan dalam probabilitas terapan”: peluangnya masih hanya diketahui lewat perkiraan.</item>
+        <item>Permainan kartu begitu populer di Eropa abad pertengahan sehingga banyak kota mengeluarkan hukum yang melarangnya, mulai tahun 1370-an.</item>
+        <item>Kartu remi paling awal diduga berasal dari Tiongkok, pada masa Dinasti Tang, sekitar abad ke-9.</item>
+        <item>Kartu Mamluk memiliki jenis cawan, koin, pedang, dan tongkat polo.</item>
+        <item>Di dek Eropa awal, kartu wajah sering berupa tiga pria: King, Ksatria, dan Knave. Queen baru datang belakangan.</item>
+        <item>Dek Spanyol secara tradisional tidak punya kartu 10, dan sering juga tanpa 8 atau 9.</item>
+        <item>Kartu termasuk benda pertama yang dicetak dengan balok kayu di Eropa, sebelum mesin cetak Gutenberg.</item>
+        <item>Kasino melubangi atau memotong sudut kartu bekas agar tidak bisa diselipkan kembali ke permainan.</item>
+        <item>Rekor dunia rumah kartu tertinggi, dibangun tanpa lem, tingginya lebih dari 7 meter.</item>
+        <item>“Poker face”, “above board”, dan “ace up your sleeve” dalam bahasa Inggris semuanya berasal dari permainan kartu.</item>
+        <item>Ungkapan Inggris “following suit” berasal dari permainan trik, di mana kamu harus memainkan kartu berjenis sama dengan yang dibuka.</item>
+        <item>Papan cribbage kapal selam USS Wahoo dari Perang Dunia II masih diwariskan ke kapal selam tertua yang bertugas di Angkatan Laut AS.</item>
+        <item>Ukuran kartu standar kasino adalah 2,5 × 3,5 inci, disebut “ukuran poker”. Kartu “ukuran bridge” yang lebih ramping lebarnya 2,25 inci.</item>
+        <item>Mahjong lahir dari permainan kartu Tiongkok pada 1800-an, dan ubinnya masih membawa jenis kartu lama: koin, untaian, dan laksaan.</item>
+        <item>Di Inggris, satu dek kartu biasanya disebut “pack”.</item>
+        <item>King, Queen, dan Jack dulu disebut “coat cards”, karena pakaian indah mereka. Nama itu lalu bergeser menjadi “court cards”.</item>
+        <item>Ada 2.598.960 tangan poker lima kartu yang berbeda.</item>
+        <item>Peluang mendapat royal flush dari lima kartu yang dibagikan adalah 1 banding 649.740.</item>
+        <item>Ada sekitar 5,36 × 10²⁸ cara berbeda untuk membagikan empat tangan dalam permainan bridge.</item>
+        <item>Pembuat kartu secara tradisional menghiasi As sekop dengan nama atau logo mereka sendiri.</item>
+        <item>Sembilan wajik dikenal sebagai “Kutukan Skotlandia”, meski tak ada yang benar-benar tahu sebabnya.</item>
+        <item>Empat keriting dijuluki “tiang ranjang iblis” dan dianggap sebagian pemain membawa sial.</item>
+        <item>Dek tarot berisi 78 kartu: 56 dalam empat jenis, ditambah 22 truf.</item>
+        <item>Dalam Tarot Prancis, si Pandir berperan agak mirip Joker: kartu ini bisa dimainkan alih-alih mengikuti jenis.</item>
+        <item>Kartu hanafuda Jepang punya 12 jenis, satu untuk tiap bulan dalam setahun, dengan bunga sebagai ganti angka.</item>
+        <item>Nintendo didirikan pada 1889 untuk membuat kartu hanafuda.</item>
+        <item>Selama Perang Dunia II, sebuah pembuat kartu AS membuat dek yang terkelupas bila direndam, memperlihatkan peta pelarian untuk tawanan perang.</item>
+        <item>Sudut membulat menjadi standar pada akhir 1800-an. Sudut ini lebih awet daripada sudut persegi dan membuat dek lebih mudah dikocok.</item>
+        <item>Punggung kartu bermotif menjadi umum pada 1800-an. Sebelumnya, punggung kartu biasanya polos.</item>
+        <item>Microsoft Solitaire masuk ke World Video Game Hall of Fame pada 2019.</item>
+        <item>Desain kartu di Windows Solitaire digambar oleh Susan Kare, yang juga merancang ikon Macintosh asli.</item>
+        <item>Napoleon konon bermain patience selama pengasingannya di St Helena, dan beberapa permainan dinamai menurut namanya.</item>
+        <item>Kartu remi Braille memiliki nilai dan jenis yang timbul di sudutnya agar bisa dibaca dengan sentuhan.</item>
+        <item>“Wild card”, “hold all the cards”, dan “lay your cards on the table” adalah ungkapan Inggris yang dipinjam dari permainan kartu.</item>
+        <item>Italia masih punya banyak pola kartu daerah, seperti Napoli, Piacenza, dan Sisilia, masing-masing dengan tampilannya sendiri.</item>
+        <item>Dek kartu biasa lengkap tertua yang diketahui adalah Flemish Hunting Deck, dilukis sekitar 1475–1480. Jenisnya perlengkapan berburu: terompet, kalung anjing, tali anjing pemburu, dan jerat buruan.</item>
+        <item>Stuttgart Playing Cards, dilukis sekitar 1430, memiliki jenis bebek, elang, rusa jantan, dan anjing pemburu.</item>
+        <item>Worshipful Company of Makers of Playing Cards didirikan di London dengan piagam kerajaan pada 1628, dan masih ada hingga kini.</item>
+        <item>Pada 1805, seorang Inggris bernama Richard Harding digantung karena memalsukan As sekop untuk menghindari pajak kartu.</item>
+        <item>Pajak kartu remi di Inggris berlaku hingga 1960. Amerika Serikat juga punya, yang dicabut pada 1965.</item>
+        <item>Pada 1685, koloni Prancis Baru kehabisan koin dan membayar tentaranya dengan kartu remi yang ditandatangani gubernur.</item>
+        <item>Selama Revolusi Prancis, pembuat kartu mengganti King, Queen, dan Jack dengan Genius, Kebebasan, dan Kesetaraan.</item>
+        <item>As dulu kartu terendah. Kenaikannya di atas King sering dikaitkan dengan Revolusi Prancis, meski beberapa permainan sudah menempatkannya tinggi jauh sebelumnya.</item>
+        <item>Kata Inggris “ace” berasal dari bahasa Latin “as”, koin Romawi kecil, lewat kata Prancis Kuno untuk angka satu pada dadu.</item>
+        <item>Dalam bahasa Prancis, jenisnya adalah pique (tombak), cœur (hati), carreau (ubin), dan trèfle (semanggi).</item>
+        <item>Nama jenis dalam bahasa Inggris dipinjam dari jenis Latin yang lebih tua: “spade” dari kata Italia untuk pedang, dan “club” dari tongkat, meski bentuknya Prancis.</item>
+        <item>Kartu wajah Prancis ditandai R, D, dan V, untuk Roi, Dame, dan Valet. Yang Jerman K, D, dan B, untuk König, Dame, dan Bube.</item>
+        <item>Di dek berjenis Jerman, kartu Dua disebut Daus dan biasanya mengalahkan King, seperti As.</item>
+        <item>Kartu Spanyol menunjukkan jenisnya lewat putusnya garis bingkai: tanpa putus untuk koin, satu untuk cawan, dua untuk pedang, tiga untuk tongkat.</item>
+        <item>Kartu Ganjifa India berbentuk bundar dan secara tradisional dilukis tangan. Versi Mughal berisi 96 kartu dalam delapan jenis.</item>
+        <item>Kartu remi tiba di Jepang bersama pelaut Portugis pada 1500-an. Kata Jepang untuk kartu, “karuta”, berasal dari kata Portugis “carta”.</item>
+        <item>Truf tarot awalnya disebut “trionfi”, artinya kemenangan. Dari situlah kata Inggris “trump” (truf) berasal.</item>
+        <item>Dek Visconti-Sforza, dilukis tangan untuk para penguasa Milan pada pertengahan 1400-an, termasuk kartu tarot tertua yang masih ada.</item>
+        <item>Meramal dengan kartu menyebar di Prancis abad ke-18. Seorang warga Paris yang dikenal sebagai Etteilla menerbitkan panduan pertamanya pada 1770.</item>
+        <item>Kata “Joker” diduga berasal dari “Jucker”, nama Jerman untuk permainan Euchre.</item>
+        <item>Dalam Euchre, truf tertinggi adalah Jack, disebut “bowers” dari “Bauer”, kata Jerman untuk petani sekaligus nama untuk Jack.</item>
+        <item>King wajik adalah satu-satunya King yang membawa kapak, bukan pedang.</item>
+        <item>Queen sekop adalah satu-satunya Queen yang memegang tongkat kerajaan.</item>
+        <item>Kartu pertama dengan indeks sudut dijuluki “squeezers”, karena tangan bisa dirapatkan menjadi kipas sempit dan tetap terbaca.</item>
+        <item>Kartu remi Bicycle dicetak sejak 1885, dan dinamai saat demam bersepeda masa itu.</item>
+        <item>Kartu remi Bee, favorit kasino, bertanda “No. 92” sesuai tahun pertama dibuat: 1892.</item>
+        <item>Kebanyakan kartu remi terdiri atas dua lembar kertas yang direkatkan dengan pasta gelap, yang mencegah cahaya tembus.</item>
+        <item>Lapisan akhir banyak dek berupa pola lekukan kecil. Lekukan ini menahan sedikit udara, yang membantu kartu meluncur satu sama lain.</item>
+        <item>Dek sering dicetak pada lembaran berisi 56 kartu: 52 kartu, dua Joker, dan dua tambahan, itulah sebabnya banyak dek punya kartu cadangan.</item>
+        <item>Kartu “transformasi”, populer pada 1800-an, menyulap simbol jenis menjadi gambar: hati menjadi wajah, sekop menjadi topi.</item>
+        <item>Eja ketiga belas nilai dalam bahasa Inggris, dari “ace” sampai “king”, lalu hitung hurufnya: tepat 52.</item>
+        <item>Ada yang melihat kalender dalam dek: empat jenis untuk musim, 13 kartu per jenis untuk minggu di tiap musim, 12 kartu wajah untuk bulan. Hampir pasti itu kebetulan.</item>
+        <item>Jika sebuah dek dikocok sekali per detik sejak Big Bang, kurang dari 10¹⁸ dari 8 × 10⁶⁷ kemungkinan urutannya yang akan muncul.</item>
+        <item>Kocokan “faro” menjalin kedua belahan dek dengan sempurna, satu kartu demi satu kartu.</item>
+        <item>Bagikan dua dek yang dikocok berdampingan, dan ada peluang 63% kartu yang sama muncul di keduanya pada saat yang sama.</item>
+        <item>Dalam bridge, jenis diurutkan menurut abjad bahasa Inggris: keriting, wajik, hati, sekop.</item>
+        <item>Pembagian bridge di mana tiap pemain memegang satu jenis utuh dilaporkan setiap beberapa tahun. Peluangnya begitu kecil sehingga kocokan yang buruk, atau keisengan, lebih mungkin jadi penyebabnya.</item>
+        <item>Nama “bridge” mungkin berasal dari “biritch”, nama permainan mirip whist yang dijelaskan dalam pamflet Inggris tahun 1886.</item>
+        <item>Poker tumbuh di sepanjang Sungai Mississippi pada awal 1800-an, dan awalnya dimainkan dengan hanya 20 kartu.</item>
+        <item>“Dead man\'s hand” (tangan orang mati), dua As hitam dan dua Delapan hitam, konon dipegang Wild Bill Hickok saat ia ditembak pada 1876.</item>
+        <item>Badan Legislatif Texas secara resmi mengakui kota Robstown sebagai tempat lahir Texas Hold\'em.</item>
+        <item>Ungkapan Inggris “passing the buck” berasal dari poker, di mana penanda bernama buck, sering pisau bergagang tanduk rusa, menunjukkan giliran siapa membagikan.</item>
+        <item>Catatan tertua tentang permainan dua puluh satu ada dalam cerita karya Cervantes, pengarang Don Quixote, yang ditulis sekitar 1601.</item>
+        <item>Dalam blackjack, 21 dari dua kartu muncul kira-kira sekali setiap 21 tangan.</item>
+        <item>Crazy Eights konon dinamai dari “Section 8”, pemberhentian militer AS bagi tentara yang dinilai tidak layak secara mental.</item>
+        <item>Scopa, permainan kartu Italia, berarti “sapu”: langkah terbaik adalah menyapu semua kartu dari meja.</item>
+        <item>Dalam Great Expectations karya Dickens, Pip dan Estella bermain Beggar-my-neighbour. Apakah permainannya bisa berlangsung selamanya menjadi pertanyaan terbuka hingga 2024, saat pembagian tanpa akhir ditemukan.</item>
+        <item>Lukisan Paul Cézanne The Card Players dilaporkan terjual lebih dari $250 juta pada 2011, harga tertinggi untuk lukisan saat itu.</item>
+        <item>“Dogs Playing Poker” sebenarnya sebuah seri: Cassius Coolidge melukis 16 gambar anjing untuk perusahaan yang mengiklankan cerutu, mulai 1903.</item>
+        <item>Selama Perang Vietnam, tentara Amerika meminta pembuat kartu berpeti-peti As sekop saja, karena keliru percaya musuh takut pada kartu itu.</item>
+        <item>Beberapa negara bagian AS memberi narapidana dek bergambar kasus yang belum terpecahkan, dan petunjuk dari para pemainnya telah memecahkan kejahatan.</item>
+        <item>Rekor melempar kartu remi adalah 65,96 meter, dicetak pesulap Rick Smith Jr. pada 2002.</item>
+        <item>Rekor menghafal urutan dek yang dikocok adalah di bawah 13 detik.</item>
+        <item>Bryan Berg, pemegang rekor rumah kartu, berlatar pendidikan arsitek. Ia tidak memakai lem, selotip, atau lipatan.</item>
+        <item>Deskripsi permainan patience tertua yang diketahui ada dalam buku permainan Jerman dari 1783.</item>
+        <item>Di Inggris, “solitaire” biasanya berarti permainan papan dengan pasak. Permainan kartunya disebut “patience”.</item>
+        <item>Dek, sisa kartu setelah pembagian, juga disebut “talon”, kata Prancis untuk “tumit”.</item>
+        <item>Canfield dinamai dari Richard Canfield, pemilik kasino yang konon menjual dek seharga $50 kepada pemain dan membayar $5 untuk setiap kartu yang sampai ke fondasi.</item>
+        <item>Laba-laba (Spider Solitaire) mendapat namanya dari delapan kaki laba-laba: ada delapan fondasi yang harus diisi.</item>
+        <item>Empat Puluh Pencuri dinamai dari 40 kartu yang dibagikan ke kolom di awal. Permainan ini juga dikenal sebagai Napoleon at St Helena.</item>
+        <item>Kalkulasi adalah solitaire yang hampir murni keterampilan: pemain yang cermat bisa memenangkan sebagian besar permainan, sedangkan yang ceroboh hampir tak pernah menang.</item>
+        <item>Windows Solitaire dulu punya “boss key” yang menyembunyikan permainan di balik spreadsheet palsu. Microsoft menyuruh fitur itu dihapus sebelum rilis.</item>
+        <item>FreeCell di Windows menyembunyikan dua pembagian bernomor −1 dan −2, yang sengaja dibuat mustahil.</item>
+        <item>Hearts ditambahkan ke Windows pada 1992 untuk memamerkan fitur jaringan barunya: permainan ini bisa dimainkan melawan orang di komputer lain.</item>
+        <item>Pada 2020, saat ulang tahun ke-30 Solitaire, Microsoft menyebut permainan ini masih dimainkan 35 juta pemain per bulan.</item>
+    </string-array>
+</resources>
