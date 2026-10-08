@@ -106,7 +106,7 @@ keeps the undo history; `SaveStore` saves each game after every move.
 - A game that needs more room than the square board, or has nothing under
   it, can change `boardFraction` and `boardLift` (Clock, Fifteen Puzzle, Nestor,
   Memory, Lights Out, Ten-Twenty-Thirty). A board that reaches up into the
-  time's room (Ouroboros) has the time drawn over it, on a fade to black.
+  time's room (Ouroboros) has the time drawn over it, with a thin black outline.
 - A board with more cards than it has room for (Accordion) scrolls them
   inside the board with `LocalBoardScroll`, so the crown turns the cards
   before the screen. `ScrollingCards` is that grid, fades and all (Ten-Twenty-Thirty,
