@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
@@ -25,7 +23,6 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
@@ -38,12 +35,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.wear.compose.foundation.CurvedAlignment
+import androidx.wear.compose.foundation.CurvedModifier
+import androidx.wear.compose.foundation.CurvedTextStyle
+import androidx.wear.compose.foundation.curvedBox
+import androidx.wear.compose.foundation.padding
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.EdgeButton
 import androidx.wear.compose.material3.EdgeButtonSize
 import androidx.wear.compose.material3.LocalTextStyle
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.TimeText
+import androidx.wear.compose.material3.timeTextCurvedText
 import com.updownupdown.cards.watch.game.Feedback
 import com.updownupdown.cards.watch.game.GameAction
 import com.updownupdown.cards.watch.game.resolve
@@ -75,8 +78,33 @@ val LocalGameAccent = staticCompositionLocalOf { AppColors.GameButton }
 /** The depth the time takes at the screen's top; a board reaching into it has the time over it. */
 private val TIME_ROOM = 20.dp
 
-/** How far down the fade under the time reaches, over such a board. */
-private val TIME_FADE = 40.dp
+/** How thick the black outline round the time is, over such a board. */
+private val TIME_OUTLINE = 1.5.dp
+
+/** The outline's copies of the time: each one shifted by [TIME_OUTLINE] one way, as padding of twice that on the other side. */
+private val TIME_OUTLINE_SHIFTS = listOf(-1, 0, 1).flatMap { r -> listOf(-1, 0, 1).map { a -> r to a } } - (0 to 0)
+
+/** The time with a thin black outline, and no backing: black copies of it shifted every way round it, under it. */
+@Composable
+private fun OutlinedTimeText() {
+    val outline = CurvedTextStyle(color = Color.Black)
+    TimeText(backgroundColor = Color.Transparent) { time ->
+        curvedBox(radialAlignment = CurvedAlignment.Radial.Center, angularAlignment = CurvedAlignment.Angular.Center) {
+            for ((radial, angular) in TIME_OUTLINE_SHIFTS) {
+                val pad = TIME_OUTLINE * 2
+                curvedBox(
+                    CurvedModifier.padding(
+                        outer = if (radial < 0) pad else 0.dp,
+                        inner = if (radial > 0) pad else 0.dp,
+                        before = if (angular > 0) pad else 0.dp,
+                        after = if (angular < 0) pad else 0.dp,
+                    ),
+                ) { timeTextCurvedText(time, outline) }
+            }
+            timeTextCurvedText(time)
+        }
+    }
+}
 
 /**
  * Every game's screen: a square board in the middle, with the time above it
@@ -99,19 +127,11 @@ fun GameLayout(
 
         // Above the rest, so a card can sit over the bottom buttons (a drawn card).
         val lift = diameter * boardLift
-        // A board reaching up into the time's room (Ouroboros) has the time over its cards, on a fade to black.
+        // A board reaching up into the time's room (Ouroboros) has the time over its cards, outlined in black.
         val underTime = band - lift < TIME_ROOM
         if (showTime) {
             Box(Modifier.fillMaxSize().zIndex(if (underTime) 2f else 0f)) {
-                if (underTime) {
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(TIME_FADE)
-                            .background(Brush.verticalGradient(0.5f to Color.Black, 1f to Color.Transparent))
-                    )
-                }
-                TimeText()
+                if (underTime) OutlinedTimeText() else TimeText()
             }
         }
         CompositionLocalProvider(LocalBoardSize provides boardSize) {

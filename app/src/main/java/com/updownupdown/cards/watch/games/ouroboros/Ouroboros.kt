@@ -232,8 +232,8 @@ object Ouroboros : Game<OuroborosState> {
      * top two either side of the bottom (6 o'clock), the last card at 4
      * o'clock, so the loop's one gap is at 5 o'clock, between them.
      */
-    private const val BOTTOM = 90f
-    private const val LAST = 30f + 360f
+    internal const val BOTTOM = 90f
+    internal const val LAST = 30f + 360f
 
     /** A card's width, × the screen's. */
     private const val CARD = 0.115f
@@ -245,21 +245,21 @@ object Ouroboros : Game<OuroborosState> {
      * rest, which share it. None is more than
      * [MOST_STEP], so cards always overlap a little (but the top two).
      */
-    private const val FIRST_STEP = 1.1f
-    private const val NEAR_STEP = 0.85f
-    private const val NEAR = 10
-    private const val CLOSING = 10
-    private const val MOST_STEP = 0.85f
+    internal const val FIRST_STEP = 1.1f
+    internal const val NEAR_STEP = 0.85f
+    internal const val NEAR = 10
+    internal const val CLOSING = 10
+    internal const val MOST_STEP = 0.85f
 
     /** How far the picked card and its target come in from the loop, × a card's height: the target nearly clear of it. */
     private const val PULL = 0.22f
-    private const val TARGET_PULL = 0.95f
+    internal const val TARGET_PULL = 0.95f
 
     /**
      * How far in the target [steps] round the loop comes: the full pull for the 1st and 2nd, tapering to half for
      * the 10th, so the far ones, up the left, don't cover the left path.
      */
-    private fun targetPull(steps: Int) = TARGET_PULL * (1f - 0.5f * ((steps - 2).coerceIn(0, 8) / 8f))
+    internal fun targetPull(steps: Int) = TARGET_PULL * (1f - 0.5f * ((steps - 2).coerceIn(0, 8) / 8f))
 
     /** The gap between the loop and the marked paths, and between the paths, × a card's width. */
     private const val PATHS_IN = 0.35f
@@ -275,7 +275,7 @@ object Ouroboros : Game<OuroborosState> {
      *
      * @param step a card's width in degrees at the loop's radius.
      */
-    private fun loopAngles(count: Int, step: Float): FloatArray {
+    internal fun loopAngles(count: Int, step: Float): FloatArray {
         val first = BOTTOM - FIRST_STEP * step / 2
         val room = LAST - first
         // The space after each card but the last, as a fixed part and a share of what the rest leave.
