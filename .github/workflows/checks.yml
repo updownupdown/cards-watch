@@ -1,6 +1,6 @@
 # The unit tests (rules, card movement, scrolling) and the screenshots of
 # every screen, on each push and pull request. The screenshots are kept as an
-# artifact to look through.
+# artifact to look through, and the Play listing's Wear screenshots as another.
 name: Checks
 
 on:
@@ -45,6 +45,13 @@ jobs:
         with:
           name: screenshots
           path: app/build/outputs/roborazzi
+          if-no-files-found: ignore
+
+      - name: Store screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: store-screenshots
+          path: app/build/outputs/store
           if-no-files-found: ignore
 
       - name: Test report
