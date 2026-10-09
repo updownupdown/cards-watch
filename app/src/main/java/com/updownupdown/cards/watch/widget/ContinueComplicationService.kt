@@ -49,12 +49,18 @@ class ContinueComplicationService : SuspendingComplicationDataSourceService() {
         val play = text.getString(R.string.play)
         val label = PlainComplicationText.Builder(if (game != null) text.getString(R.string.continue_game, titleOf(game, text)) else play).build()
         val name = PlainComplicationText.Builder(play).build()
-        val spade = MonochromaticImage.Builder(Icon.createWithResource(this, R.drawable.ic_spade_mono)).build()
+        // Bitmaps, not the vectors the app draws: the face renders these in
+        // its own process, and some faces (Pixel Watch's top-left slot,
+        // 2026-10) showed nothing where the vectors were sent.
+        val spade = MonochromaticImage.Builder(Icon.createWithResource(this, R.drawable.complication_spade_mono)).build()
+        Log.i("Complication", "Requested as $type")
         return when (type) {
             ComplicationType.MONOCHROMATIC_IMAGE ->
                 MonochromaticImageComplicationData.Builder(spade, label).setTapAction(tap).build()
             ComplicationType.SMALL_IMAGE -> {
-                val logo = SmallImage.Builder(Icon.createWithResource(this, R.drawable.logo_spade), SmallImageType.ICON).build()
+                val logo = SmallImage.Builder(Icon.createWithResource(this, R.drawable.complication_logo), SmallImageType.ICON)
+                    .setAmbientImage(Icon.createWithResource(this, R.drawable.complication_spade_mono))
+                    .build()
                 SmallImageComplicationData.Builder(logo, label).setTapAction(tap).build()
             }
             ComplicationType.SHORT_TEXT ->
