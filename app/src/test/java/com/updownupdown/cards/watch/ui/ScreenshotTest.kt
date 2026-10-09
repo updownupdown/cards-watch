@@ -200,8 +200,18 @@ class ScreenshotTest {
     }
 
     @Test
+    fun settingsAuto() = capture("settings_auto") {
+        SettingsScreen(haptics = true, onHaptics = {}, startAt = 10)
+    }
+
+    @Test
+    fun settingsLanguageList() = capture("settings_language_list") {
+        SettingsScreen(haptics = true, onHaptics = {}, language = AppLanguage.English, startAt = 11)
+    }
+
+    @Test
     fun settingsTheme() = capture("settings_theme") {
-        SettingsScreen(haptics = true, onHaptics = {}, colourTheme = ColourTheme.Verdigris, startAt = 22)
+        SettingsScreen(haptics = true, onHaptics = {}, colourTheme = ColourTheme.Verdigris, startAt = 15)
     }
 
     private val someStats = mapOf(

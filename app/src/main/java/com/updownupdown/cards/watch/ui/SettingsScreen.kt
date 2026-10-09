@@ -55,8 +55,8 @@ private val SETTING_GAP = 18.dp
 /**
  * The settings, from the home screen's Settings button: Haptics, Suit
  * Colours, how many games Continue Playing shows, the Language (Auto, which
- * follows the watch, or one of the app's), English Game Titles and the
- * Colour Theme.
+ * follows the watch, or, with Auto off, one of the app's), English Game
+ * Titles and the Colour Theme.
  */
 @Composable
 fun SettingsScreen(
@@ -120,21 +120,30 @@ fun SettingsScreen(
                 )
             }
             item { SectionHeading(stringResource(R.string.language), transformed(spec).padding(top = SETTING_GAP)) }
-            // Auto, then each language by its own name.
-            items(listOf(null) + AppLanguage.entries, key = { "language:${it?.tag ?: "auto"}" }) { choice ->
-                SettingChoice(
-                    if (choice == null) {
-                        stringResource(R.string.language_auto, stringResource(autoLanguage().nativeName))
-                    } else {
-                        stringResource(choice.nativeName)
-                    },
-                    choice == language,
-                    { onLanguage(choice) },
-                    Modifier
+            // Auto, naming the language it picks; turned off, each language by its own name.
+            item(key = "language:auto") {
+                SwitchButton(
+                    checked = language == null,
+                    onCheckedChange = { auto -> onLanguage(if (auto) null else autoLanguage()) },
+                    label = { Text(stringResource(R.string.language_auto, stringResource(autoLanguage().nativeName))) },
+                    modifier = Modifier
                         .fillMaxWidth(SETTING_WIDTH)
                         .transformedHeight(this, spec),
-                    SurfaceTransformation(spec)
+                    transformation = SurfaceTransformation(spec),
                 )
+            }
+            if (language != null) {
+                items(AppLanguage.entries, key = { "language:${it.tag}" }) { choice ->
+                    SettingChoice(
+                        stringResource(choice.nativeName),
+                        choice == language,
+                        { onLanguage(choice) },
+                        Modifier
+                            .fillMaxWidth(SETTING_WIDTH)
+                            .transformedHeight(this, spec),
+                        SurfaceTransformation(spec)
+                    )
+                }
             }
             item { Spacer(Modifier.height(SETTING_GAP)) }
             item {
