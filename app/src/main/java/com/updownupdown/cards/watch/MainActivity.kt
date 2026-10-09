@@ -46,6 +46,7 @@ import com.updownupdown.cards.watch.ui.LocalHapticsOn
 import com.updownupdown.cards.watch.ui.SettingsScreen
 import com.updownupdown.cards.watch.ui.SplashScreen
 import com.updownupdown.cards.watch.ui.StatsScreen
+import com.updownupdown.cards.watch.ui.TINT_MS
 import com.updownupdown.cards.watch.widget.refreshSurfaces
 import kotlinx.coroutines.delay
 
@@ -147,8 +148,9 @@ class MainActivity : ComponentActivity() {
         val resume = if (savedInstanceState == null) gameById(intent.getStringExtra(EXTRA_GAME) ?: saves.lastGameId) else null
         // A fresh launch shows the logo first, while what's under it gets ready.
         var splash by mutableStateOf(savedInstanceState == null)
+        var tinted by mutableStateOf(false)
         setContent {
-            AppTheme {
+            AppTheme(saves.colourTheme.accent) {
                 CompositionLocalProvider(
                     LocalHapticsOn provides saves.hapticsOn,
                     LocalAsleep provides ambient,
@@ -169,12 +171,15 @@ class MainActivity : ComponentActivity() {
                         }
                         if (splash) {
                             LaunchedEffect(Unit) {
-                                delay(SPLASH_MS)
+                                // White on black first, then the spade takes the theme's colour.
+                                delay(SPLASH_WHITE_MS)
+                                tinted = true
+                                delay(TINT_MS + SPLASH_HOLD_MS)
                                 splash = false
                             }
                         }
                         AnimatedVisibility(splash, enter = EnterTransition.None, exit = fadeOut(tween(SPLASH_FADE_MS))) {
-                            SplashScreen()
+                            SplashScreen(saves.colourTheme.accent, tinted)
                         }
                         // Over the app, so the game underneath keeps its place. A game's board shows
                         // only while it's what's in view (not its rules, nor its result); else the logo.
@@ -192,8 +197,12 @@ private const val GAME_SCREEN_ON_MS = 10_000L
 /** The id of the game to open, on an intent from the tile or a complication. */
 const val EXTRA_GAME = "game"
 
-/** How long the logo shows as the app starts, and how long it takes to fade. */
-private const val SPLASH_MS = 900L
+/**
+ * As the app starts: how long the logo stays white, how long it holds once
+ * tinted ([TINT_MS] after it starts to turn), and how long it takes to fade.
+ */
+private const val SPLASH_WHITE_MS = 200L
+private const val SPLASH_HOLD_MS = 200L
 private const val SPLASH_FADE_MS = 250
 
 /** How soon after waking a touch may reach the app: the one that woke it doesn't. */
@@ -266,6 +275,8 @@ private fun App(
                 },
                 englishTitles = saves.englishTitles,
                 onEnglishTitles = saves::chooseEnglishTitles,
+                colourTheme = saves.colourTheme,
+                onColourTheme = saves::chooseColourTheme,
             )
         }
         composable(GAME_ROUTE) { entry ->

@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
@@ -149,6 +150,7 @@ fun HomeScreen(
                     Image(
                         painterResource(R.drawable.logo_spade),
                         contentDescription = null,
+                        colorFilter = ColorFilter.tint(LocalAccent.current),
                         modifier = Modifier.size(LOGO_SIZE)
                     )
                     Text(
@@ -222,7 +224,7 @@ fun HomeScreen(
                     Icon(
                         painterResource(R.drawable.ic_fact),
                         contentDescription = stringResource(R.string.another_fact),
-                        tint = AppColors.PaleYellow,
+                        tint = LocalAccent.current,
                         modifier = Modifier.size(LOGO_SIZE * FACT_ICON_SCALE)
                     )
                     val small = MaterialTheme.typography.bodySmall

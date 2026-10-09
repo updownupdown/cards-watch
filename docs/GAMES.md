@@ -109,7 +109,14 @@ Stalker and Twelve Trials, which were once on the maybe list.
   The stats under the rules have a Stats heading, each stat its own box, two
   to a row: its number over its name.
 - **Opening** (owner, 2026-10-05): the logo (the spade over "Solitarius")
-  shows first, then the last game played, or home if there's none.
+  shows first, then the last game played, or home if there's none. Since
+  2026-10-09 (owner): no animation; the spade and name are centred together
+  (the name 1/3.4 of the spade's height, 0.75 of the name's size between
+  them), white on black, then the spade eases to the colour theme's accent.
+- **Colour themes** (owner, 2026-10-09): nine of the phone's (Nocturne by
+  default, Folio, Blossom, Verdigris, Ember, Moss, Card Room, Sand,
+  Rosewood), picked at the foot of Settings. A theme sets only the app's own
+  accent; backgrounds stay black and games keep their colours.
 - **Asleep**, a game's board shows only while it's in view; on the home
   screen, a game's rules or its result, the logo shows. The tap that wakes
   the watch (or one just after) never reaches the app, in any game.

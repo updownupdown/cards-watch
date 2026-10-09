@@ -24,6 +24,7 @@ import com.updownupdown.cards.watch.CardsWatchApp
 import com.updownupdown.cards.watch.EXTRA_GAME
 import com.updownupdown.cards.watch.MainActivity
 import com.updownupdown.cards.watch.R
+import com.updownupdown.cards.watch.data.ColourTheme
 import com.updownupdown.cards.watch.data.titleOf
 import com.updownupdown.cards.watch.data.withAppLanguage
 import com.updownupdown.cards.watch.game.Game
@@ -54,11 +55,12 @@ class GamesTileService : TileService() {
     override fun onTileRequest(requestParams: RequestBuilders.TileRequest): ListenableFuture<TileBuilders.Tile> {
         // In the language chosen in Settings, as it is now: the service may outlive a change.
         val context = withAppLanguage(this)
-        val recent = (application as CardsWatchApp).saves.recentGameIds.mapNotNull(::gameById)
+        val saves = (application as CardsWatchApp).saves
+        val recent = saves.recentGameIds.mapNotNull(::gameById)
         return done(
             TileBuilders.Tile.Builder()
                 .setResourcesVersion(RESOURCES_VERSION)
-                .setTileTimeline(TimelineBuilders.Timeline.fromLayoutElement(tileLayout(context, recent, requestParams.deviceConfiguration)))
+                .setTileTimeline(TimelineBuilders.Timeline.fromLayoutElement(tileLayout(context, recent, requestParams.deviceConfiguration, saves.colourTheme.accent)))
                 .build(),
         )
     }
@@ -132,11 +134,11 @@ private fun space(width: Float = 0f, height: Float = 0f): LayoutElement =
     LayoutElementBuilders.Spacer.Builder().setWidth(dp(width)).setHeight(dp(height)).build()
 
 /** A wide pill: an optional picture, then [title] over [subtitle]. */
-private fun pill(width: Float, tap: ModifiersBuilders.Clickable, picture: LayoutElement?, title: String, subtitle: String?): LayoutElement {
+private fun pill(width: Float, tap: ModifiersBuilders.Clickable, picture: LayoutElement?, title: String, subtitle: String?, accent: Color): LayoutElement {
     val labels = LayoutElementBuilders.Column.Builder()
         .setHorizontalAlignment(if (picture == null) LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER else LayoutElementBuilders.HORIZONTAL_ALIGN_START)
         .addContent(text(title, 15f, AppColors.ListButtonText))
-    if (subtitle != null) labels.addContent(text(subtitle, 12f, AppColors.PaleYellow))
+    if (subtitle != null) labels.addContent(text(subtitle, 12f, accent))
     val row = LayoutElementBuilders.Row.Builder().setVerticalAlignment(LayoutElementBuilders.VERTICAL_ALIGN_CENTER)
     if (picture != null) row.addContent(picture).addContent(space(width = 10f))
     row.addContent(labels.build())
@@ -179,16 +181,17 @@ internal fun othersOnTile(recent: List<Game<*>>): List<Game<*>> = recent.drop(1)
 
 /**
  * The tile's layout for the games in [recent], the last played first. With
- * none played yet, a button that opens the app.
+ * none played yet, a button that opens the app. Subtitles are in the colour
+ * theme's [accent].
  */
-internal fun tileLayout(context: Context, recent: List<Game<*>>, device: DeviceParameters): LayoutElement {
+internal fun tileLayout(context: Context, recent: List<Game<*>>, device: DeviceParameters, accent: Color = ColourTheme.Nocturne.accent): LayoutElement {
     val width = device.screenWidthDp * CONTINUE_WIDTH
     val column = LayoutElementBuilders.Column.Builder().setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
     val last = recent.firstOrNull()
     if (last == null) {
-        column.addContent(pill(width, open(context, null), null, context.getString(R.string.app_name), context.getString(R.string.play)))
+        column.addContent(pill(width, open(context, null), null, context.getString(R.string.app_name), context.getString(R.string.play), accent))
     } else {
-        column.addContent(pill(width, open(context, last), thumbnail(last, CONTINUE_THUMBNAIL), titleOf(last, context), context.getString(R.string.continue_short)))
+        column.addContent(pill(width, open(context, last), thumbnail(last, CONTINUE_THUMBNAIL), titleOf(last, context), context.getString(R.string.continue_short), accent))
         val others = othersOnTile(recent)
         if (others.isNotEmpty()) {
             // Narrower than Continue, as the round screen is by then.

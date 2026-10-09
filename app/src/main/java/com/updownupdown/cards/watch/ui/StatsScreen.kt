@@ -117,9 +117,9 @@ fun StatsScreen(stats: Map<String, GameStats>, onOpen: (Game<*>) -> Unit) {
             // Games completed, out of all of them.
             item {
                 Column(transformed(spec).fillMaxWidth(0.8f), horizontalAlignment = Alignment.CenterHorizontally) {
-                    BigNumber("${overall.completed}/${ALL_GAMES.size}", AppColors.PaleYellow)
+                    BigNumber("${overall.completed}/${ALL_GAMES.size}", LocalAccent.current)
                     StatLabel(stringResource(R.string.stat_completed))
-                    Bar(overall.completed / ALL_GAMES.size.toFloat(), AppColors.PaleYellow, BAR, Modifier.padding(top = 6.dp))
+                    Bar(overall.completed / ALL_GAMES.size.toFloat(), LocalAccent.current, BAR, Modifier.padding(top = 6.dp))
                 }
             }
 

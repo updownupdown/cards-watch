@@ -13,7 +13,7 @@
         android:label="@string/app_name"
         android:localeConfig="@xml/locales_config"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.DeviceDefault">
+        android:theme="@style/Theme.Solitarius">
 
         <uses-library
             android:name="com.google.android.wearable"

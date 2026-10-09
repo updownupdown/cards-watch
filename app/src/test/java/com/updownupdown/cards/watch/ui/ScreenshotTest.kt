@@ -25,6 +25,7 @@ import com.updownupdown.cards.watch.cards.Card
 import com.updownupdown.cards.watch.cards.Rank
 import com.updownupdown.cards.watch.cards.Suit
 import com.updownupdown.cards.watch.data.AppLanguage
+import com.updownupdown.cards.watch.data.ColourTheme
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.game.GameSession
 import com.updownupdown.cards.watch.game.GameStats
@@ -198,6 +199,11 @@ class ScreenshotTest {
         SettingsScreen(haptics = true, onHaptics = {}, language = AppLanguage.Turkish, englishTitles = true, startAt = 19)
     }
 
+    @Test
+    fun settingsTheme() = capture("settings_theme") {
+        SettingsScreen(haptics = true, onHaptics = {}, colourTheme = ColourTheme.Verdigris, startAt = 22)
+    }
+
     private val someStats = mapOf(
         Nestor.id to GameStats(won = 7, lost = 3, bestStreak = 4, bestTimeMs = 154_000),
         Lycan.id to GameStats(won = 1, lost = 4, bestStreak = 1, bestScore = 31, bestTimeMs = 402_000),
@@ -341,5 +347,11 @@ class ScreenshotTest {
         state.copy(deck = deck)
     }
 
-    @Test fun splash() = capture("splash") { SplashScreen() }
+    @Test fun splash() = capture("splash") { SplashScreen(ColourTheme.Nocturne.accent, tinted = true) }
+
+    @Test fun splashWhite() = capture("splash_white") { SplashScreen(ColourTheme.Nocturne.accent, tinted = false) }
+
+    @Test
+    @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
+    fun splashLarge() = capture("splash_large") { SplashScreen(ColourTheme.Ember.accent, tinted = true) }
 }

@@ -83,6 +83,18 @@ class SaveStore(private val context: Context, private val scope: CoroutineScope)
         prefs.edit().putString(KEY_SUIT_COLOURS, colours.name).apply()
     }
 
+    /** The colour theme (the Settings screen's Colour Theme), Nocturne until one is chosen. */
+    var colourTheme: ColourTheme by mutableStateOf(
+        runCatching { ColourTheme.valueOf(prefs.getString(KEY_THEME, null) ?: "") }.getOrDefault(ColourTheme.Nocturne),
+    )
+        private set
+
+    fun chooseColourTheme(theme: ColourTheme) {
+        colourTheme = theme
+        prefs.edit().putString(KEY_THEME, theme.name).commit()
+        refreshSurfaces(context)
+    }
+
     /** How many games the home screen's Continue Playing shows (0 hides it). */
     var continueShown: Int by mutableStateOf(prefs.getInt(KEY_CONTINUE, 3).takeIf { it in CONTINUE_CHOICES } ?: 3)
         private set
@@ -181,6 +193,7 @@ class SaveStore(private val context: Context, private val scope: CoroutineScope)
         const val KEY_HAPTICS = "haptics"
         const val KEY_SUIT_COLOURS = "suitColours"
         const val KEY_CONTINUE = "continueShown"
+        const val KEY_THEME = "colourTheme"
         const val KEY_STATS = "stats:"
         const val KEY_WON = "won:"
         const val KEY_LOST = "lost:"

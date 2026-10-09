@@ -91,7 +91,7 @@ private val TITLE_GAP = 20.dp
 @Composable
 internal fun ScreenTitle(@DrawableRes icon: Int, title: String, modifier: Modifier) {
     Column(modifier.fillMaxWidth().padding(bottom = TITLE_GAP), horizontalAlignment = Alignment.CenterHorizontally) {
-        Icon(painterResource(icon), contentDescription = null, tint = AppColors.PaleYellow, modifier = Modifier.size(30.dp))
+        Icon(painterResource(icon), contentDescription = null, tint = LocalAccent.current, modifier = Modifier.size(30.dp))
         Text(title, style = MaterialTheme.typography.titleMedium, color = Color.White)
     }
 }

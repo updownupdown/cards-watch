@@ -1,6 +1,8 @@
 package com.updownupdown.cards.watch.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.Font
@@ -11,6 +13,7 @@ import androidx.wear.compose.material3.ColorScheme
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Typography
 import com.updownupdown.cards.watch.R
+import com.updownupdown.cards.watch.data.ColourTheme
 import com.updownupdown.cards.watch.ui.AppColors.CardFace
 
 /**
@@ -19,7 +22,7 @@ import com.updownupdown.cards.watch.ui.AppColors.CardFace
  * res/drawable/ic_launcher_foreground.xml.
  */
 object AppColors {
-    /** The theme color: the Solitarius logo's yellow, also used for text accents. */
+    /** A pale yellow for games: buttons where the game's own colour isn't to hand, and hints. The app's own accent is [LocalAccent]. */
     val PaleYellow = Color(0xFFFFE27A)
 
     /** List buttons, card faces and the text on game buttons. */
@@ -154,11 +157,23 @@ private val AppTypography = Typography().run {
     )
 }
 
+/**
+ * The app's own accent, from the colour theme ([ColourTheme.accent]): the
+ * logo, screen titles' icons, the stats' totals, and Material's primary
+ * (switches and choices). Games keep their own colours.
+ */
+val LocalAccent = compositionLocalOf { ColourTheme.Nocturne.accent }
+
 @Composable
-fun AppTheme(content: @Composable () -> Unit) {
+fun AppTheme(accent: Color = ColourTheme.Nocturne.accent, content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalAccent provides accent) { Themed(accent, content) }
+}
+
+@Composable
+private fun Themed(accent: Color, content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = ColorScheme(
-            primary = AppColors.PaleYellow,
+            primary = accent,
             onPrimary = AppColors.DeepBlue,
             primaryContainer = AppColors.DeepBlue,
             onPrimaryContainer = Color.White,

@@ -46,6 +46,7 @@
     <string name="language">Dil</string>
     <string name="language_auto">Otomatik (%1$s)</string>
     <string name="english_titles">İngilizce oyun adları</string>
+    <string name="colour_theme">Renk teması</string>
     <string name="stat_completed">Tamamlanan</string>
     <string name="most_played">En çok oynanan</string>
     <string name="stats_empty">Burada görmek için bir oyun bitir.</string>

@@ -1,24 +1,37 @@
 package com.updownupdown.cards.watch.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
 import androidx.wear.compose.material3.AppScaffold
+import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.RadioButton
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.SurfaceTransformation
@@ -29,6 +42,7 @@ import androidx.wear.compose.material3.lazy.transformedHeight
 import com.updownupdown.cards.watch.R
 import com.updownupdown.cards.watch.data.AppLanguage
 import com.updownupdown.cards.watch.data.CONTINUE_CHOICES
+import com.updownupdown.cards.watch.data.ColourTheme
 import com.updownupdown.cards.watch.data.SuitColours
 import com.updownupdown.cards.watch.data.autoLanguage
 
@@ -41,7 +55,8 @@ private val SETTING_GAP = 18.dp
 /**
  * The settings, from the home screen's Settings button: Haptics, Suit
  * Colours, how many games Continue Playing shows, the Language (Auto, which
- * follows the watch, or one of the app's) and English Game Titles.
+ * follows the watch, or one of the app's), English Game Titles and the
+ * Colour Theme.
  */
 @Composable
 fun SettingsScreen(
@@ -55,6 +70,8 @@ fun SettingsScreen(
     onLanguage: (AppLanguage?) -> Unit = {},
     englishTitles: Boolean = false,
     onEnglishTitles: (Boolean) -> Unit = {},
+    colourTheme: ColourTheme = ColourTheme.Nocturne,
+    onColourTheme: (ColourTheme) -> Unit = {},
     /** The item the list starts at, for screenshots of its foot. */
     startAt: Int = 0,
 ) {
@@ -131,11 +148,57 @@ fun SettingsScreen(
                     transformation = SurfaceTransformation(spec),
                 )
             }
+            // The colour themes, three to a row, then the chosen one's name.
+            item { SectionHeading(stringResource(R.string.colour_theme), transformed(spec).padding(top = SETTING_GAP)) }
+            items(ColourTheme.entries.chunked(THEMES_PER_ROW), key = { "themes:${it.first().name}" }) { row ->
+                Row(transformed(spec), horizontalArrangement = Arrangement.spacedBy(THEME_GAP)) {
+                    row.forEach { theme -> ThemeChoice(theme, theme == colourTheme) { onColourTheme(theme) } }
+                }
+            }
+            item {
+                Text(
+                    stringResource(colourTheme.label),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color.White,
+                    modifier = transformed(spec).padding(top = THEME_GAP),
+                )
+            }
             // Room to bring the foot of the list up clear of the round screen's.
             item { Spacer(Modifier.height(LIST_END)) }
         }
     }
 }
+
+/** A colour theme's button: the spade in its colour on a round button, ringed when it's the one chosen. */
+@Composable
+private fun ThemeChoice(theme: ColourTheme, selected: Boolean, onSelect: () -> Unit) {
+    val name = stringResource(theme.label)
+    Box(
+        Modifier
+            .size(THEME_BUTTON + THEME_RING * 2)
+            .then(if (selected) Modifier.border(THEME_RING / 2, theme.accent, CircleShape) else Modifier)
+            .padding(THEME_RING)
+            .clip(CircleShape)
+            .background(AppColors.ListButton)
+            .selectable(selected, onClick = onSelect, role = Role.RadioButton)
+            .semantics { contentDescription = name },
+        contentAlignment = Alignment.Center,
+    ) {
+        Image(
+            painterResource(R.drawable.logo_spade),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(theme.accent),
+            modifier = Modifier.size(THEME_SPADE),
+        )
+    }
+}
+
+/** The colour themes' buttons: how many to a row, each one's size, the ring round the chosen one, the gap between, and the spade's drawable in each. */
+private const val THEMES_PER_ROW = 3
+private val THEME_BUTTON = 34.dp
+private val THEME_RING = 3.dp
+private val THEME_GAP = 3.dp
+private val THEME_SPADE = 23.dp
 
 /** A choice among a setting's options, as a radio button. */
 @Composable

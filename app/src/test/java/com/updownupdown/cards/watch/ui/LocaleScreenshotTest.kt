@@ -118,6 +118,7 @@ class LocaleScreenshotTest(private val language: AppLanguage) {
     @Test fun settings() = capture("settings") { SettingsScreen(haptics = true, onHaptics = {}, continueShown = 1) }
 
     @Test fun settingsLanguage() = capture("settings_language") { SettingsScreen(haptics = true, onHaptics = {}, language = language, startAt = 19) }
+    @Test fun settingsTheme() = capture("settings_theme") { SettingsScreen(haptics = true, onHaptics = {}, startAt = 22) }
 
     @Test fun stats() = capture("stats") { StatsScreen(someStats, onOpen = {}) }
 
