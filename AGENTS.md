@@ -40,7 +40,7 @@ game's wide picture (`banner`, cut to cover, never stretched) under 85% of the
 game's `accent` colour. The tile (`widget/GamesTileService`) offers the last
 game played and the two before it by name; a complication
 (`widget/ContinueComplicationService`) goes back to the last one, as the
-logo or, where a face wants text, "Solitarius". Both open
+logo or, where a face wants text, "Play". Both open
 `MainActivity` with `EXTRA_GAME`.
 
 - Games draw only playing cards, plus short text. No stand-in shapes for cards.
