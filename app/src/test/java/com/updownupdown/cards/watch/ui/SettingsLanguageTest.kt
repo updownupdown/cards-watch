@@ -3,8 +3,10 @@ package com.updownupdown.cards.watch.ui
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -50,8 +52,8 @@ class SettingsLanguageTest {
         assertEquals(AppLanguage.English, autoLanguage())
         show(null)
         compose.onNodeWithText(auto).assertIsOn()
-        compose.onNodeWithText("Français").assertDoesNotExist()
-        compose.onNodeWithText("Türkçe").assertDoesNotExist()
+        // The list's first language, which would be in view under the switch.
+        compose.onNodeWithText("English").assertDoesNotExist()
     }
 
     @Test
@@ -61,19 +63,18 @@ class SettingsLanguageTest {
         compose.waitForIdle()
         assertEquals(AppLanguage.English, language)
         compose.onNodeWithText(auto).assertIsOff()
-        compose.onNodeWithText("English").assertExists()
-        compose.onNodeWithText("Français").assertExists()
+        compose.onNodeWithText("English").assertIsSelected()
     }
 
     @Test
     fun aChosenLanguageShowsTheListAndAutoTurnsBackOn() {
         show(AppLanguage.Turkish)
         compose.onNodeWithText(auto).assertIsOff()
-        compose.onNodeWithText("Français").performClick()
-        assertEquals(AppLanguage.French, language)
+        compose.onNodeWithText("English").assertIsNotSelected().performClick()
+        assertEquals(AppLanguage.English, language)
         compose.onNodeWithText(auto).performClick()
         compose.waitForIdle()
         assertNull(language)
-        compose.onNodeWithText("Français").assertDoesNotExist()
+        compose.onNodeWithText("English").assertDoesNotExist()
     }
 }
