@@ -46,6 +46,7 @@
     <string name="language">Bahasa</string>
     <string name="language_auto">Otomatis (%1$s)</string>
     <string name="english_titles">Judul bahasa Inggris</string>
+    <string name="colour_theme">Tema warna</string>
     <string name="stat_completed">Selesai</string>
     <string name="most_played">Terbanyak dimainkan</string>
     <string name="stats_empty">Selesaikan permainan untuk melihatnya di sini.</string>

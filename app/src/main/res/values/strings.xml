@@ -47,6 +47,17 @@
     <string name="language">Language</string>
     <string name="language_auto">Auto (%1$s)</string>
     <string name="english_titles">English Game Titles</string>
+    <string name="colour_theme">Colour Theme</string>
+    <!-- The colour themes' names are the phone's, the same in every language. -->
+    <string name="theme_nocturne" translatable="false">Nocturne</string>
+    <string name="theme_folio" translatable="false">Folio</string>
+    <string name="theme_blossom" translatable="false">Blossom</string>
+    <string name="theme_verdigris" translatable="false">Verdigris</string>
+    <string name="theme_ember" translatable="false">Ember</string>
+    <string name="theme_moss" translatable="false">Moss</string>
+    <string name="theme_card_room" translatable="false">Card Room</string>
+    <string name="theme_sand" translatable="false">Sand</string>
+    <string name="theme_rosewood" translatable="false">Rosewood</string>
     <!-- Each language in itself, the same in every language -->
     <string name="language_en" translatable="false">English</string>
     <string name="language_fr" translatable="false">Français</string>

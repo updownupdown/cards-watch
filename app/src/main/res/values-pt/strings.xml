@@ -46,6 +46,7 @@
     <string name="language">Idioma</string>
     <string name="language_auto">Automático (%1$s)</string>
     <string name="english_titles">Títulos em inglês</string>
+    <string name="colour_theme">Tema de cores</string>
     <string name="stat_completed">Concluídas</string>
     <string name="most_played">Mais jogados</string>
     <string name="stats_empty">Termine uma partida para ver o jogo aqui.</string>

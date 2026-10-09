@@ -46,6 +46,7 @@
     <string name="language">Lingua</string>
     <string name="language_auto">Automatica (%1$s)</string>
     <string name="english_titles">Titoli in inglese</string>
+    <string name="colour_theme">Tema colori</string>
     <string name="stat_completed">Completate</string>
     <string name="most_played">Più giocati</string>
     <string name="stats_empty">Finisci una partita per vederla qui.</string>

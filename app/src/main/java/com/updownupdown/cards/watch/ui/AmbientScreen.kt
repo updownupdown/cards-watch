@@ -2,6 +2,9 @@ package com.updownupdown.cards.watch.ui
 
 import android.text.format.DateFormat
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,19 +12,23 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,7 +67,7 @@ fun AmbientScreen(session: GameSession<*>?, tick: Int = 0) {
     val context = LocalContext.current
     val time = remember(tick) { DateFormat.getTimeFormat(context).format(Date()) }
     Box(Modifier.fillMaxSize().background(Color.Black)) {
-        if (session != null) AmbientBoard(session) else Logo(R.drawable.logo_spade_outline, AppColors.Ambient)
+        if (session != null) AmbientBoard(session) else Logo(R.drawable.logo_spade_outline, AppColors.Ambient, AppColors.Ambient)
         Text(
             text = time,
             style = TextStyle(fontFamily = Outfit, fontWeight = FontWeight.Medium, fontSize = 14.sp),
@@ -70,28 +77,66 @@ fun AmbientScreen(session: GameSession<*>?, tick: Int = 0) {
     }
 }
 
-/** The app's logo in the middle of the screen, shown as the app starts. */
+/**
+ * The app's logo in the middle of the screen, shown as the app starts: white
+ * on black, then, once [tinted], the spade eases to the colour theme's
+ * [accent]. The system's own splash before it is blank (themes.xml).
+ */
 @Composable
-fun SplashScreen() {
+fun SplashScreen(accent: Color, tinted: Boolean) {
+    val spade by animateColorAsState(if (tinted) accent else Color.White, tween(TINT_MS, easing = FastOutSlowInEasing), label = "spade")
     Box(Modifier.fillMaxSize().background(Color.Black)) {
-        Logo(R.drawable.logo_spade, Color.White)
+        Logo(R.drawable.logo_spade, spade, Color.White)
     }
 }
 
-/** The spade ([spade]) over "Solitarius" in [textColour], in the middle of the screen. */
+/** How long the spade takes to ease from white to the theme's colour as the app starts. */
+const val TINT_MS = 600
+
+/** The spade's height in the logo; the name is [LOGO_NAME] of it, [LOGO_GAP] of the name's size below it. */
+private val LOGO_SPADE = 52.dp
+private const val LOGO_NAME = 1 / 3.4f
+private const val LOGO_GAP = 0.75f
+
+/** The spade's height in its drawables, × their size (the spade spans 113 to 911 of their 1024). */
+private const val SPADE_IN_DRAWABLE = 798f / 1024f
+
+/** The spade's width, × its height. */
+private const val SPADE_ASPECT = 702.7f / 798f
+
+/**
+ * The spade ([spade], drawn in [spadeColour]) over "Solitarius" in
+ * [textColour]: the two together in the middle of the screen.
+ */
 @Composable
-private fun Logo(@DrawableRes spade: Int, textColour: Color) {
+private fun Logo(@DrawableRes spade: Int, spadeColour: Color, textColour: Color) {
+    val nameSize = (LOGO_SPADE.value * LOGO_NAME).sp
     Column(
         Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Image(painterResource(spade), contentDescription = null, modifier = Modifier.size(72.dp))
+        // Laid out at the spade's own bounds, so the two centre together; the drawable's margins overhang.
+        Box(Modifier.size(LOGO_SPADE * SPADE_ASPECT, LOGO_SPADE), contentAlignment = Alignment.Center) {
+            Image(
+                painterResource(spade),
+                contentDescription = null,
+                colorFilter = ColorFilter.tint(spadeColour),
+                modifier = Modifier.requiredSize(LOGO_SPADE / SPADE_IN_DRAWABLE),
+            )
+        }
         Text(
             text = stringResource(R.string.app_name),
-            style = TextStyle(fontFamily = Outfit, fontWeight = FontWeight.Medium, fontSize = 15.sp, textAlign = TextAlign.Center),
+            style = TextStyle(
+                fontFamily = Outfit,
+                fontWeight = FontWeight.Medium,
+                fontSize = nameSize,
+                lineHeight = nameSize,
+                lineHeightStyle = LineHeightStyle(LineHeightStyle.Alignment.Center, LineHeightStyle.Trim.Both),
+                textAlign = TextAlign.Center,
+            ),
             color = textColour,
-            modifier = Modifier.padding(top = 6.dp, start = 24.dp, end = 24.dp),
+            modifier = Modifier.padding(top = LOGO_SPADE * (LOGO_NAME * LOGO_GAP), start = 24.dp, end = 24.dp),
         )
     }
 }

@@ -1,5 +1,5 @@
 <resources>
-    <color name="launcher_background">#FF262737</color>
+    <color name="launcher_background">#FF000000</color>
 
     <!--
         Each game's two colors, from its picture. The dark one covers the picture on the

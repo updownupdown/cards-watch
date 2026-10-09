@@ -33,9 +33,10 @@ first, then Stats and Settings side by side as icon buttons, a card fact
 (`res/values/card_facts.xml`) and a Top button at the foot.
 Each button opens its own screen, swiped away like a game: `StatsScreen`
 (stats across every game, and each game played, by title, which opens it) and `SettingsScreen`
-(Haptics, Suit Colours, Continue Playing, Language, English Game Titles). The app starts
-on the logo, then goes straight into the last game played (or home, if
-there's none). Each button is the
+(Haptics, Suit Colours, Continue Playing, Language, English Game Titles, Colour Theme). The app starts
+on the logo (the spade over the name, centred together, white on black, the
+spade then easing to the theme's accent; the system's splash is blank), then
+goes straight into the last game played (or home, if there's none). Each button is the
 game's wide picture (`banner`, cut to cover, never stretched) under 85% of the
 game's `accent` colour. The tile (`widget/GamesTileService`) offers the last
 game played and the two before it by name; a complication
@@ -44,6 +45,10 @@ logo or, where a face wants text, "Play". Both open
 `MainActivity` with `EXTRA_GAME`.
 
 - Games draw only playing cards, plus short text. No stand-in shapes for cards.
+- The spade (`solitarius-spade.svg`, the phone's retraced one) is drawn into
+  every drawable, the complication's PNGs and the card back by
+  `scripts/logo.py`. The launcher icon, tile and complication show it white
+  on black; the app tints it.
 - Each game's picture and its credit are the phone's (`assets/thumbnails` and
   `thumbnailCredit` in its `src/data/games/<id>.ts`): `art_<id>` (the whole
   picture, 384 px wide), `thumb_<id>` (96 px square) and `banner_<id>`
@@ -74,8 +79,10 @@ logo or, where a face wants text, "Play". Both open
 - Every colour is in `ui/Theme.kt` (`AppColors`), but for each game's two
   colours, which are in `res/values/colors.xml`: a dark one over its home
   button's picture, and a pale one for its action button and its rules'
-  headings (`LocalGameAccent`). The logo's yellow #ffcf87 is for the app's
-  own accents; deep blue #262737 for list buttons, card faces and the text
+  headings (`LocalGameAccent`). The app's own accents (the logo, screen titles'
+  icons, the stats' totals, switches and choices, the tile's subtitles) are the
+  colour theme's (`ColourTheme`, read through `LocalAccent`; Nocturne's yellow
+  #ffcf87 by default); deep blue #262737 for list buttons, card faces and the text
   on game buttons (which are 40% when disabled). Buttons are fully
   rounded (but Fortune's Call's calls, which are card-wide with rounded corners). A button's colour can say what it does (`GameAction.color`).
 - Tap areas reach into the gaps round their cards (`spreadTaps`), so small
