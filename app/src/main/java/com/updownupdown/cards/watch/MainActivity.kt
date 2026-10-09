@@ -34,6 +34,7 @@ import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.updownupdown.cards.watch.data.LocalEnglishTitles
 import com.updownupdown.cards.watch.data.SaveStore
+import com.updownupdown.cards.watch.data.autoLanguage
 import com.updownupdown.cards.watch.data.withAppLanguage
 import com.updownupdown.cards.watch.game.Game
 import com.updownupdown.cards.watch.games.gameById
@@ -268,9 +269,11 @@ private fun App(
                 language = saves.language,
                 onLanguage = { choice ->
                     if (choice != saves.language) {
+                        val shown = saves.language ?: autoLanguage()
                         saves.chooseLanguage(choice)
-                        // Made again in the new language, still on Settings.
-                        activity?.recreate()
+                        // Made again in the new language, still on Settings; turning
+                        // Auto off picks the language already shown, so nothing to remake.
+                        if ((choice ?: autoLanguage()) != shown) activity?.recreate()
                     }
                 },
                 englishTitles = saves.englishTitles,

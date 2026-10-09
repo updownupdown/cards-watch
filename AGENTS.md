@@ -153,9 +153,11 @@ every language at once, by `scripts/card-facts.py ../cards`.
 - Capitals go through `upper()`, and lists of games are sorted with
   `sortedByTitle`, both by the watch's language.
 - The Language setting (`data/Language.kt`) is Auto, which follows the
-  watch, or one of `AppLanguage`, the phone app's languages. The activity
+  watch, or one of `AppLanguage`, the phone app's languages. Settings shows
+  it as a switch, "Auto (English)", naming the language Auto picks; turned
+  off, it keeps that language and lists the others. The activity
   starts in it (`withAppLanguage` in `attachBaseContext`) and is made again
-  when it changes; the tile and complication look it up on each request.
+  when the language shown changes; the tile and complication look it up on each request.
   Adding a language means adding it to `AppLanguage`, `locales_config.xml`
   and `localeFilters` (Indonesian is `in` there and in `values-in`).
 - A game's title is shown through `titleOf`, which follows English Game
