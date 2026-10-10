@@ -195,7 +195,12 @@ object Lycan : Game<LycanState> {
             pickedPlayer = emptyList(),
             pickedWolf = emptyList(),
         )
-        return if (next.wolf.isEmpty()) endRound(next, won = true) else next
+        // An empty hand folds by itself: there's nothing left to capture with.
+        return when {
+            next.wolf.isEmpty() -> endRound(next, won = true)
+            next.player.isEmpty() -> endRound(next, won = false)
+            else -> next
+        }
     }
 
     fun fold(state: LycanState): LycanState? = if (state.roundResult != null) null else endRound(state, won = false)
