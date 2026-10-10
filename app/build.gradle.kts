@@ -82,6 +82,12 @@ baselineProfile {
     mergeIntoMain = true
 }
 
+// StoreScreenshotTest's images, so a test run restored from the build cache
+// brings them back too.
+tasks.withType<Test>().configureEach {
+    outputs.dir(layout.buildDirectory.dir("outputs/store"))
+}
+
 dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
