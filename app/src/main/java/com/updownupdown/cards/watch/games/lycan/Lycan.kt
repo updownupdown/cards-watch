@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -336,16 +337,19 @@ object Lycan : Game<LycanState> {
         }
 
         // The draw pile's top card is face up. When it's drawn, the one under
-        // it turns up a moment later (at once for an undo, which puts it back).
+        // it turns up a moment later (at once for an undo, which puts it back,
+        // and for a new deal or round, whose deck is dealt with its top card up).
         val top = state.deck.lastOrNull()?.id
+        val size = state.deck.size
         var turned by remember { mutableStateOf(top) }
-        LaunchedEffect(top) {
-            if (turned != top) {
-                delay(DRAW_FLIP_MS)
-                turned = top
-            }
+        var turnedSize by remember { mutableIntStateOf(size) }
+        val drawn = size < turnedSize
+        LaunchedEffect(top, size) {
+            if (turned != top && size < turnedSize) delay(DRAW_FLIP_MS)
+            turned = top
+            turnedSize = size
         }
-        val faceUp = if (LocalUndoing.current) top else turned
+        val faceUp = if (drawn && !LocalUndoing.current) turned else top
 
         CardTable(
             modifier,

@@ -25,13 +25,15 @@ import kotlin.random.Random
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 
-/** The 3×3 grid (null where a place is empty) and the stock, its next card first. */
+/** The 4×3 grid (null where a place is empty) and the stock, its next card first. */
 @Serializable
 data class ElevensState(val grid: List<Card?>, val stock: List<Card>)
 
-/** Pairs making 11, or a Jack, Queen and King together, out of a 3×3 grid. */
+/** Pairs making 11, or a Jack, Queen and King together, out of a 4×3 grid (the phone's Medium). */
 object Elevens : Game<ElevensState> {
-    const val SIZE = 9
+    private const val COLUMNS = 4
+    private const val ROWS = 3
+    const val SIZE = COLUMNS * ROWS
     private const val TOTAL = 11
     private val ROYALS = setOf(Rank.Jack, Rank.Queen, Rank.King)
 
@@ -50,6 +52,8 @@ object Elevens : Game<ElevensState> {
     override val rating = Rating(difficulty = 55, complexity = 10, luck = 80)
     override val fourSuitColours = false
     override val stateSerializer: KSerializer<ElevensState> = ElevensState.serializer()
+    // The grid grew from 3×3 to 4×3.
+    override val saveVersion = 2
 
     override val rules = R.array.elevens_rules
 
@@ -128,7 +132,7 @@ object Elevens : Game<ElevensState> {
         var picked by remember(state) { mutableStateOf(emptyList<Int>()) }
         val playing = outcome(state) == null
         CardTable(modifier) {
-            val layout = CardLayout(3, 3, width, height, gap = 0.12f)
+            val layout = CardLayout(COLUMNS, ROWS, width, height, gap = 0.12f)
             state.grid.forEachIndexed { index, card ->
                 val x = layout.xOf(index)
                 val y = layout.yOf(index)

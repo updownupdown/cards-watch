@@ -23,6 +23,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -493,6 +494,8 @@ private fun MovingCard(card: TableCard, leaving: Boolean, enter: Boolean, back: 
     val flip = remember { Animatable(if (card.faceDown || enter && dealt) 180f else 0f) }
     // Its turn in a deal, kept from when it arrived.
     val turn = remember { IntArray(1) { if (enter) wait else 0 } }
+    // The card as it is now, for once its turn comes (it may have turned while it waited).
+    val latest by rememberUpdatedState(card)
     val spec = tween<Float>(CARD_MOVE_MS, easing = FastOutSlowInEasing)
 
     LaunchedEffect(targetX, targetY, leaving) {
@@ -519,7 +522,7 @@ private fun MovingCard(card: TableCard, leaving: Boolean, enter: Boolean, back: 
             onGone()
         } else {
             if (turn[0] > 0) delay(turn[0].toLong())
-            val arriving = turn[0] >= 0 && dealt && flip.value != 0f && !card.faceDown
+            val arriving = turn[0] >= 0 && dealt && flip.value != 0f && !latest.faceDown
             turn[0] = -1
             val centre = card.orbit?.let { with(density) { Offset(it.x.toPx(), it.y.toPx()) } }
             val target = Offset(targetX, targetY)
@@ -537,7 +540,13 @@ private fun MovingCard(card: TableCard, leaving: Boolean, enter: Boolean, back: 
                     launch { x.animateTo(targetX, spec) }
                     launch { y.animateTo(targetY, spec) }
                 }
-                if (arriving) launch { flip.animateTo(0f, spec) }
+                if (arriving) {
+                    launch { flip.animateTo(0f, spec) }
+                } else {
+                    // Turned over while it waited for its turn, when its own flip doesn't run.
+                    val face = if (latest.faceDown) 180f else 0f
+                    if (flip.targetValue != face) launch { flip.animateTo(face, tween(latest.flipMs)) }
+                }
             }
             settled[0] = true
         }
