@@ -1,5 +1,10 @@
 <resources>
-    <color name="launcher_background">#FF000000</color>
+    <!--
+        Nocturne's night, the phone's icon background: under the launcher icon's yellow
+        spade, the system splash and the app's opening logo (AppColors.Night).
+    -->
+    <color name="night">#FF07080D</color>
+    <color name="launcher_background">@color/night</color>
 
     <!--
         Each game's two colors, from its picture. The dark one covers the picture on the

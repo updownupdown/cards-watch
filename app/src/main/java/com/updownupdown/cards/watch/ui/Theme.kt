@@ -18,10 +18,13 @@ import com.updownupdown.cards.watch.ui.AppColors.CardFace
 
 /**
  * Every color in the app. The launcher icon can't read these: its
- * background is in res/values/colors.xml and its spade in
- * res/drawable/ic_launcher_foreground.xml.
+ * background ([Night]) is in res/values/colors.xml and its spade (Nocturne's
+ * yellow) in res/drawable/ic_launcher_foreground.xml, drawn by scripts/logo.py.
  */
 object AppColors {
+    /** Nocturne's night, the phone's icon background: behind the launcher icon, the system splash and the opening logo. */
+    val Night = Color(0xFF07080D)
+
     /** A pale yellow for games: buttons where the game's own colour isn't to hand, and hints. The app's own accent is [LocalAccent]. */
     val PaleYellow = Color(0xFFFFE27A)
 

@@ -357,11 +357,9 @@ class ScreenshotTest {
         state.copy(deck = deck)
     }
 
-    @Test fun splash() = capture("splash") { SplashScreen(ColourTheme.Nocturne.accent, tinted = true) }
-
-    @Test fun splashWhite() = capture("splash_white") { SplashScreen(ColourTheme.Nocturne.accent, tinted = false) }
+    @Test fun splash() = capture("splash") { SplashScreen(ColourTheme.Nocturne.accent) }
 
     @Test
     @Config(qualifiers = RobolectricDeviceQualifiers.WearOSLargeRound)
-    fun splashLarge() = capture("splash_large") { SplashScreen(ColourTheme.Ember.accent, tinted = true) }
+    fun splashLarge() = capture("splash_large") { SplashScreen(ColourTheme.Ember.accent) }
 }

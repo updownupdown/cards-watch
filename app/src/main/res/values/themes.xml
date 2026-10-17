@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- The app's window. From Android 12 (values-v31) its splash is blank black, so the first thing on screen is the app's own logo. -->
-    <style name="Theme.Solitarius" parent="@android:style/Theme.DeviceDefault" />
+    <!-- The app's window, Nocturne's night until the app draws. From Android 12 (values-v31) its splash is blank night, so the first thing on screen is the app's own logo. -->
+    <style name="Theme.Solitarius" parent="@android:style/Theme.DeviceDefault">
+        <item name="android:windowBackground">@color/night</item>
+    </style>
 </resources>
