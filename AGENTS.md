@@ -34,8 +34,9 @@ first, then Stats and Settings side by side as icon buttons, a card fact
 Each button opens its own screen, swiped away like a game: `StatsScreen`
 (stats across every game, and each game played, by title, which opens it) and `SettingsScreen`
 (Haptics, Suit Colours, Continue Playing, Language, English Game Titles, Colour Theme). The app starts
-on the logo (the spade over the name, centred together, white on black, the
-spade then easing to the theme's accent; the system's splash is blank), then
+on the logo (the spade over the name, centred together, the spade in the
+theme's accent and the name in white, on Nocturne's night #07080d, held for
+half a second; the system's splash is blank, on the same night), then
 goes straight into the last game played (or home, if there's none). Each button is the
 game's wide picture (`banner`, cut to cover, never stretched) under 85% of the
 game's `accent` colour. The tile (`widget/GamesTileService`) offers the last
@@ -47,8 +48,11 @@ logo or, where a face wants text, "Play". Both open
 - Games draw only playing cards, plus short text. No stand-in shapes for cards.
 - The spade (`solitarius-spade.svg`, the phone's retraced one) is drawn into
   every drawable, the complication's PNGs and the card back by
-  `scripts/logo.py`. The launcher icon, tile and complication show it white
-  on black; the app tints it.
+  `scripts/logo.py`. The launcher icon (and so the tile's) and the
+  complication's picture show it like the phone's icon: Nocturne's yellow
+  #ffcf87 on Nocturne's night #07080d (the complication's on the face's own
+  background). What the system or a face tints (the complication's
+  monochrome images, `ic_spade_mono`) stays white, and the app tints its own.
 - Each game's picture and its credit are the phone's (`assets/thumbnails` and
   `thumbnailCredit` in its `src/data/games/<id>.ts`): `art_<id>` (the whole
   picture, 384 px wide), `thumb_<id>` (96 px square) and `banner_<id>`

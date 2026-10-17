@@ -2,9 +2,6 @@ package com.updownupdown.cards.watch.ui
 
 import android.text.format.DateFormat
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -78,20 +74,17 @@ fun AmbientScreen(session: GameSession<*>?, tick: Int = 0) {
 }
 
 /**
- * The app's logo in the middle of the screen, shown as the app starts: white
- * on black, then, once [tinted], the spade eases to the colour theme's
- * [accent]. The system's own splash before it is blank (themes.xml).
+ * The app's logo in the middle of the screen, shown as the app starts: the
+ * spade in the colour theme's [accent] (Nocturne's yellow by default, as on
+ * the launcher icon) on Nocturne's night. The system's own splash before it
+ * is blank, on the same night (themes.xml).
  */
 @Composable
-fun SplashScreen(accent: Color, tinted: Boolean) {
-    val spade by animateColorAsState(if (tinted) accent else Color.White, tween(TINT_MS, easing = FastOutSlowInEasing), label = "spade")
-    Box(Modifier.fillMaxSize().background(Color.Black)) {
-        Logo(R.drawable.logo_spade, spade, Color.White)
+fun SplashScreen(accent: Color) {
+    Box(Modifier.fillMaxSize().background(AppColors.Night)) {
+        Logo(R.drawable.logo_spade, accent, Color.White)
     }
 }
-
-/** How long the spade takes to ease from white to the theme's colour as the app starts. */
-const val TINT_MS = 600
 
 /** The spade's height in the logo; the name is [LOGO_NAME] of it, [LOGO_GAP] of the name's size below it. */
 private val LOGO_SPADE = 52.dp

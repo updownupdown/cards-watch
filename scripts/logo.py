@@ -5,9 +5,14 @@ spade, five filled ribbons on a 1024 grid), in place:
 
 - res/drawable: logo_spade (white, tinted where it's drawn), logo_spade_outline
   (ambient), ic_spade_mono (watch faces tint it), ic_launcher_foreground
-  (white, inside the icon's safe zone),
-- res/drawable-nodpi: complication_logo and complication_spade_mono (256 px),
-- card-icons/Back.svg (the card back's logo).
+  (Nocturne's yellow, inside the icon's safe zone, over launcher_background:
+  Nocturne's night),
+- res/drawable-nodpi: complication_logo (yellow, drawn as it is) and
+  complication_spade_mono (white, the face tints it), 256 px,
+- card-icons/Back.svg (the card back's logo, tinted where it's drawn).
+
+The yellow and the night are the phone's icon colours (Nocturne's accent and
+background); the app's own in ui/Theme.kt and res/values/colors.xml match.
 
     python3 scripts/logo.py
 
@@ -22,6 +27,9 @@ from PIL import Image, ImageDraw
 ROOT = Path(__file__).resolve().parent.parent
 MAIN = ROOT / "app/src/main"
 SOURCE = ROOT / "solitarius-spade.svg"
+
+# Nocturne's yellow, the spade on the launcher icon and the complication.
+YELLOW = (0xFF, 0xCF, 0x87)
 
 
 def subpaths(d):
@@ -116,7 +124,8 @@ drawable = MAIN / "res/drawable"
 (drawable / "logo_spade_outline.xml").write_text(vector("The spade's outline, for ambient.", outlined("#FF8A8A8A", 14)))
 (drawable / "ic_spade_mono.xml").write_text(vector("The spade, in white, for watch faces to tint.", filled("#FFFFFFFF")))
 (drawable / "ic_launcher_foreground.xml").write_text(
-    vector("The spade, in white, scaled into the icon's safe zone.", filled("#FFFFFFFF"), width=108, group="0.6"))
+    vector("The spade, in Nocturne's yellow, scaled into the icon's safe zone.",
+           filled("#FF%02X%02X%02X" % YELLOW), width=108, group="0.6"))
 
 # The card back's logo, read by CardIcons.
 (MAIN / "card-icons/Back.svg").write_text(
@@ -139,6 +148,6 @@ def png(colour, size=256, ss=4):
 
 
 nodpi = MAIN / "res/drawable-nodpi"
-png((255, 255, 255)).save(nodpi / "complication_logo.png", optimize=True)
+png(YELLOW).save(nodpi / "complication_logo.png", optimize=True)
 png((255, 255, 255)).save(nodpi / "complication_spade_mono.png", optimize=True)
 print("Drew the spade into", len(DATA), "paths: logo_spade, logo_spade_outline, ic_spade_mono, ic_launcher_foreground, Back.svg, complication PNGs.")
