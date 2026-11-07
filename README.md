@@ -1,63 +1,39 @@
 # Solitarius for Wear OS
 
-A small collection of playing-card games for round Wear OS watches, sister to
-the Solitarius phone app. Kotlin + Compose for Wear OS.
+**Bite-sized card and puzzle games designed from the ground up for a round watch face.**
 
-## Setup (Windows)
+This is the wrist-sized sister of [Solitarius](https://github.com/updownupdown/cards) ([solitarius.app](https://solitarius.app)). It isn't a shrunken phone app: around two dozen games (Aces Up, Clock, Beehive, Memory, Lights Out, Tower of Hanoi and a handful of originals) were chosen and re-laid out so they're comfortable to play with a fingertip and the rotating crown. It runs standalone, with no phone required, and comes with a tile and a watch-face complication for jumping straight back into a game. The full list is in [docs/GAMES.md](docs/GAMES.md).
 
-1. Clone into a Windows folder such as `C:\dev\cards-watch` (not inside WSL:
-   Android Studio, adb and the emulator all run natively on Windows, and
-   building across the WSL file system is slow).
-2. Open the folder in Android Studio. It installs the SDK it needs
-   (compileSdk 37) and syncs Gradle.
+## Built with
 
-## Running on the watch (wireless debugging)
+Kotlin and Compose for Wear OS, with baseline profiles for fast startup, unit-tested game rules, and Roborazzi screenshot tests that render every screen.
 
-1. Watch: **Settings → System → About → Versions**, tap **Build number**
-   7 times.
-2. **Settings → Developer options**: turn on **ADB debugging** and
-   **Wireless debugging**. Watch and PC on the same Wi-Fi.
-3. Android Studio: **Device Manager → Pair devices using Wi-Fi**, or
-   `adb pair <ip>:<port>` with the watch's code, then `adb connect <ip>:<port>`.
-4. Pick the watch as the run target and press Run.
+## Install it on your watch (sideload)
 
-If the watch drops off Wi-Fi, put it on its charger while testing. After a
-restart, `adb connect` again (the port changes).
+You build it from source and push it to the watch over Wi-Fi. You'll need [Android Studio](https://developer.android.com/studio) (which brings the Android SDK, `adb` and a JDK) and a watch running Wear OS 3 or later.
 
-## Speed: use the `fast` build
+1. **Turn on developer mode on the watch:** Settings → System → About → Versions, then tap **Build number** seven times.
+2. **Turn on debugging:** Settings → Developer options → enable **ADB debugging** and **Wireless debugging**. Keep the watch and your computer on the same Wi-Fi.
+3. **Connect:** in Wireless debugging, tap **Pair new device** and run, with the IP, port and code the watch shows:
+   ```sh
+   adb pair <ip>:<pairing-port>
+   adb connect <ip>:<port>
+   ```
+4. **Build and install** the optimised `fast` build (small and quick, signed with a debug key):
+   ```sh
+   git clone https://github.com/updownupdown/cards-watch
+   cd cards-watch
+   ./gradlew :app:installFast
+   ```
+   Or open the folder in Android Studio, pick the watch as the target and press Run.
 
-Debug builds of Compose run many times slower than release builds (no code
-shrinking or optimisation, debuggable runtime), and the debug APK is ~38 MB to
-push over Wi-Fi. To judge speed, switch **Build Variants** (View → Tool Windows
-→ Build Variants) to **fast**: optimised like a release, signed with the debug
-key, ~2 MB. Use **debug** only when you need the debugger.
+Tip: if the watch drops off Wi-Fi, put it on its charger while installing. After a restart, run `adb connect` again (the port changes).
 
-## Emulator
+## Development
 
-Device Manager → Create device → Wear OS → Small Round and Large Round. Good for
-layout checks; tap feel, the crown and haptics need the real watch.
-
-## Checks
-
-```
-./gradlew testDebugUnitTest         # unit tests
-./gradlew recordRoborazziDebug      # renders screens to app/build/outputs/roborazzi
+```sh
+./gradlew testDebugUnitTest      # unit tests
+./gradlew recordRoborazziDebug   # render screens to app/build/outputs/roborazzi
 ```
 
-## Release
-
-The watch is uploaded to the phone app's Play listing, on its Wear OS track,
-signed with the phone's upload key.
-
-1. In the phone app, `eas credentials` → Android → production → download the
-   keystore. Put it beside this folder (not in it), e.g. `../solitarius-upload.jks`.
-2. Create `keystore.properties` here (ignored by git) with the values EAS shows:
-   ```
-   storeFile=../solitarius-upload.jks
-   storePassword=…
-   keyAlias=…
-   keyPassword=…
-   ```
-3. Bump `versionName` in `app/build.gradle.kts` (the version code follows it).
-4. `./gradlew :app:bundleRelease`, then upload
-   `app/build/outputs/bundle/release/app-release.aab` to the Wear OS track.
+Use the `fast` build variant to judge performance; Compose debug builds are many times slower. Release and signing steps are in [docs/RELEASING.md](docs/RELEASING.md).

@@ -209,4 +209,4 @@ and the same upload key, uploaded to the listing's Wear OS track. Bump
 `versionName` for every upload; `versionCode` follows it in a range of its own
 (`36MMmmpp`), so it never repeats one of the phone's (EAS counts those up from
 1). The release build signs with the key in `keystore.properties`, kept out of
-the repo (see README).
+the repo (see docs/RELEASING.md).
