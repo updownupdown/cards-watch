@@ -1,5 +1,17 @@
 # Releasing
 
+## Sideload APK (GitHub Releases)
+
+`.github/workflows/release.yml` builds the release variant signed with a separate
+sideload key (repository secrets `SIDELOAD_KEYSTORE_BASE64` and
+`SIDELOAD_KEYSTORE_PASSWORD`, alias `sideload`) and attaches
+`solitarius-watch-v<version>.apk` to a GitHub Release. Bump `versionName`, then
+run Actions → Release APK → Run workflow (or push a `v*` tag). Keep using the
+same sideload key so installs can update. A sideloaded build and a Play build are
+signed differently, so one has to be uninstalled before the other goes on.
+
+## Play Store
+
 The watch is uploaded to the phone app's Play listing, on its Wear OS track,
 signed with the phone's upload key.
 

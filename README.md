@@ -10,24 +10,26 @@ Kotlin and Compose for Wear OS, with baseline profiles for fast startup, unit-te
 
 ## Install it on your watch (sideload)
 
-You build it from source and push it to the watch over Wi-Fi. You'll need [Android Studio](https://developer.android.com/studio) (which brings the Android SDK, `adb` and a JDK) and a watch running Wear OS 3 or later.
+You'll need a watch running Wear OS 3 or later, and `adb` on your computer (it comes with [Android's platform tools](https://developer.android.com/tools/releases/platform-tools)).
 
-1. **Turn on developer mode on the watch:** Settings → System → About → Versions, then tap **Build number** seven times.
-2. **Turn on debugging:** Settings → Developer options → enable **ADB debugging** and **Wireless debugging**. Keep the watch and your computer on the same Wi-Fi.
-3. **Connect:** in Wireless debugging, tap **Pair new device** and run, with the IP, port and code the watch shows:
+1. **Download** the latest `solitarius-watch-….apk` from [Releases](https://github.com/updownupdown/cards-watch/releases/latest).
+2. **Turn on developer mode on the watch:** Settings → System → About → Versions, then tap **Build number** seven times.
+3. **Turn on debugging:** Settings → Developer options → enable **ADB debugging** and **Wireless debugging**. Keep the watch and your computer on the same Wi-Fi.
+4. **Connect:** in Wireless debugging, tap **Pair new device**, then run these with the IP, ports and code the watch shows:
    ```sh
    adb pair <ip>:<pairing-port>
    adb connect <ip>:<port>
    ```
-4. **Build and install** the optimised `fast` build (small and quick, signed with a debug key):
+5. **Install:**
    ```sh
-   git clone https://github.com/updownupdown/cards-watch
-   cd cards-watch
-   ./gradlew :app:installFast
+   adb install solitarius-watch-<version>.apk
    ```
-   Or open the folder in Android Studio, pick the watch as the target and press Run.
 
-Tip: if the watch drops off Wi-Fi, put it on its charger while installing. After a restart, run `adb connect` again (the port changes).
+The app appears in the watch's app list. To update, install a newer APK the same way; your progress is kept.
+
+Tips: if the watch drops off Wi-Fi, put it on its charger while installing. After a restart, run `adb connect` again (the port changes). You can turn Wireless debugging off again afterwards.
+
+Or build it yourself: clone the repo and run `./gradlew :app:installFast` (an optimised build signed with your own debug key), or open the folder in Android Studio and press Run.
 
 ## Development
 
@@ -36,4 +38,4 @@ Tip: if the watch drops off Wi-Fi, put it on its charger while installing. After
 ./gradlew recordRoborazziDebug   # render screens to app/build/outputs/roborazzi
 ```
 
-Use the `fast` build variant to judge performance; Compose debug builds are many times slower. Release and signing steps are in [docs/RELEASING.md](docs/RELEASING.md).
+Use the `fast` build variant to judge performance; Compose debug builds are many times slower. To publish a sideload APK, bump `versionName` and run **Actions → Release APK → Run workflow**. Play Store release and signing steps are in [docs/RELEASING.md](docs/RELEASING.md).
